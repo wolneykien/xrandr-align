@@ -1,0 +1,22 @@
+         xinput 1.x by Frederic Lepied <Frederic.Lepied@sugix.frmug.org>
+
+1. Introduction
+===============
+
+xinput is an  utility  I have built  to  configure and test my  XInput
+devices.    The functionalities aren't    complete  but  they fill  my
+needs. If you have  some ideas or needs  for improvement, feel free to
+contact me.  Any feedback welcome.
+
+2. Requirements
+===============
+
+You'll need  an ANSI   C   compiler.  I  know   it works  under  Linux
+ELF/XFree86 and Solaris 2.4 Sparc/X11R6.1.
+
+3. Installation
+===============
+
+xmkmf -a
+make install
+make install.man

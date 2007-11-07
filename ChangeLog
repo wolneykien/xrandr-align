@@ -1,0 +1,38 @@
+Sat Jun 14 21:10:21 1997  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* version 1.2 released.
+
+Tue Jun 10 06:13:05 1997  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* state.c: new file.
+	* xinput.man: documented all function calls associated with commands.
+
+Sat Feb  1 19:20:19 1997  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* version 1.1.1 released.
+
+	* test.c (test): added the option "-proximity" to handle proximity
+	events because I haven't found the way to know if a device reports
+	proximity events!!!
+
+Thu Dec 19 20:35:14 1996  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* version 1.1 released
+
+Wed Dec 18 22:39:18 1996  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* xinput.c (main): flush the X request queue before exiting.
+
+	* setint.c: new file.
+
+	* feedback.c (get_feedbacks): the switch was on state->id...
+
+Tue Oct 22 19:08:26 1996  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* version 1.0.1 released
+
+Thu Oct 17 17:21:39 1996  Frederic Lepied  <Frederic.Lepied@sugix.frmug.org>
+
+	* xinput.c (is_xinput_present): corrected the bug when the XInput
+	extension is unavailable (must test NoSuchExtension).
+
