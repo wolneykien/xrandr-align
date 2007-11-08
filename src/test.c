@@ -22,8 +22,7 @@
  */
 
 #include "xinput.h"
-
-static const char rcs_id[] = "$Id: test.c,v 1.3 1997/06/09 16:06:31 fred Exp $";
+#include <string.h>
 
 #define INVALID_EVENT_TYPE	-1
 
@@ -44,7 +43,6 @@ register_events(Display		*dpy,
     int			number = 0;	/* number of events registered */
     XEventClass		event_list[7];
     int			i;
-    XAnyClassPtr	any;
     XDevice		*device;
     Window		root_win;
     unsigned long	screen;
@@ -198,5 +196,4 @@ test(Display	*display,
     return EXIT_FAILURE;
 }
 
-/* end of test.c
- */
+/* end of test.c */

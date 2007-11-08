@@ -23,8 +23,7 @@
 
 #include "xinput.h"
 #include <ctype.h>
-
-static const char rcs_id[] = "$Id: xinput.c,v 1.5 1997/06/09 16:06:31 fred Exp $";
+#include <string.h>
 
 typedef int (*prog)(
 #if NeedFunctionPrototypes
@@ -190,5 +189,4 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
 }
 
-/* end of xinput.c
- */
+/* end of xinput.c */

@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: list.c,v 1.1.1.2 1997/06/09 16:00:48 fred Exp $";
-
 static void
 print_info(XDeviceInfo	*info)
 {
@@ -114,5 +112,4 @@ list(Display	*display,
     return EXIT_SUCCESS;
 }
 
-/* end of list.c
- */
+/* end of list.c */

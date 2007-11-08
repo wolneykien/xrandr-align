@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: feedback.c,v 1.2 1996/12/19 19:40:41 fred Exp $";
-
 int
 set_ptr_feedback(Display	*display,
 		 int		argc,
@@ -115,7 +113,7 @@ get_feedbacks(Display	*display,
 	switch (state->class) {
 	case KbdFeedbackClass:
 	    k = (XKbdFeedbackState*) state;
-	    printf("KbdFeedbackClass id=%d\n", state->id);
+	    printf("KbdFeedbackClass id=%ld\n", state->id);
 	    printf("\tclick is %d\n", k->click);
 	    printf("\tpercent is %d\n", k->percent);
 	    printf("\tpitch is %d\n", k->pitch);
@@ -126,7 +124,7 @@ get_feedbacks(Display	*display,
 	    
 	case PtrFeedbackClass:
 	    p = (XPtrFeedbackState*) state;
-	    printf("PtrFeedbackClass id=%d\n", state->id);
+	    printf("PtrFeedbackClass id=%ld\n", state->id);
 	    printf("\taccelNum is %d\n", p->accelNum);
 	    printf("\taccelDenom is %d\n", p->accelDenom);
 	    printf("\tthreshold is %d\n", p->threshold);	    
@@ -134,14 +132,14 @@ get_feedbacks(Display	*display,
 
 	case StringFeedbackClass:
 	    s = (XStringFeedbackState*) state;
-	    printf("XStringFeedbackControl id=%d\n", state->id);
+	    printf("XStringFeedbackControl id=%ld\n", state->id);
 	    printf("\tmax_symbols is %d\n", s->max_symbols);
 	    printf("\tnum_syms_supported is %d\n", s->num_syms_supported);
 	    break;
 
 	case IntegerFeedbackClass:
 	    i = (XIntegerFeedbackState*) state;
-	    printf("XIntegerFeedbackControl id=%d\n", state->id);
+	    printf("XIntegerFeedbackControl id=%ld\n", state->id);
 	    printf("\tresolution is %d\n", i->resolution);
 	    printf("\tminVal is %d\n", i->minVal);
 	    printf("\tmaxVal is %d\n", i->maxVal);
@@ -149,13 +147,13 @@ get_feedbacks(Display	*display,
 
 	case LedFeedbackClass:
 	    l = (XLedFeedbackState*) state;
-	    printf("XLedFeedbackState id=%d\n", state->id);
+	    printf("XLedFeedbackState id=%ld\n", state->id);
 	    printf("\tled_values is %d\n", l->led_values);
 	    break;
 
 	case BellFeedbackClass:
 	    b = (XBellFeedbackState*) state;
-	    printf("XBellFeedbackControl id=%d\n", state->id);
+	    printf("XBellFeedbackControl id=%ld\n", state->id);
 	    printf("\tpercent is %d\n", b->percent);
 	    printf("\tpitch is %d\n", b->pitch);
 	    printf("\tduration is %d\n", b->duration);	    
@@ -166,5 +164,4 @@ get_feedbacks(Display	*display,
     return EXIT_SUCCESS;
 }
 
-/* end of ptrfdbk.c
-*/
+/* end of ptrfdbk.c */

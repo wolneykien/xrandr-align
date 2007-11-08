@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: buttonmap.c,v 1.1.1.2 1997/06/09 16:00:47 fred Exp $";
-
 int
 set_button_map(Display	*display,
 	       int	argc,
@@ -90,5 +88,4 @@ set_button_map(Display	*display,
     }
 }
 
-/* end of buttonmap.c
- */
+/* end of buttonmap.c */

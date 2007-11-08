@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: setptr.c,v 1.1.1.2 1997/06/09 16:00:47 fred Exp $";
-
 int
 set_pointer(Display	*display,
 	    int		argc,
@@ -66,5 +64,4 @@ set_pointer(Display	*display,
     }
 }
 
-/* end of setptr.c
- */
+/* end of setptr.c */

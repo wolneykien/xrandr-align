@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: state.c,v 1.2 1997/06/14 19:11:49 fred Exp $";
-
 int
 query_state(Display	*display,
 	    int		argc,
@@ -106,5 +104,4 @@ query_state(Display	*display,
     return EXIT_SUCCESS;
 }
 
-/* end of state.c
-*/
+/* end of state.c */

@@ -23,8 +23,6 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: setint.c,v 1.1 1996/12/19 19:41:10 fred Exp $";
-
 int
 set_integer_feedback(Display	*display,
 		     int	argc,
@@ -65,5 +63,4 @@ set_integer_feedback(Display	*display,
     }
 }
 
-/* end of setint.c
- */
+/* end of setint.c */

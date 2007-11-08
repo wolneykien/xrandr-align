@@ -22,8 +22,7 @@
  */
 
 #include "xinput.h"
-
-static const char rcs_id[] = "$Id: setmode.c,v 1.1.1.2 1997/06/09 16:00:47 fred Exp $";
+#include <string.h>
 
 int
 set_mode(Display	*display,
@@ -66,5 +65,4 @@ set_mode(Display	*display,
     }
 }
 
-/* end of setmode.c
- */
+/* end of setmode.c */

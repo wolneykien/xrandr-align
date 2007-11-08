@@ -23,10 +23,11 @@
 
 #include "xinput.h"
 
-static const char rcs_id[] = "$Id: version.c,v 1.5 1997/06/14 19:11:49 fred Exp $";
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-/* must be synched with Imakefile */
-static const char version_id[] = "1.2";
+static const char version_id[] = VERSION;
 
 int
 version(Display	*display,
@@ -39,5 +40,4 @@ version(Display	*display,
     return EXIT_SUCCESS;
 }
 
-/* end of version.c
- */
+/* end of version.c */
