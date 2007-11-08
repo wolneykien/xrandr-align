@@ -1,0 +1,16 @@
+*.o
+config.*
+Makefile
+*.in
+stamp-h1
+.deps
+*.swp
+*.m4
+src/xinput
+autom4te.cache
+compile
+configure
+depcomp
+install-sh
+missing
+xinput.1
