@@ -152,5 +152,48 @@ query_state(
 #endif
 );
 
-/* end of xinput.h
- */
+int
+create_master(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+int
+remove_master(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+int
+change_attachment(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+int
+float_device(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+/* end of xinput.h */

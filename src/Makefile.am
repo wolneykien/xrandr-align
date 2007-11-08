@@ -27,6 +27,7 @@ xinput_LDADD = $(XINPUT_LIBS) -lm
 xinput_SOURCES = \
     buttonmap.c \
     feedback.c \
+    hierarchy.c \
     list.c \
     setint.c \
     setmode.c \

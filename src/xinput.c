@@ -81,6 +81,22 @@ static entry drivers[] =
      "",
      version
     },
+    { "create-master",
+      "<id> [sendCore (dflt:1)] [enable (dflt:1)]",
+      create_master
+    },
+    { "remove-master",
+      "<id> [returnMode (dflt:Floating)] [returnPointer] [returnKeyboard]",
+      remove_master
+    },
+    { "reattach",
+      "<id> <master>",
+      change_attachment
+    },
+    { "float",
+      "<id>",
+      float_device
+    },
     {0, 0, 0
     }
 };
