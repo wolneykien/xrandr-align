@@ -33,9 +33,29 @@ print_info(XDeviceInfo	*info)
     XValuatorInfoPtr	v;
     XAxisInfoPtr	a;
 
-    printf("\"%s\"\tid=%ld\t[%s]\n", info->name, info->id,
-	   (info->use == IsXExtensionDevice) ? "XExtensionDevice" :
-	   ((info->use == IsXPointer) ? "XPointer" : "XKeyboard"));
+    printf("\"%s\"\tid=%ld\t[", info->name, info->id);
+
+    switch (info->use) {
+    case IsXPointer:
+       printf("XPointer");
+       break;
+    case IsXKeyboard:
+       printf("XKeyboard");
+       break;
+    case IsXExtensionDevice:
+       printf("XExtensionDevice");
+       break;
+    case IsXExtensionKeyboard:
+       printf("XExtensionKeyboard");
+       break;
+    case IsXExtensionPointer:
+       printf("XExtensionPointer");
+       break;
+    default:
+       printf("Unknown class");
+       break;
+    }
+    printf("]\n");
 
     if (info->num_classes > 0) {
 	any = (XAnyClassPtr) (info->inputclassinfo);

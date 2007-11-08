@@ -128,7 +128,7 @@ find_device_info(Display	*display,
     devices = XListInputDevices(display, &num_devices);
 
     for(loop=0; loop<num_devices; loop++) {
-	if ((!only_extended || (devices[loop].use == IsXExtensionDevice)) &&
+	if ((!only_extended || (devices[loop].use >= IsXExtensionDevice)) &&
 	    ((!is_id && strcmp(devices[loop].name, name) == 0) ||
 	     (is_id && devices[loop].id == id))) {
 	    return &devices[loop];

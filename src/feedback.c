@@ -33,6 +33,10 @@ set_ptr_feedback(Display	*display,
     XDeviceInfo		*info;
     XDevice		*device;
     XPtrFeedbackControl	feedback;
+    XFeedbackState	*state;
+    int			num_feedbacks;
+    int			loop;
+    int			id;
     
     if (argc != 4) {
 	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
@@ -52,10 +56,25 @@ set_ptr_feedback(Display	*display,
 	fprintf(stderr, "unable to open device %s\n", argv[0]);
 	return 1;
     }
+
+    /* We will match the first Ptr Feedback class. Can there be more? */
+    id = -1;
+    state = XGetFeedbackControl(display, device, &num_feedbacks);
+    for(loop=0; loop<num_feedbacks; loop++) {
+	if (state->class == PtrFeedbackClass) {
+	   id = state->id;
+	}
+	state = (XFeedbackState*) ((char*) state + state->length);
+    }
+
+    if (id == -1) {
+       fprintf(stderr, "unable to find PtrFeedbackClass for %s\n", argv[0]);
+       return 1;
+    }
     
     feedback.class    	 = PtrFeedbackClass;
     feedback.length   	 = sizeof(XPtrFeedbackControl);
-    feedback.id	      	 = 0;
+    feedback.id	      	 = id;
     feedback.threshold	 = atoi(argv[1]);
     feedback.accelNum 	 = atoi(argv[2]);
     feedback.accelDenom  = atoi(argv[3]);
