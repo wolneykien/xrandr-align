@@ -33,6 +33,7 @@ print_info(XDeviceInfo	*info, Bool shortformat)
     XButtonInfoPtr	b;
     XValuatorInfoPtr	v;
     XAxisInfoPtr	a;
+    XAttachInfoPtr      att;
 
     printf("\"%s\"\tid=%ld\t[", info->name, info->id);
 
@@ -91,6 +92,10 @@ print_info(XDeviceInfo	*info, Bool shortformat)
 		    printf ("\t\tResolution is %d\n", a->resolution);
 		}
 		break;
+            case AttachClass:
+                att = (XAttachInfoPtr)any;
+                printf("\tAttached to %d\n", att->attached);
+                break;
 
 	    default:
 		printf ("unknown class\n");
