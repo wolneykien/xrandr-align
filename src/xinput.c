@@ -156,6 +156,7 @@ main(int argc, char * argv[])
 {
     Display	*display;
     entry	*driver = drivers;
+    char        *func;
     
     if (argc < 2) {
 	usage();
@@ -169,13 +170,16 @@ main(int argc, char * argv[])
 	return EXIT_FAILURE;
     }
 
+    func = argv[1];
+    while((*func) == '-') func++;
+
     if (!is_xinput_present(display)) {
 	fprintf(stderr, "%s extension not available\n", INAME);
 	return EXIT_FAILURE;
     }
     
     while(driver->func_name) {
-	if (strcmp(driver->func_name, argv[1]) == 0) {
+	if (strcmp(driver->func_name, func) == 0) {
 	    int	r = (*driver->func)(display, argc-2, argv+2,
 				    driver->func_name, driver->arg_desc);
 	    XFlush(display);
