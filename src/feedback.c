@@ -1,6 +1,6 @@
 /*
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
- *                                                                            
+ *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
@@ -9,8 +9,8 @@
  * advertising or publicity pertaining to distribution of the software without
  * specific,  written      prior  permission.     Frederic  Lepied   makes  no
  * representations about the suitability of this software for any purpose.  It
- * is provided "as is" without express or implied warranty.                   
- *                                                                            
+ * is provided "as is" without express or implied warranty.
+ *
  * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
  * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
@@ -37,21 +37,21 @@ set_ptr_feedback(Display	*display,
     int			num_feedbacks;
     int			loop;
     int			id;
-    
+
     if (argc != 4) {
 	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
 	return 1;
     }
-    
+
     info = find_device_info(display, argv[0], True);
-    
+
     if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return 1;
     }
-    
+
     device = XOpenDevice(display, info->id);
-    
+
     if (!device) {
 	fprintf(stderr, "unable to open device %s\n", argv[0]);
 	return 1;
@@ -71,12 +71,12 @@ set_ptr_feedback(Display	*display,
        fprintf(stderr, "unable to find PtrFeedbackClass for %s\n", argv[0]);
        return 1;
     }
-    
-    feedback.class    	 = PtrFeedbackClass;
-    feedback.length   	 = sizeof(XPtrFeedbackControl);
-    feedback.id	      	 = id;
+
+    feedback.class       = PtrFeedbackClass;
+    feedback.length      = sizeof(XPtrFeedbackControl);
+    feedback.id	         = id;
     feedback.threshold	 = atoi(argv[1]);
-    feedback.accelNum 	 = atoi(argv[2]);
+    feedback.accelNum	 = atoi(argv[2]);
     feedback.accelDenom  = atoi(argv[3]);
 
     XChangeFeedbackControl(display, device, DvAccelNum|DvAccelDenom|DvThreshold,
@@ -103,31 +103,31 @@ get_feedbacks(Display	*display,
     XLedFeedbackState	*l;
     XIntegerFeedbackState *i;
     XStringFeedbackState *s;
-    
+
     if (argc != 1) {
 	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
 	return 1;
     }
-    
+
     info = find_device_info(display, argv[0], True);
-    
+
     if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return 1;
     }
-    
+
     device = XOpenDevice(display, info->id);
-    
+
     if (!device) {
 	fprintf(stderr, "unable to open device %s\n", argv[0]);
 	return 1;
     }
-    
+
     state = XGetFeedbackControl(display, device, &num_feedbacks);
 
     printf("%d feedback class%s\n", num_feedbacks,
 	   (num_feedbacks > 1) ? "es" : "");
-    
+
     for(loop=0; loop<num_feedbacks; loop++) {
 	switch (state->class) {
 	case KbdFeedbackClass:
@@ -140,13 +140,13 @@ get_feedbacks(Display	*display,
 	    printf("\tled_mask is %d\n", k->led_mask);
 	    printf("\tglobal_auto_repeat is %d\n", k->global_auto_repeat);
 	    break;
-	    
+
 	case PtrFeedbackClass:
 	    p = (XPtrFeedbackState*) state;
 	    printf("PtrFeedbackClass id=%ld\n", state->id);
 	    printf("\taccelNum is %d\n", p->accelNum);
 	    printf("\taccelDenom is %d\n", p->accelDenom);
-	    printf("\tthreshold is %d\n", p->threshold);	    
+	    printf("\tthreshold is %d\n", p->threshold);
 	    break;
 
 	case StringFeedbackClass:
@@ -175,7 +175,7 @@ get_feedbacks(Display	*display,
 	    printf("XBellFeedbackControl id=%ld\n", state->id);
 	    printf("\tpercent is %d\n", b->percent);
 	    printf("\tpitch is %d\n", b->pitch);
-	    printf("\tduration is %d\n", b->duration);	    
+	    printf("\tduration is %d\n", b->duration);
 	    break;
 	}
 	state = (XFeedbackState*) ((char*) state + state->length);

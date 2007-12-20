@@ -1,6 +1,6 @@
 /*
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
- *                                                                            
+ *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
@@ -9,8 +9,8 @@
  * advertising or publicity pertaining to distribution of the software without
  * specific,  written      prior  permission.     Frederic  Lepied   makes  no
  * representations about the suitability of this software for any purpose.  It
- * is provided "as is" without express or implied warranty.                   
- *                                                                            
+ * is provided "as is" without express or implied warranty.
+ *
  * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
  * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
@@ -22,6 +22,7 @@
  */
 
 #include "xinput.h"
+#include <string.h>
 
 static void
 print_info(XDeviceInfo	*info, Bool shortformat)
@@ -78,7 +79,7 @@ print_info(XDeviceInfo	*info, Bool shortformat)
 
 	    case ValuatorClass:
 		v = (XValuatorInfoPtr) any;
-		a = (XAxisInfoPtr) ((char *) v + 
+		a = (XAxisInfoPtr) ((char *) v +
 				    sizeof (XValuatorInfo));
 		printf("\tNum_axes is %d\n", v->num_axes);
 		printf("\tMode is %s\n", (v->mode == Absolute) ? "Absolute" : "Relative");
@@ -90,7 +91,7 @@ print_info(XDeviceInfo	*info, Bool shortformat)
 		    printf ("\t\tResolution is %d\n", a->resolution);
 		}
 		break;
-		
+
 	    default:
 		printf ("unknown class\n");
 	    }
@@ -112,11 +113,11 @@ list(Display	*display,
 
     shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
 
-    if (argc == 0) {
+    if (argc == 0 || shortformat) {
 	int		num_devices;
-    
+
 	info = XListInputDevices(display, &num_devices);
-	
+
 	for(loop=0; loop<num_devices; loop++) {
 	    print_info(info+loop, shortformat);
 	}
@@ -125,7 +126,7 @@ list(Display	*display,
 
 	for(loop=0; loop<argc; loop++) {
 	    info = find_device_info(display, argv[0], False);
-	    
+
 	    if (!info) {
 		fprintf(stderr, "unable to find device %s\n", argv[0]);
 		ret = EXIT_FAILURE;

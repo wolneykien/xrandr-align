@@ -1,6 +1,6 @@
 /*
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
- *                                                                            
+ *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
@@ -9,8 +9,8 @@
  * advertising or publicity pertaining to distribution of the software without
  * specific,  written      prior  permission.     Frederic  Lepied   makes  no
  * representations about the suitability of this software for any purpose.  It
- * is provided "as is" without express or implied warranty.                   
- *                                                                            
+ * is provided "as is" without express or implied warranty.
+ *
  * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
  * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
@@ -57,7 +57,7 @@ register_events(Display		*dpy,
 	fprintf(stderr, "unable to open device %s\n", dev_name);
 	return 0;
     }
-    
+
     if (device->num_classes > 0) {
 	for (ip = device->classes, i=0; i<info->num_classes; ip++, i++) {
 	    switch (ip->input_class) {
@@ -78,7 +78,7 @@ register_events(Display		*dpy,
 		    ProximityOut(device, proximity_out_type, event_list[number]); number++;
 		}
 		break;
-		
+
 	    default:
 		fprintf(stderr, "unknown class\n");
 		break;
@@ -94,19 +94,19 @@ register_events(Display		*dpy,
 }
 
 static void
-print_events(Display	*dpy) 
+print_events(Display	*dpy)
 {
     XEvent        Event;
-    
+
     while(1) {
 	XNextEvent(dpy, &Event);
-	
+
 	if (Event.type == motion_type) {
-	    int	loop;    
+	    int	loop;
 	    XDeviceMotionEvent *motion = (XDeviceMotionEvent *) &Event;
 
 	    printf("motion ");
-	    
+
 	    for(loop=0; loop<motion->axes_count; loop++) {
 		printf("a[%d]=%d ", motion->first_axis + loop, motion->axis_data[loop]);
 	    }
@@ -115,10 +115,10 @@ print_events(Display	*dpy)
 		   (Event.type == button_release_type)) {
 	    int	loop;
 	    XDeviceButtonEvent *button = (XDeviceButtonEvent *) &Event;
-	    
+
 	    printf("button %s %d ", (Event.type == button_release_type) ? "release" : "press  ",
 		   button->button);
-	    
+
 	    for(loop=0; loop<button->axes_count; loop++) {
 		printf("a[%d]=%d ", button->first_axis + loop, button->axis_data[loop]);
 	    }
@@ -127,10 +127,10 @@ print_events(Display	*dpy)
 		   (Event.type == key_release_type)) {
 	    int	loop;
 	    XDeviceKeyEvent *key = (XDeviceKeyEvent *) &Event;
-	    
+
 	    printf("key %s %d ", (Event.type == key_release_type) ? "release" : "press  ",
 		   key->keycode);
-	    
+
 	    for(loop=0; loop<key->axes_count; loop++) {
 		printf("a[%d]=%d ", key->first_axis + loop, key->axis_data[loop]);
 	    }
@@ -139,9 +139,9 @@ print_events(Display	*dpy)
 		   (Event.type == proximity_in_type)) {
 	    int	loop;
 	    XProximityNotifyEvent *prox = (XProximityNotifyEvent *) &Event;
-	    
+
 	    printf("proximity %s ", (Event.type == proximity_in_type) ? "in " : "out");
-	    
+
 	    for(loop=0; loop<prox->axes_count; loop++) {
 		printf("a[%d]=%d ", prox->first_axis + loop, prox->axis_data[loop]);
 	    }
@@ -168,18 +168,18 @@ test(Display	*display,
     } else {
 	Bool	handle_proximity = False;
 	int	idx = 0;
-	
+
 	if (argc == 2) {
 	    if (strcmp("-proximity", argv[0]) != 0) {
-	    	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
+		fprintf(stderr, "usage: xinput %s %s\n", name, desc);
 		return EXIT_FAILURE;
 	    }
 	    handle_proximity = 1;
 	    idx = 1;
 	}
-	
+
 	info = find_device_info(display, argv[idx], True);
-	    
+
 	if (!info) {
 	    fprintf(stderr, "unable to find device %s\n", argv[idx]);
 	    return EXIT_FAILURE;

@@ -113,7 +113,7 @@ find_device_info(Display	*display,
     int		len = strlen(name);
     Bool	is_id = True;
     XID		id;
-    
+
     for(loop=0; loop<len; loop++) {
 	if (!isdigit(name[loop])) {
 	    is_id = False;
@@ -124,7 +124,7 @@ find_device_info(Display	*display,
     if (is_id) {
 	id = atoi(name);
     }
-    
+
     devices = XListInputDevices(display, &num_devices);
 
     for(loop=0; loop<num_devices; loop++) {
@@ -138,12 +138,12 @@ find_device_info(Display	*display,
 }
 
 static void
-usage() 
+usage()
 {
     entry	*pdriver = drivers;
-    
+
     fprintf(stderr, "usage :\n");
-    
+
     while(pdriver->func_name) {
 	fprintf(stderr, "\txinput %s %s\n", pdriver->func_name,
 		pdriver->arg_desc);
@@ -157,14 +157,14 @@ main(int argc, char * argv[])
     Display	*display;
     entry	*driver = drivers;
     char        *func;
-    
+
     if (argc < 2) {
 	usage();
 	return EXIT_FAILURE;
     }
-    
+
     display = XOpenDisplay(NULL);
-    
+
     if (display == NULL) {
 	fprintf(stderr, "Unable to connect to X server\n");
 	return EXIT_FAILURE;
@@ -177,7 +177,7 @@ main(int argc, char * argv[])
 	fprintf(stderr, "%s extension not available\n", INAME);
 	return EXIT_FAILURE;
     }
-    
+
     while(driver->func_name) {
 	if (strcmp(driver->func_name, func) == 0) {
 	    int	r = (*driver->func)(display, argc-2, argv+2,
@@ -187,9 +187,9 @@ main(int argc, char * argv[])
 	}
 	driver++;
     }
-    
+
     usage();
-    
+
     return EXIT_FAILURE;
 }
 

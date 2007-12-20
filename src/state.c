@@ -1,6 +1,6 @@
 /*
  * Copyright 1996-1997 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
- *                                                                            
+ *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
@@ -9,8 +9,8 @@
  * advertising or publicity pertaining to distribution of the software without
  * specific,  written      prior  permission.     Frederic  Lepied   makes  no
  * representations about the suitability of this software for any purpose.  It
- * is provided "as is" without express or implied warranty.                   
- *                                                                            
+ * is provided "as is" without express or implied warranty.
+ *
  * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
  * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
@@ -39,21 +39,21 @@ query_state(Display	*display,
     XValuatorState	*val_state;
     XKeyState		*key_state;
     XButtonState	*but_state;
-    
+
     if (argc != 1) {
 	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
 	return 1;
     }
-    
+
     info = find_device_info(display, argv[0], True);
-    
+
     if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return 1;
     }
-    
+
     device = XOpenDevice(display, info->id);
-    
+
     if (!device) {
 	fprintf(stderr, "unable to open device %s\n", argv[0]);
 	return 1;
@@ -76,7 +76,7 @@ query_state(Display	*display,
 	      printf("\tvaluator[%d]=%d\n", loop2, val_state->valuators[loop2]);
 	    }
 	    break;
-	    
+
 	  case ButtonClass:
 	    but_state = (XButtonState *) cls;
 	    printf("ButtonClass\n");
@@ -93,7 +93,7 @@ query_state(Display	*display,
 	      printf("\tkey[%d]=%s\n", loop2,
 		     (key_state->keys[loop2 / 8] & (1 << (loop2 % 8))) ? "down" : "up" );
 	    }
-	    
+
 	    break;
 
 	  }
