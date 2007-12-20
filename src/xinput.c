@@ -97,6 +97,10 @@ static entry drivers[] =
       "<id>",
       float_device
     },
+    { "set-cp",
+      "<window> <device>",
+      set_clientpointer
+    },
     {0, 0, 0
     }
 };

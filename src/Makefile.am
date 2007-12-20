@@ -30,6 +30,7 @@ xinput_SOURCES = \
     hierarchy.c \
     list.c \
     setint.c \
+    setcp.c \
     setmode.c \
     setptr.c \
     state.c \

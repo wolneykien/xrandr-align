@@ -6,10 +6,10 @@
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation.
- * 
+ *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -17,12 +17,12 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * Except as contained in this notice, the name of the author shall
  * not be used in advertising or otherwise to promote the sale, use or
  * other dealings in this Software without prior written authorization
  * from the author.
- * 
+ *
  */
 
 #include "xinput.h"
@@ -37,7 +37,7 @@
  * Create a new master device. Name must be supplied, other values are
  * optional.
  */
-int 
+int
 create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
 {
     XCreateMasterInfo c;
@@ -88,7 +88,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
             r.returnMode = Floating;
         else if (!strcmp(argv[1], "AttachToMaster"))
             r.returnMode = AttachToMaster;
-        else 
+        else
             Error(BadValue, "Invalid returnMode.\n");
     } else
         r.returnMode = Floating;
