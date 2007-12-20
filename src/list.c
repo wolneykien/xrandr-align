@@ -24,7 +24,7 @@
 #include "xinput.h"
 
 static void
-print_info(XDeviceInfo	*info)
+print_info(XDeviceInfo	*info, Bool shortformat)
 {
     int			i,j;
     XAnyClassPtr	any;
@@ -56,6 +56,9 @@ print_info(XDeviceInfo	*info)
        break;
     }
     printf("]\n");
+
+    if (shortformat)
+        return;
 
     if (info->num_classes > 0) {
 	any = (XAnyClassPtr) (info->inputclassinfo);
@@ -105,6 +108,9 @@ list(Display	*display,
 {
     XDeviceInfo		*info;
     int			loop;
+    int                 shortformat = False;
+
+    shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
 
     if (argc == 0) {
 	int		num_devices;
@@ -112,7 +118,7 @@ list(Display	*display,
 	info = XListInputDevices(display, &num_devices);
 	
 	for(loop=0; loop<num_devices; loop++) {
-	    print_info(info+loop);
+	    print_info(info+loop, shortformat);
 	}
     } else {
 	int	ret = EXIT_SUCCESS;
@@ -124,7 +130,7 @@ list(Display	*display,
 		fprintf(stderr, "unable to find device %s\n", argv[0]);
 		ret = EXIT_FAILURE;
 	    } else {
-		print_info(info);
+		print_info(info, shortformat);
 	    }
 	}
 	return ret;
