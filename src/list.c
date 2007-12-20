@@ -23,6 +23,7 @@
 
 #include "xinput.h"
 #include <string.h>
+#include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
 
 static void
 print_info(XDeviceInfo	*info, Bool shortformat)
@@ -128,7 +129,8 @@ list(Display	*display,
         if (daemon)
         {
             XiSelectEvent(display, DefaultRootWindow(display),
-                          XI_DeviceHierarchyChangedMask);
+                          XI_DeviceHierarchyChangedMask |
+                          XI_DeviceClassesChangedMask);
         }
 
         do {
@@ -141,7 +143,20 @@ list(Display	*display,
             while (daemon && !XNextEvent(display, &ev))
             {
                 if (ev.type == GenericEvent)
+                {
+                    XGenericEvent* gev = (XGenericEvent*)&ev;
+                    /* we just assume that extension is IReqCode, pretty save
+                       since we don't register for other events. */
+                    if (gev->evtype == XI_DeviceHierarchyChangedNotify)
+                    {
+                        printf("Hierarchy change.\n");
+                    } else if (gev->evtype == XI_DeviceClassesChangedNotify)
+                    {
+                        printf("Device classes changed.\n");
+                        free(((XDeviceClassesChangedEvent*)&ev)->inputclassinfo);
+                    }
                     break;
+                }
             }
         } while(daemon);
     } else {
