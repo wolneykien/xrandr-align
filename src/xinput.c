@@ -1,6 +1,6 @@
 /*
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
- *                                                                            
+ *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
@@ -9,8 +9,8 @@
  * advertising or publicity pertaining to distribution of the software without
  * specific,  written      prior  permission.     Frederic  Lepied   makes  no
  * representations about the suitability of this software for any purpose.  It
- * is provided "as is" without express or implied warranty.                   
- *                                                                            
+ * is provided "as is" without express or implied warranty.
+ *
  * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
  * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
@@ -32,7 +32,7 @@ typedef int (*prog)(
 #endif
 );
 
-typedef struct 
+typedef struct
 {
     char	*func_name;
     char	*arg_desc;
@@ -66,7 +66,7 @@ static entry drivers[] =
      set_mode
     },
     {"list",
-     "[--short || <device name>...]",
+     "[--loop || --short || <device name>...]",
      list
     },
     {"query-state",
@@ -106,7 +106,7 @@ is_xinput_present(Display	*display)
 {
     XExtensionVersion	*version;
     Bool		present;
-    
+
     version = XGetExtensionVersion(display, INAME);
 
     if (version && (version != (XExtensionVersion*) NoSuchExtension)) {

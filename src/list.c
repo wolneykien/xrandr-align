@@ -115,17 +115,35 @@ list(Display	*display,
     XDeviceInfo		*info;
     int			loop;
     int                 shortformat = False;
+    int                 daemon = False;
 
     shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
+    daemon = (argc == 1 && strcmp(argv[0], "--loop") == 0);
 
-    if (argc == 0 || shortformat) {
+    if (argc == 0 || shortformat || daemon) {
 	int		num_devices;
+        XEvent  ev;
+        int     daemon = argc;
 
-	info = XListInputDevices(display, &num_devices);
+        if (daemon)
+        {
+            XiSelectEvent(display, DefaultRootWindow(display),
+                          XI_DeviceHierarchyChangedMask);
+        }
 
-	for(loop=0; loop<num_devices; loop++) {
-	    print_info(info+loop, shortformat);
-	}
+        do {
+            info = XListInputDevices(display, &num_devices);
+            for(loop=0; loop<num_devices; loop++) {
+                print_info(info+loop, shortformat);
+            }
+
+            /* just wait for the next generic event to come along */
+            while (daemon && !XNextEvent(display, &ev))
+            {
+                if (ev.type == GenericEvent)
+                    break;
+            }
+        } while(daemon);
     } else {
 	int	ret = EXIT_SUCCESS;
 
