@@ -124,7 +124,6 @@ list(Display	*display,
     if (argc == 0 || shortformat || daemon) {
 	int		num_devices;
         XEvent  ev;
-        int     daemon = argc;
 
         if (daemon)
         {
