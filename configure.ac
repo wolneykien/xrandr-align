@@ -12,7 +12,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(XINPUT, x11 xext xi)
+PKG_CHECK_MODULES(XINPUT, x11 xext xi inputproto >= 1.4)
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
 
