@@ -108,6 +108,7 @@ find_device_info(Display	*display,
 		 Bool		only_extended)
 {
     XDeviceInfo	*devices;
+    XDeviceInfo *found = NULL;
     int		loop;
     int		num_devices;
     int		len = strlen(name);
@@ -131,10 +132,17 @@ find_device_info(Display	*display,
 	if ((!only_extended || (devices[loop].use >= IsXExtensionDevice)) &&
 	    ((!is_id && strcmp(devices[loop].name, name) == 0) ||
 	     (is_id && devices[loop].id == id))) {
-	    return &devices[loop];
+	    if (found) {
+	        fprintf(stderr,
+	                "Warning: There are multiple devices named \"%s\".\n"
+	                "To ensure the correct one is selected, please use "
+	                "the device ID instead.\n\n", name);
+	    } else {
+		found = &devices[loop];
+	    }
 	}
     }
-    return NULL;
+    return found;
 }
 
 static void
