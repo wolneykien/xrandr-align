@@ -67,10 +67,13 @@ device.
 
 .SH COPYRIGHT
 Copyright 1996,1997, Frederic Lepied.
+.PP
+Copyright 2008, Philip Langdale.
 
 .SH AUTHOR
 
 .nf
+Philip Langdale, <philipl@alumni.utexas.net>
 Frederic Lepied, France <Frederic.Lepied@sugix.frmug.org>
 .fi
 
