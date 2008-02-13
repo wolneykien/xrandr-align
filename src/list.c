@@ -127,7 +127,7 @@ list(Display	*display,
 
         if (daemon)
         {
-            XiSelectEvent(display, DefaultRootWindow(display),
+            XiSelectEvent(display, DefaultRootWindow(display), NULL,
                           XI_DeviceHierarchyChangedMask |
                           XI_DeviceClassesChangedMask);
         }
