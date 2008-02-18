@@ -41,7 +41,6 @@ int
 create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
 {
     XCreateMasterInfo c;
-    XCreateMasterInfo* pc = &c;
 
     if (argc == 0)
     {
@@ -54,7 +53,7 @@ create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
     c.sendCore = (argc >= 2) ? atoi(argv[1]) : 1;
     c.enable = (argc >= 3) ? atoi(argv[2]) : 1;
 
-    return XChangeDeviceHierarchy(dpy, 1, (XAnyHierarchyChangeInfo**)&pc);
+    return XChangeDeviceHierarchy(dpy, (XAnyHierarchyChangeInfo*)&c, 1);
 }
 
 /**
@@ -66,7 +65,6 @@ int
 remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 {
     XRemoveMasterInfo r;
-    XRemoveMasterInfo* pr = &r;
     XDevice* master = NULL, *ptr = NULL, *keybd = NULL;
     int ret;
 
@@ -103,7 +101,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
         r.returnKeyboard = keybd;
     }
 
-    ret = XChangeDeviceHierarchy(dpy, 1, (XAnyHierarchyChangeInfo**)&pr);
+    ret = XChangeDeviceHierarchy(dpy, (XAnyHierarchyChangeInfo*)&r, 1);
     if (ptr)
         XCloseDevice(dpy, ptr);
     if (keybd)
@@ -118,7 +116,6 @@ int
 change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 {
     XChangeAttachmentInfo c;
-    XChangeAttachmentInfo* pc = &c;
     XDevice *slave, *master;
     int ret;
 
@@ -142,7 +139,7 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
     c.device = slave;
     c.newMaster = master;
 
-    ret = XChangeDeviceHierarchy(dpy, 1, (XAnyHierarchyChangeInfo**)&pc);
+    ret = XChangeDeviceHierarchy(dpy, (XAnyHierarchyChangeInfo*)&c, 1);
     XCloseDevice(dpy, slave);
     XCloseDevice(dpy, master);
     return ret;
@@ -155,7 +152,6 @@ int
 float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
 {
     XChangeAttachmentInfo c;
-    XChangeAttachmentInfo* pc = &c;
     XDevice *slave;
     int ret;
 
@@ -175,7 +171,7 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
     c.changeMode = Floating;
     c.device = slave;
 
-    ret = XChangeDeviceHierarchy(dpy, 1, (XAnyHierarchyChangeInfo**)&pc);
+    ret = XChangeDeviceHierarchy(dpy, (XAnyHierarchyChangeInfo*)&c, 1);
     XCloseDevice(dpy, slave);
     return ret;
 }
