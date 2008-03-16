@@ -146,7 +146,7 @@ find_device_info(Display	*display,
 }
 
 static void
-usage()
+usage(void)
 {
     entry	*pdriver = drivers;
 
