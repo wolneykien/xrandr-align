@@ -125,10 +125,10 @@ list(Display	*display,
 	int	ret = EXIT_SUCCESS;
 
 	for(loop=0; loop<argc; loop++) {
-	    info = find_device_info(display, argv[0], False);
+	    info = find_device_info(display, argv[loop], False);
 
 	    if (!info) {
-		fprintf(stderr, "unable to find device %s\n", argv[0]);
+		fprintf(stderr, "unable to find device %s\n", argv[loop]);
 		ret = EXIT_FAILURE;
 	    } else {
 		print_info(info, shortformat);
