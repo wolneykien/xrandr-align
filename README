@@ -1,22 +1,29 @@
-         xinput 1.x by Frederic Lepied <Frederic.Lepied@sugix.frmug.org>
+				xinput
+				======
 
-1. Introduction
-===============
+Overview
+========
 
-xinput is an  utility  I have built  to  configure and test my  XInput
-devices.    The functionalities aren't    complete  but  they fill  my
-needs. If you have  some ideas or needs  for improvement, feel free to
-contact me.  Any feedback welcome.
+xinput is a utility to configure and test XInput devices. It wasn't
+originally designed to be the primary tool for doing this but it's
+still pretty much the only program out there for doing it. :-)
 
-2. Requirements
-===============
+Requirements
+============
 
-You'll need  an ANSI   C   compiler.  I  know   it works  under  Linux
-ELF/XFree86 and Solaris 2.4 Sparc/X11R6.1.
+xinput depends on the X11 headers and particularly the XInput headers.
+As xinput now supports the new device types added in Xserver 1.4 (Xorg 7.3),
+your headers must be from that version or newer.
 
-3. Installation
-===============
+Otherwise it will just require a working ANSI C compiler.
 
-xmkmf -a
+Building and Installation
+=========================
+
+xinput uses autotools so the usual pattern applies:
+
+./configure
+make
 make install
-make install.man
+
+See the INSTALL file for details.

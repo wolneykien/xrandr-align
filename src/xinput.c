@@ -5,15 +5,15 @@
  * documentation for any purpose is  hereby granted without fee, provided that
  * the  above copyright   notice appear  in   all  copies and  that both  that
  * copyright  notice   and   this  permission   notice  appear  in  supporting
- * documentation, and that   the  name of  Frederic   Lepied not  be  used  in
+ * documentation, and that   the  name of  the authors  not  be  used  in
  * advertising or publicity pertaining to distribution of the software without
- * specific,  written      prior  permission.     Frederic  Lepied   makes  no
+ * specific,  written      prior  permission.     The authors  make  no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
- * FREDERIC  LEPIED DISCLAIMS ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
+ * THE AUTHORS DISCLAIM ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
  * INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS, IN NO
- * EVENT  SHALL FREDERIC  LEPIED BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
+ * EVENT  SHALL THE AUTHORS  BE   LIABLE   FOR ANY  SPECIAL, INDIRECT   OR
  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
  * DATA  OR PROFITS, WHETHER  IN  AN ACTION OF  CONTRACT,  NEGLIGENCE OR OTHER
  * TORTIOUS  ACTION, ARISING    OUT OF OR   IN  CONNECTION  WITH THE USE    OR
@@ -128,6 +128,7 @@ find_device_info(Display	*display,
 		 Bool		only_extended)
 {
     XDeviceInfo	*devices;
+    XDeviceInfo *found = NULL;
     int		loop;
     int		num_devices;
     int		len = strlen(name);
@@ -151,14 +152,21 @@ find_device_info(Display	*display,
 	if ((!only_extended || (devices[loop].use >= IsXExtensionDevice)) &&
 	    ((!is_id && strcmp(devices[loop].name, name) == 0) ||
 	     (is_id && devices[loop].id == id))) {
-	    return &devices[loop];
+	    if (found) {
+	        fprintf(stderr,
+	                "Warning: There are multiple devices named \"%s\".\n"
+	                "To ensure the correct one is selected, please use "
+	                "the device ID instead.\n\n", name);
+	    } else {
+		found = &devices[loop];
+	    }
 	}
     }
-    return NULL;
+    return found;
 }
 
 static void
-usage()
+usage(void)
 {
     entry	*pdriver = drivers;
 

@@ -21,8 +21,8 @@
 
 bin_PROGRAMS = xinput
 
-xinput_CFLAGS = $(XINPUT_CFLAGS)
-xinput_LDADD = $(XINPUT_LIBS) -lm
+AM_CFLAGS = $(XINPUT_CFLAGS)
+xinput_LDADD = $(XINPUT_LIBS)
 
 xinput_SOURCES = \
     buttonmap.c \
