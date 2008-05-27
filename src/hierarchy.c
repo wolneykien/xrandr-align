@@ -64,6 +64,7 @@ create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
 int
 remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 {
+    XDeviceInfo *info;
     XRemoveMasterInfo r;
     XDevice* master = NULL, *ptr = NULL, *keybd = NULL;
     int ret;
@@ -74,9 +75,16 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
         return EXIT_FAILURE;
     }
 
-    master = XOpenDevice(dpy, atoi(argv[0]));
+    info = find_device_info(dpy, argv[0], False);
+
+    if (!info) {
+	fprintf(stderr, "unable to find device %s\n", argv[0]);
+	return EXIT_FAILURE;
+    }
+
+    master = XOpenDevice(dpy, info->id);
     if (!master)
-        Error(BadValue, "Invalid master device.\n");
+        Error(BadValue, "Unable to open device %s.\n", argv[0]);
 
     r.type = CH_RemoveMasterDevice;
     r.device = master;
@@ -115,6 +123,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 int
 change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 {
+    XDeviceInfo *info_sd, *info_md;
     XChangeAttachmentInfo c;
     XDevice *slave, *master;
     int ret;
@@ -125,8 +134,21 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
         return EXIT_FAILURE;
     }
 
-    slave = XOpenDevice(dpy, atoi(argv[0]));
-    master = XOpenDevice(dpy, atoi(argv[1]));
+    info_sd = find_device_info(dpy, argv[0], True);
+    info_md = find_device_info(dpy, argv[1], False);
+
+    if (!info_sd) {
+	fprintf(stderr, "unable to find device %s\n", argv[0]);
+	return EXIT_FAILURE;
+    }
+
+    if (!info_md) {
+	fprintf(stderr, "unable to find device %s\n", argv[1]);
+	return EXIT_FAILURE;
+    }
+
+    slave = XOpenDevice(dpy, info_sd->id);
+    master = XOpenDevice(dpy, info_md->id);
 
     if (!slave)
         Error(BadValue, "Invalid slave device given %d\n", atoi(argv[0]));
@@ -151,6 +173,7 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 int
 float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
 {
+    XDeviceInfo *info;
     XChangeAttachmentInfo c;
     XDevice *slave;
     int ret;
@@ -161,8 +184,14 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
         return EXIT_FAILURE;
     }
 
+    info = find_device_info(dpy, argv[0], True);
 
-    slave = XOpenDevice(dpy, atoi(argv[0]));
+    if (!info) {
+	fprintf(stderr, "unable to find device %s\n", argv[0]);
+	return EXIT_FAILURE;
+    }
+
+    slave = XOpenDevice(dpy, info->id);
 
     if (!slave)
         return BadValue;
