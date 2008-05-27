@@ -24,17 +24,22 @@ bin_PROGRAMS = xinput
 AM_CFLAGS = $(XINPUT_CFLAGS)
 xinput_LDADD = $(XINPUT_LIBS)
 
+
+if HAVE_XI2
+    xinput2_files = hierarchy.c setcp.c
+endif # HAVE_XI2
+
 xinput_SOURCES = \
     buttonmap.c \
     feedback.c \
-    hierarchy.c \
     list.c \
     setint.c \
-    setcp.c \
     setmode.c \
     setptr.c \
     state.c \
     test.c \
     version.c \
     xinput.c \
-    xinput.h
+    xinput.h \
+    $(xinput2_files)
+

@@ -81,6 +81,7 @@ static entry drivers[] =
      "",
      version
     },
+#if HAVE_XI2
     { "create-master",
       "<id> [sendCore (dflt:1)] [enable (dflt:1)]",
       create_master
@@ -101,6 +102,7 @@ static entry drivers[] =
       "<window> <device>",
       set_clientpointer
     },
+#endif
     {0, 0, 0
     }
 };
@@ -111,7 +113,11 @@ is_xinput_present(Display	*display)
     XExtensionVersion	*version;
     Bool		present;
 
+#if HAVE_XI2
     version = XQueryInputVersion(display, XI_2_Major, XI_2_Minor);
+#else
+    version = XGetExtensionVersion(display, INAME);
+#endif
 
     if (version && (version != (XExtensionVersion*) NoSuchExtension)) {
 	present = version->present;

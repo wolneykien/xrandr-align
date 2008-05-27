@@ -13,8 +13,16 @@ AC_PROG_INSTALL
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XINPUT, x11 xext xi [inputproto >= 1.4])
+
+LIBS="$XINPUT_LIBS $LIBS"
+AC_CHECK_LIB(Xi, XSetClientPointer,
+             have_xi2=yes AC_DEFINE(HAVE_XI2, 1, [Enabling XI 2 calls]),
+             have_xi2=no)
+AM_CONDITIONAL(HAVE_XI2, test "x$have_xi2" == xyes)
+
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
+AC_SUBST(HAVE_XI2)
 
 AC_SUBST(VERSION)
 

@@ -34,7 +34,9 @@ print_info(XDeviceInfo	*info, Bool shortformat)
     XButtonInfoPtr	b;
     XValuatorInfoPtr	v;
     XAxisInfoPtr	a;
+#if HAVE_XI2
     XAttachInfoPtr      att;
+#endif
 
     printf("\"%s\"\tid=%ld\t[", info->name, info->id);
 
@@ -93,11 +95,12 @@ print_info(XDeviceInfo	*info, Bool shortformat)
 		    printf ("\t\tResolution is %d\n", a->resolution);
 		}
 		break;
+#if HAVE_XI2
             case AttachClass:
                 att = (XAttachInfoPtr)any;
                 printf("\tAttached to %d\n", att->attached);
                 break;
-
+#endif
 	    default:
 		printf ("unknown class\n");
 	    }
@@ -125,12 +128,14 @@ list(Display	*display,
 	int		num_devices;
         XEvent  ev;
 
+#if HAVE_XI2
         if (daemon)
         {
             XiSelectEvent(display, DefaultRootWindow(display), NULL,
                           XI_DeviceHierarchyChangedMask |
                           XI_DeviceClassesChangedMask);
         }
+#endif
 
         do {
             info = XListInputDevices(display, &num_devices);
@@ -138,6 +143,7 @@ list(Display	*display,
                 print_info(info+loop, shortformat);
             }
 
+#if HAVE_XI2
             /* just wait for the next generic event to come along */
             while (daemon && !XNextEvent(display, &ev))
             {
@@ -157,6 +163,7 @@ list(Display	*display,
                     break;
                 }
             }
+#endif
         } while(daemon);
     } else {
 	int	ret = EXIT_SUCCESS;
