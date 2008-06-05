@@ -18,7 +18,7 @@ LIBS="$XINPUT_LIBS $LIBS"
 AC_CHECK_LIB(Xi, XSetClientPointer,
              have_xi2=yes AC_DEFINE(HAVE_XI2, 1, [Enabling XI 2 calls]),
              have_xi2=no)
-AM_CONDITIONAL(HAVE_XI2, test "x$have_xi2" == xyes)
+AM_CONDITIONAL(HAVE_XI2, [test "x$have_xi2" = "xyes"])
 
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
