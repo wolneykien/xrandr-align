@@ -15,10 +15,8 @@ AC_PROG_INSTALL
 PKG_CHECK_MODULES(XINPUT, x11 xext xi [inputproto >= 1.4])
 
 LIBS="$XINPUT_LIBS $LIBS"
-AC_CHECK_LIB(Xi, XSetClientPointer,
-             have_xi2=yes AC_DEFINE(HAVE_XI2, 1, [Enabling XI 2 calls]),
-             have_xi2=no)
-AM_CONDITIONAL(HAVE_XI2, [test "x$have_xi2" = "xyes"])
+AC_CHECK_FUNC(XSetClientPointer,AC_DEFINE(HAVE_XI2,1,[XInput Version 2 Enabled]))
+AM_CONDITIONAL(HAVE_XI2, [test "x$ac_cv_func_XSetClientPointer" = "xyes"] )
 
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
