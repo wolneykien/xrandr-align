@@ -102,6 +102,18 @@ static entry drivers[] =
       "<window> <device>",
       set_clientpointer
     },
+    { "list-props",
+      "<device> [<device> ...]",
+      list_props
+    },
+    { "set-int-prop",
+      "<device> <property> <format (8, 16, 32)> <val> [<val> ...]",
+      set_int_prop
+    },
+    { "watch-props",
+      "<device>",
+      watch_props
+    },
 #endif
     {0, 0, 0
     }
