@@ -50,7 +50,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
         return;
 
     name = XGetAtomName(dpy, property);
-    printf("\t%s:\t", name);
+    printf("\t%s (%d):\t", name, property);
 
     if (XGetDeviceProperty(dpy, dev, property, 0, 1000, False, False,
                            AnyPropertyType, &act_type, &act_format,
