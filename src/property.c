@@ -215,6 +215,8 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     if (!is_atom)
         prop = XInternAtom(dpy, name, False);
+    else
+        prop = atoi(name);
 
     nelements = argc - 3;
     format    = atoi(argv[2]);
