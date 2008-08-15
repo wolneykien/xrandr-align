@@ -259,6 +259,8 @@ int watch_props(Display *dpy, int argc, char** argv, char* n, char *desc)
     XEvent      ev;
     XDevicePropertyNotifyEvent *dpev;
     char        *name;
+    int         type_prop;
+    XEventClass cls_prop;
 
     if (list_props(dpy, argc, argv, n, desc) != EXIT_SUCCESS)
         return EXIT_FAILURE;
@@ -277,17 +279,17 @@ int watch_props(Display *dpy, int argc, char** argv, char* n, char *desc)
         return EXIT_FAILURE;
     }
 
-    XiSelectEvent(dpy, DefaultRootWindow(dpy), NULL,
-                  XI_DevicePropertyNotifyMask);
+    DevicePropertyNotify(dev, type_prop, cls_prop);
+    XSelectExtensionEvent(dpy, DefaultRootWindow(dpy), &cls_prop, 1);
 
     while(1)
     {
         XNextEvent(dpy, &ev);
 
         dpev = (XDevicePropertyNotifyEvent*)&ev;
-        if (dpev->type != GenericEvent &&
-            dpev->type != XI_DevicePropertyNotify)
+        if (dpev->type != type_prop)
             continue;
+
         name = XGetAtomName(dpy, dpev->atom);
         printf("Property '%s' changed.\n", name);
         print_property(dpy, dev, dpev->atom);
