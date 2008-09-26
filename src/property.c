@@ -37,7 +37,6 @@
 static void
 print_property(Display *dpy, XDevice* dev, Atom property)
 {
-    XIPropertyInfo      *propinfo;
     Atom                act_type;
     char                *name;
     int                 act_format;
@@ -45,14 +44,10 @@ print_property(Display *dpy, XDevice* dev, Atom property)
     unsigned char       *data, *ptr;
     int                 j;
 
-    propinfo = XQueryDeviceProperty(dpy, dev, property);
-    if (!propinfo)
-        return;
-
     name = XGetAtomName(dpy, property);
     printf("\t%s (%d):\t", name, property);
 
-    if (XGetDeviceProperty(dpy, dev, property, 0, 1000, False, False,
+    if (XGetDeviceProperty(dpy, dev, property, 0, 1000, False,
                            AnyPropertyType, &act_type, &act_format,
                            &nitems, &bytes_after, &data) == Success)
     {
@@ -100,26 +95,6 @@ print_property(Display *dpy, XDevice* dev, Atom property)
         XFree(data);
     } else
         printf("\tFetch failure\n");
-
-    if (propinfo->pending || propinfo->range || propinfo->immutable || propinfo->fromClient)
-    {
-        printf("\t\t%s%s%s%s", ((propinfo->pending) ? "[pending]" : ""),
-                                  ((propinfo->range)   ? "[range]" : ""),
-                                  ((propinfo->immutable) ? "[immutable]" : ""),
-                                  ((propinfo->fromClient) ? "[client]" : ""));
-        printf("\n");
-    }
-
-    if (propinfo->num_values)
-    {
-        long *values = propinfo->values;
-        printf("\t\tvalid values: ");
-        while(values && propinfo->num_values--)
-            printf("%ld ", *values++);
-        printf("\n");
-    }
-
-    XFree(propinfo);
 
 }
 
