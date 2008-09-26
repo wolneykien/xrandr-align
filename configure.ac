@@ -12,7 +12,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(XINPUT, x11 xext xi [inputproto >= 1.9.99.4])
+PKG_CHECK_MODULES(XINPUT, x11 xext xi [inputproto >= 1.9.99.5])
 
 LIBS="$XINPUT_LIBS $LIBS"
 AC_CHECK_FUNC(XSetClientPointer,AC_DEFINE(HAVE_XI2,1,[XInput Version 2 Enabled]))
