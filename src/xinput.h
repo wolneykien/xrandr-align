@@ -245,4 +245,15 @@ watch_props(
 #endif
 );
 
+int
+delete_prop(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
 /* end of xinput.h */

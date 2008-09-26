@@ -114,6 +114,10 @@ static entry drivers[] =
       "<device>",
       watch_props
     },
+    { "delete-prop",
+      "<device> <property>",
+      delete_prop
+    },
 #endif
     {0, 0, 0
     }

@@ -272,3 +272,46 @@ int watch_props(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     XCloseDevice(dpy, dev);
 }
+
+int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    XDevice     *dev;
+    XDeviceInfo *info;
+    char        *name;
+    int         i;
+    Bool        is_atom = True;
+    Atom        prop;
+
+    info = find_device_info(dpy, argv[0], False);
+    if (!info)
+    {
+        fprintf(stderr, "unable to find device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    dev = XOpenDevice(dpy, info->id);
+    if (!dev)
+    {
+        fprintf(stderr, "unable to open device '%s'\n", info->name);
+        return EXIT_FAILURE;
+    }
+
+    name = argv[1];
+
+    for(i = 0; i < strlen(name); i++) {
+	if (!isdigit(name[i])) {
+            is_atom = False;
+	    break;
+	}
+    }
+
+    if (!is_atom)
+        prop = XInternAtom(dpy, name, False);
+    else
+        prop = atoi(name);
+
+    XDeleteDeviceProperty(dpy, dev, prop);
+
+    XCloseDevice(dpy, dev);
+    return EXIT_SUCCESS;
+}
