@@ -23,6 +23,72 @@
 
 #include "xinput.h"
 
+
+int
+get_button_map(Display	*display,
+	       int	argc,
+	       char	*argv[],
+	       char	*name,
+	       char	*desc)
+{
+    XDeviceInfo		*info;
+    XDevice		*device;
+    XAnyClassPtr	ip;
+    int			i;
+    int			nbuttons;
+
+    if (argc != 1) {
+	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
+	return EXIT_FAILURE;
+    }
+
+    info = find_device_info(display, argv[0], False);
+
+    if (!info) {
+	fprintf(stderr, "unable to find device %s\n", argv[0]);
+	return EXIT_FAILURE;
+    }
+
+    ip = (XAnyClassPtr) info->inputclassinfo;
+    nbuttons = 0;
+
+    /* try to find the number of buttons */
+    for(i=0; i<info->num_classes; i++) {
+	if (ip->class == ButtonClass) {
+	    nbuttons = ((XButtonInfoPtr)ip)->num_buttons;
+	    break;
+	}
+	ip = (XAnyClassPtr) ((char *) ip + ip->length);
+    }
+    if (nbuttons == 0) {
+	fprintf(stderr, "device has no buttons\n");
+	return EXIT_FAILURE;
+    }
+
+    device = XOpenDevice(display, info->id);
+    if (device) {
+	int		idx;
+	unsigned char	*map;
+	int		min;
+
+	map = (unsigned char *) malloc(sizeof(unsigned char) * nbuttons);
+
+	XGetDeviceButtonMapping(display, device, map, nbuttons);
+
+	for(idx=1; idx < nbuttons + 1; idx++) {
+	    printf("%d ", map[idx - 1]);
+	}
+        printf("\n");
+	XCloseDevice(display, device);
+	return EXIT_SUCCESS;
+    } else {
+	fprintf(stderr, "Unable to open device\n");
+	return EXIT_FAILURE;
+    }
+}
+
+
+
 int
 set_button_map(Display	*display,
 	       int	argc,

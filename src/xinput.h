@@ -69,6 +69,17 @@ set_ptr_feedback(
 );
 
 int
+get_button_map(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+int
 set_button_map(
 #if NeedFunctionPrototypes
 		 Display*	display,

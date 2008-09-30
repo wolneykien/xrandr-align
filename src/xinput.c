@@ -53,6 +53,10 @@ static entry drivers[] =
      "<device name> <feedback id> <value>",
      set_integer_feedback
     },
+    {"get-button-map",
+     "<device name>",
+     get_button_map
+    },
     {"set-button-map",
      "<device name> <map button 1> [<map button 2> [...]]",
      set_button_map
