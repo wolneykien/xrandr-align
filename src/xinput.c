@@ -236,7 +236,7 @@ main(int argc, char * argv[])
 	if (strcmp(driver->func_name, func) == 0) {
 	    int	r = (*driver->func)(display, argc-2, argv+2,
 				    driver->func_name, driver->arg_desc);
-	    XFlush(display);
+	    XSync(display, False);
 	    return r;
 	}
 	driver++;
