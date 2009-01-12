@@ -114,6 +114,10 @@ static entry drivers[] =
       "<device> <property> <format (8, 16, 32)> <val> [<val> ...]",
       set_int_prop
     },
+    { "set-float-prop",
+      "<device> <property> <val> [<val> ...]",
+      set_float_prop
+    },
     { "watch-props",
       "<device>",
       watch_props

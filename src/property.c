@@ -45,12 +45,14 @@ print_property(Display *dpy, XDevice* dev, Atom property)
     int                 j;
 
     name = XGetAtomName(dpy, property);
-    printf("\t%s (%d):\t", name, property);
+    printf("\t%s (%ld):\t", name, property);
 
     if (XGetDeviceProperty(dpy, dev, property, 0, 1000, False,
                            AnyPropertyType, &act_type, &act_format,
                            &nitems, &bytes_after, &data) == Success)
     {
+        int float_atom = XInternAtom(dpy, "FLOAT", False);
+
         ptr = data;
         printf("\t");
 
@@ -79,6 +81,12 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     printf("\t%s\n", XGetAtomName(dpy, (Atom)(*ptr)));
                     break;
                 default:
+                    if (float_atom != None && act_type == float_atom)
+                    {
+                        printf("\t%f\n", *((float*)ptr));
+                        break;
+                    }
+
                     printf("\t\t... of unknown type %s\n",
                             XGetAtomName(dpy, act_type));
                     break;
@@ -219,6 +227,87 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     }
 
     XChangeDeviceProperty(dpy, dev, prop, XA_INTEGER, format, PropModeReplace,
+                          (unsigned char*)data, nelements);
+
+    free(data);
+    XCloseDevice(dpy, dev);
+    return EXIT_SUCCESS;
+}
+
+int
+set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    XDeviceInfo *info;
+    XDevice     *dev;
+    Atom         prop, float_atom;
+    char        *name;
+    int          i;
+    Bool         is_atom = True;
+    float       *data;
+    int          nelements =  0;
+    char*        endptr;
+
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
+        return EXIT_FAILURE;
+    }
+
+    info = find_device_info(dpy, argv[0], False);
+    if (!info)
+    {
+        fprintf(stderr, "unable to find device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    dev = XOpenDevice(dpy, info->id);
+    if (!dev)
+    {
+        fprintf(stderr, "unable to open device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    name = argv[1];
+
+    for(i = 0; i < strlen(name); i++) {
+	if (!isdigit(name[i])) {
+            is_atom = False;
+	    break;
+	}
+    }
+
+    if (!is_atom)
+        prop = XInternAtom(dpy, name, False);
+    else
+        prop = atoi(name);
+
+    nelements = argc - 2;
+
+    float_atom = XInternAtom(dpy, "FLOAT", False);
+
+    if (float_atom == (Atom)0)
+    {
+	fprintf(stderr, "no FLOAT atom present in server\n");
+	return EXIT_FAILURE;
+    }
+
+    if (sizeof(float) != 4)
+    {
+	fprintf(stderr, "sane FP required\n");
+	return EXIT_FAILURE;
+    }
+
+    data = calloc(nelements, 4);
+    for (i = 0; i < nelements; i++)
+    {
+        *(data + i) = strtod(argv[2 + i], &endptr);
+	if(endptr == argv[2 + i]){
+	    fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
+	    return EXIT_FAILURE;
+	}
+    }
+
+    XChangeDeviceProperty(dpy, dev, prop, float_atom, 32, PropModeReplace,
                           (unsigned char*)data, nelements);
 
     free(data);

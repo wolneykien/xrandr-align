@@ -246,6 +246,18 @@ set_int_prop(
 );
 
 int
+set_float_prop(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
+
+
+int
 watch_props(
 #if NeedFunctionPrototypes
 		 Display*	display,
