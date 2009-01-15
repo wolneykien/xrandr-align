@@ -256,6 +256,16 @@ set_float_prop(
 #endif
 );
 
+int
+set_atom_prop(
+#if NeedFunctionPrototypes
+		 Display*	display,
+		 int		argc,
+		 char		*argv[],
+		 char		*prog_name,
+		 char		*prog_desc
+#endif
+);
 
 int
 watch_props(

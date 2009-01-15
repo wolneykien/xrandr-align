@@ -404,3 +404,81 @@ int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     XCloseDevice(dpy, dev);
     return EXIT_SUCCESS;
 }
+
+int
+set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    XDeviceInfo *info;
+    XDevice     *dev;
+    Atom         prop;
+    char        *name;
+    int          i, j;
+    Bool         is_atom = True;
+    Atom        *data;
+    int          nelements =  0;
+
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
+        return EXIT_FAILURE;
+    }
+
+    info = find_device_info(dpy, argv[0], False);
+    if (!info)
+    {
+        fprintf(stderr, "unable to find device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    dev = XOpenDevice(dpy, info->id);
+    if (!dev)
+    {
+        fprintf(stderr, "unable to open device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    name = argv[1];
+
+    for(i = 0; i < strlen(name); i++) {
+	if (!isdigit(name[i])) {
+            is_atom = False;
+	    break;
+	}
+    }
+
+    if (!is_atom)
+        prop = XInternAtom(dpy, name, False);
+    else
+        prop = atoi(name);
+
+    nelements = argc - 2;
+    data = calloc(nelements, sizeof(Atom));
+    for (i = 0; i < nelements; i++)
+    {
+        is_atom = True;
+        name = argv[2 + i];
+        for(j = 0; j < strlen(name); j++) {
+            if (!isdigit(name[j])) {
+                is_atom = False;
+                break;
+            }
+        }
+
+        if (!is_atom)
+            data[i] = XInternAtom(dpy, name, False);
+        else
+        {
+            data[i] = atoi(name);
+            XFree(XGetAtomName(dpy, data[i]));
+        }
+    }
+
+    XChangeDeviceProperty(dpy, dev, prop, XA_ATOM, 32, PropModeReplace,
+                          (unsigned char*)data, nelements);
+
+    free(data);
+    XCloseDevice(dpy, dev);
+    return EXIT_SUCCESS;
+}
+
+

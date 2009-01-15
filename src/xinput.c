@@ -119,6 +119,10 @@ static entry drivers[] =
       "<device> <property> <val> [<val> ...]",
       set_float_prop
     },
+    { "set-atom-prop",
+      "<device> <property> <val> [<val> ...]",
+      set_atom_prop
+    },
     { "watch-props",
       "<device>",
       watch_props
