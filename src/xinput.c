@@ -106,6 +106,7 @@ static entry drivers[] =
       "<window> <device>",
       set_clientpointer
     },
+#endif
     { "list-props",
       "<device> [<device> ...]",
       list_props
@@ -126,7 +127,6 @@ static entry drivers[] =
       "<device> <property>",
       delete_prop
     },
-#endif
     {0, 0, 0
     }
 };

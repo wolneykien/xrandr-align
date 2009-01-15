@@ -26,7 +26,7 @@ xinput_LDADD = $(XINPUT_LIBS)
 
 
 if HAVE_XI2
-    xinput2_files = hierarchy.c setcp.c property.c
+    xinput2_files = hierarchy.c setcp.c
 endif # HAVE_XI2
 
 xinput_SOURCES = \
@@ -37,6 +37,7 @@ xinput_SOURCES = \
     setmode.c \
     setptr.c \
     state.c \
+    property.c \
     test.c \
     version.c \
     xinput.c \
