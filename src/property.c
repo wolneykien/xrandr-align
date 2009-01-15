@@ -75,10 +75,10 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     }
                     break;
                 case XA_STRING:
-                    printf("\t%s\n", ptr);
+                    printf("\t%s", ptr);
                     break;
                 case XA_ATOM:
-                    printf("\t%s\n", XGetAtomName(dpy, *(Atom*)ptr));
+                    printf("\t%s", XGetAtomName(dpy, *(Atom*)ptr));
                     break;
                 default:
                     if (float_atom != None && act_type == float_atom)
