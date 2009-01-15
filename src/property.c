@@ -78,7 +78,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     printf("\t%s\n", ptr);
                     break;
                 case XA_ATOM:
-                    printf("\t%s\n", XGetAtomName(dpy, (Atom)(*ptr)));
+                    printf("\t%s\n", XGetAtomName(dpy, *(Atom*)ptr));
                     break;
                 default:
                     if (float_atom != None && act_type == float_atom)
