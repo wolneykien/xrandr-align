@@ -17,3 +17,7 @@ depcomp
 install-sh
 missing
 xinput.1
+*~
+xinput-*.tar.*
+ChangeLog
+tags

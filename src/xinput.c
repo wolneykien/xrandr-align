@@ -131,7 +131,7 @@ static entry drivers[] =
       "<device> <property>",
       delete_prop
     },
-    {0, 0, 0
+    {NULL, NULL, NULL
     }
 };
 
@@ -167,7 +167,7 @@ find_device_info(Display	*display,
     int		num_devices;
     int		len = strlen(name);
     Bool	is_id = True;
-    XID		id;
+    XID		id = (XID)-1;
 
     for(loop=0; loop<len; loop++) {
 	if (!isdigit(name[loop])) {
