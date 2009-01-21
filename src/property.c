@@ -42,7 +42,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
     int                 act_format;
     unsigned long       nitems, bytes_after;
     unsigned char       *data, *ptr;
-    int                 j;
+    int                 j, done = False;
 
     name = XGetAtomName(dpy, property);
     printf("\t%s (%ld):\t", name, property);
@@ -54,7 +54,6 @@ print_property(Display *dpy, XDevice* dev, Atom property)
         int float_atom = XInternAtom(dpy, "FLOAT", False);
 
         ptr = data;
-        printf("\t");
 
         for (j = 0; j < nitems; j++)
         {
@@ -75,20 +74,22 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     }
                     break;
                 case XA_STRING:
-                    printf("\t%s", ptr);
+                    printf("\"%s\"", ptr);
+                    done = True;
                     break;
                 case XA_ATOM:
-                    printf("\t%s", XGetAtomName(dpy, *(Atom*)ptr));
+                    printf("\"%s\"", XGetAtomName(dpy, *(Atom*)ptr));
                     break;
                 default:
                     if (float_atom != None && act_type == float_atom)
                     {
-                        printf("\t%f\n", *((float*)ptr));
+                        printf("%f", *((float*)ptr));
                         break;
                     }
 
-                    printf("\t\t... of unknown type %s\n",
+                    printf("\t... of unknown type %s\n",
                             XGetAtomName(dpy, act_type));
+                    done = True;
                     break;
             }
 
@@ -96,7 +97,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
 
             if (j < nitems - 1)
                 printf(", ");
-            if (act_type == XA_STRING)
+            if (done == True)
                 break;
         }
         printf("\n");
