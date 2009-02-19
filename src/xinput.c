@@ -191,6 +191,7 @@ find_device_info(Display	*display,
 	                "Warning: There are multiple devices named \"%s\".\n"
 	                "To ensure the correct one is selected, please use "
 	                "the device ID instead.\n\n", name);
+		return NULL;
 	    } else {
 		found = &devices[loop];
 	    }
