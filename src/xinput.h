@@ -40,253 +40,41 @@
 
 XDeviceInfo*
 find_device_info(
-#if NeedFunctionPrototypes
 		 Display	*display,
 		 char		*name,
 		 Bool		only_extended
-#endif
 		 );
-int
-get_feedbacks(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_ptr_feedback(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-get_button_map(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_button_map(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_pointer(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_mode(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-list(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-test(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-version(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_integer_feedback(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-query_state(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-create_master(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-remove_master(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-change_attachment(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-float_device(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_clientpointer(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-list_props(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
 
 
-int
-set_int_prop(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
+#define DECLARE(name) \
+    int (name) ( \
+		 Display*	display, \
+		 int		argc, \
+		 char		*argv[], \
+		 char		*prog_name, \
+		 char		*prog_desc \
+)
 
-int
-set_float_prop(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-set_atom_prop(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-watch_props(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
-int
-delete_prop(
-#if NeedFunctionPrototypes
-		 Display*	display,
-		 int		argc,
-		 char		*argv[],
-		 char		*prog_name,
-		 char		*prog_desc
-#endif
-);
-
+DECLARE(get_feedbacks);
+DECLARE(set_ptr_feedback);
+DECLARE(get_button_map);
+DECLARE(set_button_map);
+DECLARE(set_pointer);
+DECLARE(set_mode);
+DECLARE(list);
+DECLARE(test);
+DECLARE(version);
+DECLARE(set_integer_feedback);
+DECLARE(query_state);
+DECLARE(create_master);
+DECLARE(remove_master);
+DECLARE(change_attachment);
+DECLARE(float_device);
+DECLARE(set_clientpointer);
+DECLARE(list_props);
+DECLARE(set_int_prop);
+DECLARE(set_float_prop);
+DECLARE(set_atom_prop);
+DECLARE(watch_props);
+DECLARE(delete_prop);
 /* end of xinput.h */
