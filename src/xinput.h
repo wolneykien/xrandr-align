@@ -27,6 +27,9 @@
 
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput.h>
+#ifdef HAVE_XI2
+#include <X11/extensions/XInput2.h>
+#endif
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,6 +77,7 @@ DECLARE(remove_master);
 DECLARE(change_attachment);
 DECLARE(float_device);
 DECLARE(set_clientpointer);
+DECLARE(test_xi2);
 DECLARE(list_props);
 DECLARE(set_int_prop);
 DECLARE(set_float_prop);

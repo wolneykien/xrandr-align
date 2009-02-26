@@ -20,11 +20,12 @@ XORG_CWARNFLAGS
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XINPUT, x11 xext [xi >= 1.2] [inputproto >= 1.5])
 
-LIBS="$XINPUT_LIBS $LIBS"
-AC_CHECK_FUNC(XSetClientPointer,AC_DEFINE(HAVE_XI2,1,[XInput Version 2 Enabled]))
-AM_CONDITIONAL(HAVE_XI2, [test "x$ac_cv_func_XSetClientPointer" = "xyes"] )
+# XI2 support
+PKG_CHECK_MODULES(XI2, [xi >= 1.2.99],
+                  HAVE_XI2="yes"; AC_DEFINE(HAVE_XI2, 1, "foo"),
+                  HAVE_XI2="no");
+AM_CONDITIONAL(HAVE_XI2, [ test "$HAVE_XI2" = "yes" ])
 
-XINPUT_CFLAGS="$CWARNFLAGS $XINPUT_CFLAGS"
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
 AC_SUBST(HAVE_XI2)
