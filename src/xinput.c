@@ -141,11 +141,7 @@ is_xinput_present(Display	*display)
     XExtensionVersion	*version;
     Bool		present;
 
-#if HAVE_XI2
-    version = XQueryInputVersion(display, XI_2_Major, XI_2_Minor);
-#else
     version = XGetExtensionVersion(display, INAME);
-#endif
 
     if (version && (version != (XExtensionVersion*) NoSuchExtension)) {
 	present = version->present;
