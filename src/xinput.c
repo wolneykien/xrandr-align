@@ -106,6 +106,10 @@ static entry drivers[] =
       "<window> <device>",
       set_clientpointer
     },
+    { "test-xi2",
+      "<device>",
+      test_xi2,
+    },
 #endif
     { "list-props",
       "<device> [<device> ...]",
