@@ -135,21 +135,23 @@ static entry drivers[] =
     }
 };
 
-static Bool
-is_xinput_present(Display	*display)
+int
+xinput_version(Display	*display)
 {
     XExtensionVersion	*version;
-    Bool		present;
+    static int vers = -1;
+
+    if (vers != -1)
+        return vers;
 
     version = XGetExtensionVersion(display, INAME);
 
     if (version && (version != (XExtensionVersion*) NoSuchExtension)) {
-	present = version->present;
+	vers = version->major_version;
 	XFree(version);
-	return present;
-    } else {
-	return False;
     }
+
+    return vers;
 }
 
 XDeviceInfo*
@@ -269,7 +271,7 @@ main(int argc, char * argv[])
     func = argv[1];
     while((*func) == '-') func++;
 
-    if (!is_xinput_present(display)) {
+    if (!xinput_version(display)) {
 	fprintf(stderr, "%s extension not available\n", INAME);
 	return EXIT_FAILURE;
     }

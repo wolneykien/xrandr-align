@@ -47,6 +47,7 @@ find_device_info(
 int
 xi2_find_device_id(Display *display, char *name);
 
+int xinput_version(Display* display);
 
 #define DECLARE(name) \
     int (name) ( \
