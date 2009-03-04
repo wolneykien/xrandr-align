@@ -100,12 +100,11 @@ print_info(XDeviceInfo	*info, Bool shortformat)
     }
 }
 
-int
-list(Display	*display,
-     int	argc,
-     char	*argv[],
-     char	*name,
-     char	*desc)
+static int list_xi1(Display     *display,
+                    int	        argc,
+                    char        *argv[],
+                    char        *name,
+                    char        *desc)
 {
     XDeviceInfo		*info;
     int			loop;
@@ -140,6 +139,152 @@ list(Display	*display,
 	return ret;
     }
     return EXIT_SUCCESS;
+}
+
+#ifdef HAVE_XI2
+/* also used from test_xi2.c */
+void
+print_classes_xi2(Display* display, XIAnyClassInfo **classes,
+                  int num_classes)
+{
+    int i;
+
+    printf("\tReporting %d classes:\n", num_classes);
+    for (i = 0; i < num_classes; i++)
+    {
+        switch(classes[i]->type)
+        {
+            case ButtonClass:
+                {
+                    XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
+                    printf("\t\tButtons supported: %d\n", b->num_buttons);
+
+                }
+                break;
+            case KeyClass:
+                {
+                    XIKeyClassInfo *k = (XIKeyClassInfo*)classes[i];
+                    printf("\t\tKeycodes supported: %d\n", k->num_keycodes);
+                }
+                break;
+            case ValuatorClass:
+                {
+                    XIValuatorClassInfo *v = (XIValuatorClassInfo*)classes[i];
+                    printf("\t\tDetail for Valuator %d:\n", v->number);
+                    printf("\t\t  Name: %s\n", XGetAtomName(display, v->name));
+                    printf("\t\t  Range: %f - %f\n", v->min, v->max);
+                    printf("\t\t  Resolution: %d units/m\n", v->resolution);
+                    printf("\t\t  Mode: %s\n", v->mode == Absolute ? "absolute" :
+                            "relative");
+                }
+                break;
+        }
+    }
+
+    printf("\n");
+}
+
+static void
+print_info_xi2(Display* display, XIDeviceInfo *dev, Bool shortformat)
+{
+    printf("%-40s\tid=%d\t[", dev->name, dev->deviceid);
+    switch(dev->use)
+    {
+        case MasterPointer:
+            printf("master pointer  (%d)]\n", dev->attachment);
+            break;
+        case MasterKeyboard:
+            printf("master keyboard (%d)]\n", dev->attachment);
+            break;
+        case SlavePointer:
+            printf("slave  pointer  (%d)]\n", dev->attachment);
+            break;
+        case SlaveKeyboard:
+            printf("slave  keyboard (%d)]\n", dev->attachment);
+            break;
+        case FloatingSlave:
+            printf("floating slave]\n");
+            break;
+    }
+
+    if (shortformat)
+        return;
+
+    if (!dev->enabled)
+        printf("\tThis device is disabled\n");
+
+    print_classes_xi2(display, dev->classes, dev->num_classes);
+}
+
+
+int
+list_xi2(Display	*display,
+         int	argc,
+         char	*argv[],
+         char	*name,
+         char	*desc)
+{
+    int major = XI_2_Major,
+        minor = XI_2_Minor;
+    int ndevices;
+    int i, j, shortformat;
+    XIDeviceInfo *info, *dev;
+
+    shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
+
+    if (XIQueryVersion(display, &major, &minor) != Success ||
+        (major * 1000 + minor) < (XI_2_Major * 1000 + XI_2_Minor))
+    {
+        fprintf(stderr, "XI2 not supported.\n");
+        return EXIT_FAILURE;
+    }
+
+    info = XIQueryDevice(display, AllDevices, &ndevices);
+    dev = info;
+
+    for(i = 0; i < ndevices; i++)
+    {
+        dev = &info[i];
+        if (dev->use == MasterPointer || dev->use == MasterKeyboard)
+        {
+            if (dev->use == MasterPointer)
+                printf("⎡ ");
+            else
+                printf("⎣ ");
+
+            print_info_xi2(display, dev, shortformat);
+            for (j = 0; j < ndevices; j++)
+            {
+                XIDeviceInfo* sd = &info[j];
+
+                if ((sd->use == SlavePointer || sd->use == SlaveKeyboard) &&
+                     (sd->attachment == dev->deviceid))
+                {
+                    printf("%s   ↳ ", dev->use == MasterPointer ? "⎜" : " ");
+                    print_info_xi2(display, sd, shortformat);
+                }
+            }
+        }
+    }
+
+
+    XIFreeDeviceInfo(info);
+    return EXIT_SUCCESS;
+}
+#endif
+
+int
+list(Display	*display,
+     int	argc,
+     char	*argv[],
+     char	*name,
+     char	*desc)
+{
+#ifdef HAVE_XI2
+    if (xinput_version(display) == XI_2_Major)
+        return list_xi2(display, argc, argv, name, desc);
+#endif
+    return list_xi1(display, argc, argv, name, desc);
 }
 
 /* end of list.c */
