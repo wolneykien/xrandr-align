@@ -196,6 +196,43 @@ find_device_info(Display	*display,
     return found;
 }
 
+#ifdef HAVE_XI2
+int
+xi2_find_device_id(Display *display, char *name)
+{
+    XIDeviceInfo *info;
+    int ndevices;
+    Bool is_id = True;
+    int i, id = -1;
+
+    for(i = 0; i < strlen(name); i++) {
+	if (!isdigit(name[i])) {
+	    is_id = False;
+	    break;
+	}
+    }
+
+    if (is_id) {
+	id = atoi(name);
+    } else
+    {
+        info = XIQueryDevice(display, AllDevices, &ndevices);
+        for(i = 0; i < ndevices; i++)
+        {
+            if ((is_id && info[i].deviceid == id) ||
+                    (!is_id && strcmp(info[i].name, name) == 0))
+            {
+                id = info[i].deviceid;
+                break;
+            }
+        }
+
+        XIFreeDeviceInfo(info);
+    }
+    return id;;
+}
+#endif
+
 static void
 usage(void)
 {

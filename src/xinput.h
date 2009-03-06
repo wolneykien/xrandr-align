@@ -44,6 +44,8 @@ find_device_info(
 		 char		*name,
 		 Bool		only_extended
 		 );
+int
+xi2_find_device_id(Display *display, char *name);
 
 
 #define DECLARE(name) \
