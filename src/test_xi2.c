@@ -25,6 +25,8 @@
 
 #include "xinput.h"
 
+extern void print_classes_xi2(Display*, XIAnyClassInfo **classes,
+                              int num_classes);
 
 #define BitIsOn(ptr, bit) (((BYTE *) (ptr))[(bit)>>3] & (1 << ((bit) & 7)))
 
@@ -38,6 +40,46 @@ static Window create_win(Display *dpy)
     return win;
 }
 
+static void print_deviceevent(XIDeviceEvent* event)
+{
+    double *val;
+    int i;
+
+    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
+    printf("    detail: %d\n", event->detail);
+    printf("    buttons:");
+    for (i = 0; i < event->buttons->mask_len * 8; i++)
+        if (BitIsOn(event->buttons->mask, i))
+            printf(" %d", i);
+    printf("\n");
+
+    printf("    modifiers: locked 0x%x latched 0x%x base 0x%x\n",
+            event->mods->locked, event->mods->latched,
+            event->mods->base);
+    printf("    group: locked 0x%x latched 0x%x base 0x%x\n",
+            event->group->locked, event->group->latched,
+            event->group->base);
+    printf("    valuators:");
+
+    val = event->valuators->values;
+    for (i = 0; i < event->valuators->mask_len * 8; i++)
+        if (BitIsOn(event->valuators->mask, i))
+            printf(" %.2f", *val++);
+    printf("\n");
+
+    printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
+            event->root, event->event, event->child);
+}
+
+static void print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
+{
+    printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
+    printf("    reason: %s\n", (event->reason == SlaveSwitch) ? "SlaveSwitch" :
+                                "DeviceChanged");
+    print_classes_xi2(dpy, event->classes, event->num_classes);
+}
+
+
 int
 test_xi2(Display	*display,
          int	argc,
@@ -45,7 +87,6 @@ test_xi2(Display	*display,
          char	*name,
          char	*desc)
 {
-    int i;
     XIDeviceEventMask mask;
     Window win;
 
@@ -54,10 +95,10 @@ test_xi2(Display	*display,
 
     /* Select for motion events */
     mask.deviceid = AllDevices;
-    mask.mask_len = 1;
-    mask.mask = calloc(1, sizeof(char));
+    mask.mask_len = 2;
+    mask.mask = calloc(2, sizeof(char));
     mask.mask[0] = XI_ButtonPressMask | XI_ButtonReleaseMask | XI_MotionMask |
-        XI_KeyPressMask | XI_KeyReleaseMask;
+        XI_KeyPressMask | XI_KeyReleaseMask | XI_DeviceChangedMask;
     XISelectEvent(display, win, &mask, 1);
     free(mask.mask);
 
@@ -68,33 +109,18 @@ test_xi2(Display	*display,
         if (ev.type == GenericEvent)
         {
             XIDeviceEvent *event = (XIDeviceEvent*)&ev;
-            double *val;
 
             printf("EVENT type %d\n", event->evtype);
-            printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-            printf("    detail: %d\n", event->detail);
-            printf("    buttons:");
-            for (i = 0; i < event->buttons->mask_len * 8; i++)
-                if (BitIsOn(event->buttons->mask, i))
-                    printf(" %d", i);
-            printf("\n");
-
-            printf("    modifiers: locked 0x%x latched 0x%x base 0x%x\n",
-                    event->mods->locked, event->mods->latched,
-                    event->mods->base);
-            printf("    group: locked 0x%x latched 0x%x base 0x%x\n",
-                    event->group->locked, event->group->latched,
-                    event->group->base);
-            printf("    valuators:");
-
-            val = event->valuators->values;
-            for (i = 0; i < event->valuators->mask_len * 8; i++)
-                if (BitIsOn(event->valuators->mask, i))
-                    printf(" %.2f", *val++);
-            printf("\n");
-
-            printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
-                    event->root, event->event, event->child);
+            switch (event->evtype)
+            {
+                case XI_DeviceChanged:
+                    print_devicechangedevent(display,
+                                             (XIDeviceChangedEvent*)event);
+                    break;
+                default:
+                    print_deviceevent(event);
+                    break;
+            }
         }
 
         XIFreeEventData(&ev);
