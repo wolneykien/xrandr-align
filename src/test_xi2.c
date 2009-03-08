@@ -79,6 +79,39 @@ static void print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
     print_classes_xi2(dpy, event->classes, event->num_classes);
 }
 
+static void print_hierarchychangedevent(XIDeviceHierarchyEvent *event)
+{
+    int i;
+    printf("    Changes happened: %s %s %s %s %s %s %s\n",
+            (event->flags & HF_MasterAdded) ? "[new master]" : "",
+            (event->flags & HF_MasterRemoved) ? "[master removed]" : "",
+            (event->flags & HF_SlaveAdded) ? "[new slave]" : "",
+            (event->flags & HF_SlaveRemoved) ? "[slave removed]" : "",
+            (event->flags & HF_SlaveAttached) ? "[slave attached]" : "",
+            (event->flags & HF_DeviceEnabled) ? "[device enabled]" : "",
+            (event->flags & HF_DeviceDisabled) ? "[device disabled]" : "");
+
+    for (i = 0; i < event->num_devices; i++)
+    {
+        char *use;
+        switch(event->info[i].use)
+        {
+            case MasterPointer: use = "master pointer";
+            case MasterKeyboard: use = "master keyboard"; break;
+            case SlavePointer: use = "slave pointer";
+            case SlaveKeyboard: use = "slave keyboard"; break;
+            case FloatingSlave: use = "floating slave"; break;
+                break;
+        }
+
+        printf("    device %d [%s (%d)] is %s\n",
+                event->info[i].deviceid,
+                use,
+                event->info[i].attachment,
+                (event->info[i].enabled) ? "enabled" : "disabled");
+    }
+}
+
 
 int
 test_xi2(Display	*display,
@@ -116,6 +149,9 @@ test_xi2(Display	*display,
                 case XI_DeviceChanged:
                     print_devicechangedevent(display,
                                              (XIDeviceChangedEvent*)event);
+                    break;
+                case XI_HierarchyChanged:
+                    print_hierarchychangedevent((XIDeviceHierarchyEvent*)event);
                     break;
                 default:
                     print_deviceevent(event);
