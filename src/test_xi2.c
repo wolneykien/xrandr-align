@@ -29,6 +29,7 @@ extern void print_classes_xi2(Display*, XIAnyClassInfo **classes,
                               int num_classes);
 
 #define BitIsOn(ptr, bit) (((BYTE *) (ptr))[(bit)>>3] & (1 << ((bit) & 7)))
+#define SetBit(ptr, bit)  (((BYTE *) (ptr))[(bit)>>3] |= (1 << ((bit) & 7)))
 
 static Window create_win(Display *dpy)
 {
@@ -130,8 +131,13 @@ test_xi2(Display	*display,
     mask.deviceid = AllDevices;
     mask.mask_len = 2;
     mask.mask = calloc(2, sizeof(char));
-    mask.mask[0] = XI_ButtonPressMask | XI_ButtonReleaseMask | XI_MotionMask |
-        XI_KeyPressMask | XI_KeyReleaseMask | XI_DeviceChangedMask;
+    SetBit(mask.mask, XI_ButtonPress);
+    SetBit(mask.mask, XI_ButtonRelease);
+    SetBit(mask.mask, XI_Motion);
+    SetBit(mask.mask, XI_KeyPress);
+    SetBit(mask.mask, XI_KeyPress);
+    SetBit(mask.mask, XI_DeviceChanged);
+    SetBit(mask.mask, XI_HierarchyChanged);
     XISelectEvent(display, win, &mask, 1);
     free(mask.mask);
 
