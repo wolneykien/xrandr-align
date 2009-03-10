@@ -36,7 +36,10 @@ static Window create_win(Display *dpy)
 {
     Window win = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, 200,
             200, 0, 0, WhitePixel(dpy, 0));
+    Window subwindow = XCreateSimpleWindow(dpy, win, 50, 50, 50, 50, 0, 0,
+            BlackPixel(dpy, 0));
 
+    XMapWindow(dpy, subwindow);
     XMapWindow(dpy, win);
     XFlush(dpy);
     return win;
@@ -131,6 +134,52 @@ static void print_rawevent(XIRawDeviceEvent *event)
     printf("\n");
 }
 
+static void print_enterleave(XILeaveEvent* event)
+{
+    char *mode, *detail;
+    int i;
+
+    printf("    windows: root 0x%lx event 0x%lx child 0x%ld\n",
+            event->root, event->event, event->child);
+    switch(event->mode)
+    {
+        case NotifyNormal:       mode = "NotifyNormal"; break;
+        case NotifyGrab:         mode = "NotifyGrab"; break;
+        case NotifyUngrab:       mode = "NotifyUngrab"; break;
+        case NotifyWhileGrabbed: mode = "NotifyWhileGrabbed"; break;
+    }
+    switch (event->detail)
+    {
+        case NotifyAncestor: detail = "NotifyAncestor"; break;
+        case NotifyVirtual: detail = "NotifyVirtual"; break;
+        case NotifyInferior: detail = "NotifyInferior"; break;
+        case NotifyNonlinear: detail = "NotifyNonlinear"; break;
+        case NotifyNonlinearVirtual: detail = "NotifyNonlinearVirtual"; break;
+        case NotifyPointer: detail = "NotifyPointer"; break;
+        case NotifyPointerRoot: detail = "NotifyPointerRoot"; break;
+        case NotifyDetailNone: detail = "NotifyDetailNone"; break;
+    }
+    printf("    mode: %s (detail %s)\n", mode, detail);
+    printf("    flags: %s %s\n", event->focus ? "[focus]" : "",
+                                 event->same_screen ? "[same screen]" : "");
+    printf("    buttons:");
+    for (i = 0; i < event->buttons->mask_len * 8; i++)
+        if (BitIsOn(event->buttons->mask, i))
+            printf(" %d", i);
+    printf("\n");
+
+    printf("    modifiers: locked 0x%x latched 0x%x base 0x%x\n",
+            event->mods->locked, event->mods->latched,
+            event->mods->base);
+    printf("    group: locked 0x%x latched 0x%x base 0x%x\n",
+            event->group->locked, event->group->latched,
+            event->group->base);
+
+    printf("    root x/y:  %.2f / %.2f\n", event->root_x, event->root_y);
+    printf("    event x/y: %.2f / %.2f\n", event->event_x, event->event_x);
+
+}
+
 int
 test_xi2(Display	*display,
          int	argc,
@@ -154,6 +203,10 @@ test_xi2(Display	*display,
     SetBit(mask.mask, XI_KeyPress);
     SetBit(mask.mask, XI_KeyPress);
     SetBit(mask.mask, XI_DeviceChanged);
+    SetBit(mask.mask, XI_Enter);
+    SetBit(mask.mask, XI_Leave);
+    SetBit(mask.mask, XI_FocusIn);
+    SetBit(mask.mask, XI_FocusOut);
     SetBit(mask.mask, XI_HierarchyChanged);
     XISelectEvent(display, win, &mask, 1);
 
@@ -184,6 +237,12 @@ test_xi2(Display	*display,
                     break;
                 case XI_RawEvent:
                     print_rawevent((XIRawDeviceEvent*)event);
+                    break;
+                case XI_Enter:
+                case XI_Leave:
+                case XI_FocusIn:
+                case XI_FocusOut:
+                    print_enterleave((XILeaveEvent*)event);
                     break;
                 default:
                     print_deviceevent(event);
