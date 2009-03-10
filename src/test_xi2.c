@@ -24,6 +24,7 @@
 
 
 #include "xinput.h"
+#include <string.h>
 
 extern void print_classes_xi2(Display*, XIAnyClassInfo **classes,
                               int num_classes);
@@ -113,6 +114,22 @@ static void print_hierarchychangedevent(XIDeviceHierarchyEvent *event)
     }
 }
 
+static void print_rawevent(XIRawDeviceEvent *event)
+{
+    int i;
+    double *val, *raw_val;
+
+    printf("    device: %d\n", event->deviceid);
+    printf("    detail: %d\n", event->detail);
+    printf("    valuators:\n");
+
+    val = event->valuators->values;
+    raw_val = event->raw_values;
+    for (i = 0; i < event->valuators->mask_len * 8; i++)
+        if (BitIsOn(event->valuators->mask, i))
+            printf("         %2d: %.2f (%.2f)\n", i, *val++, *raw_val++);
+    printf("\n");
+}
 
 int
 test_xi2(Display	*display,
@@ -139,6 +156,12 @@ test_xi2(Display	*display,
     SetBit(mask.mask, XI_DeviceChanged);
     SetBit(mask.mask, XI_HierarchyChanged);
     XISelectEvent(display, win, &mask, 1);
+
+    mask.deviceid = AllMasterDevices;
+    memset(mask.mask, 0, 2);
+    SetBit(mask.mask, XI_RawEvent);
+    XISelectEvent(display, DefaultRootWindow(display), &mask, 1);
+
     free(mask.mask);
 
     while(1)
@@ -158,6 +181,9 @@ test_xi2(Display	*display,
                     break;
                 case XI_HierarchyChanged:
                     print_hierarchychangedevent((XIDeviceHierarchyEvent*)event);
+                    break;
+                case XI_RawEvent:
+                    print_rawevent((XIRawDeviceEvent*)event);
                     break;
                 default:
                     print_deviceevent(event);
