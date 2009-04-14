@@ -69,7 +69,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                             printf("%d", *((int16_t*)ptr));
                             break;
                         case 32:
-                            printf("%d", *((int32_t*)ptr));
+                            printf("%ld", *((long*)ptr));
                             break;
                     }
                     break;
@@ -222,7 +222,7 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
                 *(((int16_t*)data) + i) = atoi(argv[3 + i]);
                 break;
             case 32:
-                *(((int32_t*)data) + i) = atoi(argv[3 + i]);
+                *(((long*)data) + i) = atoi(argv[3 + i]);
                 break;
         }
     }
