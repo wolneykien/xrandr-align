@@ -42,7 +42,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
     int                 act_format;
     unsigned long       nitems, bytes_after;
     unsigned char       *data, *ptr;
-    int                 j, done = False;
+    int                 j, done = False, size;
 
     name = XGetAtomName(dpy, property);
     printf("\t%s (%ld):\t", name, property);
@@ -55,6 +55,13 @@ print_property(Display *dpy, XDevice* dev, Atom property)
 
         ptr = data;
 
+        switch(act_format)
+        {
+            case 8: size = sizeof(char); break;
+            case 16: size = sizeof(short); break;
+            case 32: size = sizeof(long); break;
+        }
+
         for (j = 0; j < nitems; j++)
         {
             switch(act_type)
@@ -63,13 +70,13 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     switch(act_format)
                     {
                         case 8:
-                            printf("%d", *((int8_t*)ptr));
+                            printf("%d", *((char*)ptr));
                             break;
                         case 16:
-                            printf("%d", *((int16_t*)ptr));
+                            printf("%d", *((short*)ptr));
                             break;
                         case 32:
-                            printf("%d", *((int32_t*)ptr));
+                            printf("%ld", *((long*)ptr));
                             break;
                     }
                     break;
@@ -93,7 +100,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     break;
             }
 
-            ptr += act_format/8;
+            ptr += size;
 
             if (j < nitems - 1)
                 printf(", ");
@@ -210,19 +217,19 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
         return EXIT_FAILURE;
     }
 
-    data = calloc(nelements, format/8);
+    data = calloc(nelements, sizeof(long));
     for (i = 0; i < nelements; i++)
     {
         switch(format)
         {
             case 8:
-                *(((int8_t*)data) + i) = atoi(argv[3 + i]);
+                *(((char*)data) + i) = atoi(argv[3 + i]);
                 break;
             case 16:
-                *(((int16_t*)data) + i) = atoi(argv[3 + i]);
+                *(((short*)data) + i) = atoi(argv[3 + i]);
                 break;
             case 32:
-                *(((int32_t*)data) + i) = atoi(argv[3 + i]);
+                *(((long*)data) + i) = atoi(argv[3 + i]);
                 break;
         }
     }
