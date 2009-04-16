@@ -34,6 +34,23 @@
 
 #include "xinput.h"
 
+static Atom parse_atom(Display *dpy, char *name) {
+    Bool is_atom = True;
+    int i;
+
+    for (i = 0; name[i] != '\0'; i++) {
+        if (!isdigit(name[i])) {
+            is_atom = False;
+            break;
+        }
+    }
+
+    if (is_atom)
+        return atoi(name);
+    else
+        return XInternAtom(dpy, name, False);
+}
+
 static void
 print_property(Display *dpy, XDevice* dev, Atom property)
 {
@@ -171,7 +188,6 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop;
     char        *name;
     int          i;
-    Bool         is_atom = True;
     char        *data;
     int          format, nelements =  0;
 
@@ -197,17 +213,7 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 3;
     format    = atoi(argv[2]);
@@ -250,7 +256,6 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop, float_atom;
     char        *name;
     int          i;
-    Bool         is_atom = True;
     long        *data;
     int          nelements =  0;
     char*        endptr;
@@ -277,17 +282,7 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 2;
 
@@ -375,8 +370,6 @@ int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     XDevice     *dev;
     XDeviceInfo *info;
     char        *name;
-    int         i;
-    Bool        is_atom = True;
     Atom        prop;
 
     info = find_device_info(dpy, argv[0], False);
@@ -395,17 +388,7 @@ int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     XDeleteDeviceProperty(dpy, dev, prop);
 
@@ -421,7 +404,7 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop;
     char        *name;
     int          i, j;
-    Bool         is_atom = True;
+    Bool         is_atom;
     Atom        *data;
     int          nelements =  0;
 
@@ -447,17 +430,7 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 2;
     data = calloc(nelements, sizeof(Atom));
