@@ -251,7 +251,7 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     char        *name;
     int          i;
     Bool         is_atom = True;
-    float       *data;
+    long        *data;
     int          nelements =  0;
     char*        endptr;
 
@@ -305,10 +305,10 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 	return EXIT_FAILURE;
     }
 
-    data = calloc(nelements, 4);
+    data = calloc(nelements, sizeof(long));
     for (i = 0; i < nelements; i++)
     {
-        *(data + i) = strtod(argv[2 + i], &endptr);
+        *((float*)(data + i)) = strtod(argv[2 + i], &endptr);
 	if(endptr == argv[2 + i]){
 	    fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
 	    return EXIT_FAILURE;
