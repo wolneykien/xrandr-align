@@ -39,6 +39,7 @@ static Window create_win(Display *dpy)
     Window subwindow = XCreateSimpleWindow(dpy, win, 50, 50, 50, 50, 0, 0,
             BlackPixel(dpy, 0));
 
+    XSelectInput(dpy, win, ExposureMask);
     XMapWindow(dpy, subwindow);
     XMapWindow(dpy, win);
     XFlush(dpy);
@@ -221,6 +222,13 @@ test_xi2(Display	*display,
 
     free(mask.mask);
 
+    {
+        XEvent event;
+        XMaskEvent(display, ExposureMask, &event);
+        XSelectInput(display, win, 0);
+    }
+
+
     while(1)
     {
         XIEvent ev;
@@ -256,6 +264,8 @@ test_xi2(Display	*display,
 
         XIFreeEventData(&ev);
     }
+
+    XDestroyWindow(display, win);
 
     return EXIT_SUCCESS;
 }
