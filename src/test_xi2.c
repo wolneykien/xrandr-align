@@ -176,7 +176,7 @@ static void print_enterleave(XILeaveEvent* event)
             event->group->base);
 
     printf("    root x/y:  %.2f / %.2f\n", event->root_x, event->root_y);
-    printf("    event x/y: %.2f / %.2f\n", event->event_x, event->event_x);
+    printf("    event x/y: %.2f / %.2f\n", event->event_x, event->event_y);
 
 }
 
