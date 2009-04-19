@@ -243,6 +243,8 @@ test_xi2(Display	*display,
     list(display, argc, argv, name, desc);
     win = create_win(display);
 
+    XSync(display, False);
+
     /* Select for motion events */
     mask.deviceid = AllDevices;
     mask.mask_len = 2;
