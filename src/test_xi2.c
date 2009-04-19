@@ -185,6 +185,51 @@ static void print_enterleave(XILeaveEvent* event)
 
 }
 
+void
+test_sync_grab(Display *display, Window win)
+{
+    int loop = 3;
+    int rc;
+    XIDeviceEventMask mask;
+
+    /* Select for motion events */
+    mask.deviceid = AllDevices;
+    mask.mask_len = 2;
+    mask.mask = calloc(2, sizeof(char));
+    SetBit(mask.mask, XI_ButtonPress);
+
+    if ((rc = XIGrabDevice(display, 2,  win, CurrentTime, None, GrabModeSync,
+                           GrabModeAsync, False, &mask)) != GrabSuccess)
+    {
+        fprintf(stderr, "Grab failed with %d\n", rc);
+        return;
+    }
+    free(mask.mask);
+
+    XSync(display, True);
+    XIAllowEvents(display, 2, SyncPointer, CurrentTime);
+    XFlush(display);
+
+    printf("Holding sync grab for %d button presses.\n", loop);
+
+    while(loop--)
+    {
+        XIEvent ev;
+
+        XNextEvent(display, (XEvent*)&ev);
+        if (ev.type == GenericEvent)
+        {
+            XIDeviceEvent *event = (XIDeviceEvent*)&ev;
+            print_deviceevent(event);
+            XIAllowEvents(display, 2, SyncPointer, CurrentTime);
+            XIFreeEventData(&ev);
+        }
+    }
+
+    XIUngrabDevice(display, 2, CurrentTime);
+    printf("Done\n");
+}
+
 int
 test_xi2(Display	*display,
          int	argc,
@@ -228,6 +273,7 @@ test_xi2(Display	*display,
         XSelectInput(display, win, 0);
     }
 
+    test_sync_grab(display, win);
 
     while(1)
     {
