@@ -52,6 +52,10 @@ static void print_deviceevent(XIDeviceEvent* event)
 
     printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
     printf("    detail: %d\n", event->detail);
+
+    printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
+    printf("    event: %.2f/%.2f\n", event->event_x, event->event_x);
+
     printf("    buttons:");
     for (i = 0; i < event->buttons->mask_len * 8; i++)
         if (BitIsOn(event->buttons->mask, i))
