@@ -462,4 +462,119 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     return EXIT_SUCCESS;
 }
 
+int
+set_prop(Display *dpy, int argc, char **argv, char *n, char *desc)
+{
+    XDeviceInfo  *info;
+    XDevice      *dev;
+    Atom          prop;
+    Atom          type;
+    char         *name;
+    int           i;
+    Atom          float_atom;
+    int           format, nelements = 0;
+    unsigned long act_nitems, bytes_after;
+    char         *endptr;
+    union {
+        unsigned char *c;
+        short *s;
+        long *l;
+        Atom *a;
+    } data;
 
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
+        return EXIT_FAILURE;
+    }
+
+    info = find_device_info(dpy, argv[0], False);
+    if (!info)
+    {
+        fprintf(stderr, "unable to find device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    dev = XOpenDevice(dpy, info->id);
+    if (!dev)
+    {
+        fprintf(stderr, "unable to open device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    name = argv[1];
+
+    prop = parse_atom(dpy, name);
+
+    if (prop == None) {
+        fprintf(stderr, "invalid property %s\n", name);
+        return EXIT_FAILURE;
+    }
+
+    float_atom = XInternAtom(dpy, "FLOAT", False);
+
+    nelements = argc - 2;
+    if (XGetDeviceProperty(dpy, dev, prop, 0, 0, False, AnyPropertyType,
+                           &type, &format, &act_nitems, &bytes_after, &data.c)
+            != Success) {
+        fprintf(stderr, "failed to get property type and format for %s\n", name);
+        return EXIT_FAILURE;
+    }
+
+    XFree(data.c);
+
+    if (type == None) {
+        fprintf(stderr, "property %s doesn't exist\n", name);
+        return EXIT_FAILURE;
+    }
+
+    data.c = calloc(nelements, sizeof(long));
+
+    for (i = 0; i < nelements; i++)
+    {
+        if (type == XA_INTEGER) {
+            switch (format)
+            {
+                case 8:
+                    data.c[i] = atoi(argv[2 + i]);
+                    break;
+                case 16:
+                    data.s[i] = atoi(argv[2 + i]);
+                    break;
+                case 32:
+                    data.l[i] = atoi(argv[2 + i]);
+                    break;
+                default:
+                    fprintf(stderr, "unexpected size for property %s", name);
+                    return EXIT_FAILURE;
+            }
+        } else if (type == float_atom) {
+            if (format != 32) {
+                fprintf(stderr, "unexpected format %d for property %s\n",
+                        format, name);
+                return EXIT_FAILURE;
+            }
+            *(float *)(data.l + i) = strtod(argv[2 + i], &endptr);
+            if (endptr == argv[2 + i]) {
+                fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
+                return EXIT_FAILURE;
+            }
+        } else if (type == XA_ATOM) {
+            if (format != 32) {
+                fprintf(stderr, "unexpected format %d for property %s\n",
+                        format, name);
+                return EXIT_FAILURE;
+            }
+            data.a[i] = parse_atom(dpy, argv[2 + i]);
+        } else {
+            fprintf(stderr, "unexpected type for property %s\n", name);
+            return EXIT_FAILURE;
+        }
+    }
+
+    XChangeDeviceProperty(dpy, dev, prop, type, format, PropModeReplace,
+                          data.c, nelements);
+    free(data.c);
+    XCloseDevice(dpy, dev);
+    return EXIT_SUCCESS;
+}

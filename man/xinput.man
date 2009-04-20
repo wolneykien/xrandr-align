@@ -69,6 +69,12 @@ are 8, 16, or 32, depending on the property.
 Sets a float property for the device.
 .PP
 .TP 8
+.B xinput set-prop \fIdevice_name\fP \fIproperty\fP \fIvalue\fP
+Set the property to the given value(s). The format and type of the property
+are left as-is and the arguments are interpreted according to the property
+type. This argument can only be used to modify existing properties.
+.PP
+.TP 8
 .B xinput watch-props \fIdevice_name\fP
 Prints to standard out when property changes occur.
 .PP

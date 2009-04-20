@@ -131,6 +131,10 @@ static entry drivers[] =
       "<device> <property>",
       delete_prop
     },
+    { "set-prop",
+      "<device> <property> <val> [<val> ...]",
+      set_prop
+    },
     {NULL, NULL, NULL
     }
 };
