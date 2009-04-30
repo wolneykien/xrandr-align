@@ -74,9 +74,17 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     }
                     break;
                 case XA_STRING:
-                    printf("\"%s\"", ptr);
-                    done = True;
-                    break;
+                    {
+                        int len = 0;
+                        unsigned char *p = ptr;
+                        while(len < nitems)
+                        {
+                            printf("'%s' ", &p[len]);
+                            len += (strlen(&p[len]) + 1);
+                        }
+                        done = True;
+                        break;
+                    }
                 case XA_ATOM:
                     printf("\"%s\"", XGetAtomName(dpy, *(Atom*)ptr));
                     break;
@@ -95,10 +103,10 @@ print_property(Display *dpy, XDevice* dev, Atom property)
 
             ptr += act_format/8;
 
-            if (j < nitems - 1)
-                printf(", ");
             if (done == True)
                 break;
+            if (j < nitems - 1)
+                printf(", ");
         }
         printf("\n");
         XFree(data);
