@@ -68,7 +68,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                            AnyPropertyType, &act_type, &act_format,
                            &nitems, &bytes_after, &data) == Success)
     {
-        int float_atom = XInternAtom(dpy, "FLOAT", False);
+        Atom float_atom = XInternAtom(dpy, "FLOAT", False);
 
         ptr = data;
 
