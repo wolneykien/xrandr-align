@@ -98,8 +98,17 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     }
                     break;
                 case XA_STRING:
+                    if (act_format != 8)
+                    {
+                        printf("Unknown string format.\n");
+                        done = True;
+                        break;
+                    }
                     printf("\"%s\"", ptr);
-                    done = True;
+                    j += strlen((char*)ptr); /* The loop's j++ jumps over the
+                                                terminating 0 */
+                    ptr += strlen((char*)ptr); /* ptr += size below jumps over
+                                                  the terminating 0 */
                     break;
                 case XA_ATOM:
                     printf("\"%s\"", XGetAtomName(dpy, *(Atom*)ptr));
