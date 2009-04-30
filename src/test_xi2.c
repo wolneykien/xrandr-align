@@ -185,6 +185,21 @@ static void print_enterleave(XILeaveEvent* event)
 
 }
 
+static void print_propertyevent(Display *display, XIPropertyEvent* event)
+{
+    char *changed;
+
+    if (event->what == XIPropertyDeleted)
+        changed = "deleted";
+    else if (event->what == XIPropertyCreated)
+        changed = "created";
+    else
+        changed = "modified";
+
+    printf("     property: %ld '%s'\n", event->property, XGetAtomName(display, event->property));
+    printf("     changed: %s\n", changed);
+
+}
 void
 test_sync_grab(Display *display, Window win)
 {
@@ -248,19 +263,39 @@ test_xi2(Display	*display,
     /* Select for motion events */
     mask.deviceid = AllDevices;
     mask.mask_len = 2;
-    mask.mask = calloc(2, sizeof(char));
+    mask.mask = calloc(mask.mask_len, sizeof(char));
     SetBit(mask.mask, XI_ButtonPress);
     SetBit(mask.mask, XI_ButtonRelease);
+    SetBit(mask.mask, XI_KeyPress);
+    SetBit(mask.mask, XI_KeyRelease);
     SetBit(mask.mask, XI_Motion);
-    SetBit(mask.mask, XI_KeyPress);
-    SetBit(mask.mask, XI_KeyPress);
     SetBit(mask.mask, XI_DeviceChanged);
     SetBit(mask.mask, XI_Enter);
     SetBit(mask.mask, XI_Leave);
     SetBit(mask.mask, XI_FocusIn);
     SetBit(mask.mask, XI_FocusOut);
     SetBit(mask.mask, XI_HierarchyChanged);
+    SetBit(mask.mask, XI_PropertyEvent);
     XISelectEvent(display, win, &mask, 1);
+    XSync(display, False);
+
+    {
+        int modifiers[] = {0, 0x10, 0x1, 0x11};
+        int nmods = sizeof(modifiers)/sizeof(modifiers[0]);
+
+        mask.deviceid = 2;
+        memset(mask.mask, 0, 2);
+        SetBit(mask.mask, XI_KeyPress);
+        SetBit(mask.mask, XI_KeyRelease);
+        SetBit(mask.mask, XI_ButtonPress);
+        SetBit(mask.mask, XI_Motion);
+        XIGrabButton(display, 2, 1, win, None, GrabModeAsync, GrabModeAsync,
+                False, &mask, nmods, modifiers);
+        XIGrabKeysym(display, 3, 0x71, win, GrabModeAsync, GrabModeAsync,
+                False, &mask, nmods, modifiers);
+        XIUngrabButton(display, 3, 1, win, nmods - 2, &modifiers[2]);
+        XIUngrabKeysym(display, 3, 0x71, win, nmods - 2, &modifiers[2]);
+    }
 
     mask.deviceid = AllMasterDevices;
     memset(mask.mask, 0, 2);
@@ -275,7 +310,9 @@ test_xi2(Display	*display,
         XSelectInput(display, win, 0);
     }
 
+    /*
     test_sync_grab(display, win);
+    */
 
     while(1)
     {
@@ -303,6 +340,9 @@ test_xi2(Display	*display,
                 case XI_FocusIn:
                 case XI_FocusOut:
                     print_enterleave((XILeaveEvent*)event);
+                    break;
+                case XI_PropertyEvent:
+                    print_propertyevent(display, (XIPropertyEvent*)event);
                     break;
                 default:
                     print_deviceevent(event);
