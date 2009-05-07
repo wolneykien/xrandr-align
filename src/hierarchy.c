@@ -65,7 +65,8 @@ int
 remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 {
     XIRemoveMasterInfo r;
-    int ret, id;
+    XIDeviceInfo *info;
+    int ret;
 
     if (argc == 0)
     {
@@ -73,15 +74,15 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
         return EXIT_FAILURE;
     }
 
-    id = xi2_find_device_id(dpy, argv[0]);
+    info = xi2_find_device_info(dpy, argv[0]);
 
-    if (id == -1) {
+    if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return EXIT_FAILURE;
     }
 
     r.type = CH_RemoveMasterDevice;
-    r.device = id;
+    r.device = info->deviceid;
     if (argc >= 2)
     {
         if (!strcmp(argv[1], "Floating"))
@@ -109,7 +110,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 int
 change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 {
-    int sd_id, md_id;
+    XIDeviceInfo *sd_info, *md_info;
     XIAttachSlaveInfo c;
     int ret;
 
@@ -119,22 +120,22 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
         return EXIT_FAILURE;
     }
 
-    sd_id = xi2_find_device_id(dpy, argv[0]);
-    md_id = xi2_find_device_id(dpy, argv[1]);
+    sd_info = xi2_find_device_info(dpy, argv[0]);
+    md_info= xi2_find_device_info(dpy, argv[1]);
 
-    if (sd_id == -1) {
+    if (!sd_info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return EXIT_FAILURE;
     }
 
-    if (md_id == -1) {
+    if (!md_info) {
 	fprintf(stderr, "unable to find device %s\n", argv[1]);
 	return EXIT_FAILURE;
     }
 
     c.type = CH_AttachSlave;
-    c.device = sd_id;
-    c.newMaster = md_id;
+    c.device = sd_info->deviceid;
+    c.newMaster = md_info->deviceid;
 
     ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;
@@ -146,7 +147,7 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 int
 float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
 {
-    int id;
+    XIDeviceInfo *info;
     XIDetachSlaveInfo c;
     int ret;
 
@@ -156,15 +157,15 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
         return EXIT_FAILURE;
     }
 
-    id = xi2_find_device_id(dpy, argv[0]);
+    info = xi2_find_device_info(dpy, argv[0]);
 
-    if (id == -1) {
+    if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[0]);
 	return EXIT_FAILURE;
     }
 
     c.type = CH_DetachSlave;
-    c.device = id;
+    c.device = info->deviceid;
 
     ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;

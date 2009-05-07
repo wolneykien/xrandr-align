@@ -43,8 +43,10 @@
 
 
 XDeviceInfo* find_device_info( Display *display, char *name, Bool only_extended);
-int xi2_find_device_id(Display *display, char *name);
+#if HAVE_XI2
+XIDeviceInfo* xi2_find_device_info(Display *display, char *name);
 int xinput_version(Display* display);
+#endif
 
 int get_feedbacks( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int set_ptr_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);

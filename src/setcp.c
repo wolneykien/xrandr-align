@@ -32,7 +32,7 @@
 int
 set_clientpointer(Display* dpy, int argc, char** argv, char* name, char *desc)
 {
-    int deviceid;
+    XIDeviceInfo *info;
     XID window;
     char* id;
     char* dummy;
@@ -49,13 +49,13 @@ set_clientpointer(Display* dpy, int argc, char** argv, char* name, char *desc)
 
     window = strtol(argv[0], &dummy, (*id == 'x') ? 16 : 10);
 
-    deviceid = xi2_find_device_id(dpy, argv[1]);
+    info = xi2_find_device_info(dpy, argv[1]);
 
-    if (deviceid == -1) {
+    if (!info) {
 	fprintf(stderr, "unable to find device %s\n", argv[1]);
 	return EXIT_FAILURE;
     }
 
-    XISetClientPointer(dpy, window, deviceid);
+    XISetClientPointer(dpy, window, info->deviceid);
     return 0;
 }

@@ -203,8 +203,8 @@ find_device_info(Display	*display,
 }
 
 #ifdef HAVE_XI2
-int
-xi2_find_device_id(Display *display, char *name)
+XIDeviceInfo*
+xi2_find_device_info(Display *display, char *name)
 {
     XIDeviceInfo *info;
     int ndevices;
@@ -220,22 +220,20 @@ xi2_find_device_id(Display *display, char *name)
 
     if (is_id) {
 	id = atoi(name);
-    } else
-    {
-        info = XIQueryDevice(display, AllDevices, &ndevices);
-        for(i = 0; i < ndevices; i++)
-        {
-            if ((is_id && info[i].deviceid == id) ||
-                    (!is_id && strcmp(info[i].name, name) == 0))
-            {
-                id = info[i].deviceid;
-                break;
-            }
-        }
-
-        XIFreeDeviceInfo(info);
     }
-    return id;;
+
+    info = XIQueryDevice(display, AllDevices, &ndevices);
+    for(i = 0; i < ndevices; i++)
+    {
+        if ((is_id && info[i].deviceid == id) ||
+                (!is_id && strcmp(info[i].name, name) == 0))
+        {
+            return &info[i];
+        }
+    }
+
+    XIFreeDeviceInfo(info);
+    return NULL;
 }
 #endif
 
