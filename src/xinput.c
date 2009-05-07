@@ -25,12 +25,8 @@
 #include <ctype.h>
 #include <string.h>
 
-typedef int (*prog)(
-#if NeedFunctionPrototypes
-		    Display* display, int argc, char *argv[],
-		    char *prog_name, char *prog_desc
-#endif
-);
+typedef int (*prog)(Display* display, int argc, char *argv[],
+		    char *prog_name, char *prog_desc);
 
 typedef struct
 {
