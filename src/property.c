@@ -34,6 +34,23 @@
 
 #include "xinput.h"
 
+static Atom parse_atom(Display *dpy, char *name) {
+    Bool is_atom = True;
+    int i;
+
+    for (i = 0; name[i] != '\0'; i++) {
+        if (!isdigit(name[i])) {
+            is_atom = False;
+            break;
+        }
+    }
+
+    if (is_atom)
+        return atoi(name);
+    else
+        return XInternAtom(dpy, name, False);
+}
+
 static void
 print_property(Display *dpy, XDevice* dev, Atom property)
 {
@@ -42,7 +59,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
     int                 act_format;
     unsigned long       nitems, bytes_after;
     unsigned char       *data, *ptr;
-    int                 j, done = False;
+    int                 j, done = False, size;
 
     name = XGetAtomName(dpy, property);
     printf("\t%s (%ld):\t", name, property);
@@ -51,9 +68,16 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                            AnyPropertyType, &act_type, &act_format,
                            &nitems, &bytes_after, &data) == Success)
     {
-        int float_atom = XInternAtom(dpy, "FLOAT", False);
+        Atom float_atom = XInternAtom(dpy, "FLOAT", True);
 
         ptr = data;
+
+        switch(act_format)
+        {
+            case 8: size = sizeof(char); break;
+            case 16: size = sizeof(short); break;
+            case 32: size = sizeof(long); break;
+        }
 
         for (j = 0; j < nitems; j++)
         {
@@ -63,10 +87,10 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     switch(act_format)
                     {
                         case 8:
-                            printf("%d", *((int8_t*)ptr));
+                            printf("%d", *((char*)ptr));
                             break;
                         case 16:
-                            printf("%d", *((int16_t*)ptr));
+                            printf("%d", *((short*)ptr));
                             break;
                         case 32:
                             printf("%ld", *((long*)ptr));
@@ -74,17 +98,18 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     }
                     break;
                 case XA_STRING:
+                    if (act_format != 8)
                     {
-                        int len = 0;
-                        unsigned char *p = ptr;
-                        while(len < nitems)
-                        {
-                            printf("'%s' ", &p[len]);
-                            len += (strlen(&p[len]) + 1);
-                        }
+                        printf("Unknown string format.\n");
                         done = True;
                         break;
                     }
+                    printf("\"%s\"", ptr);
+                    j += strlen((char*)ptr); /* The loop's j++ jumps over the
+                                                terminating 0 */
+                    ptr += strlen((char*)ptr); /* ptr += size below jumps over
+                                                  the terminating 0 */
+                    break;
                 case XA_ATOM:
                     printf("\"%s\"", XGetAtomName(dpy, *(Atom*)ptr));
                     break;
@@ -101,7 +126,7 @@ print_property(Display *dpy, XDevice* dev, Atom property)
                     break;
             }
 
-            ptr += act_format/8;
+            ptr += size;
 
             if (done == True)
                 break;
@@ -172,7 +197,6 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop;
     char        *name;
     int          i;
-    Bool         is_atom = True;
     char        *data;
     int          format, nelements =  0;
 
@@ -198,17 +222,7 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 3;
     format    = atoi(argv[2]);
@@ -218,16 +232,16 @@ set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
         return EXIT_FAILURE;
     }
 
-    data = calloc(nelements, format/8);
+    data = calloc(nelements, sizeof(long));
     for (i = 0; i < nelements; i++)
     {
         switch(format)
         {
             case 8:
-                *(((int8_t*)data) + i) = atoi(argv[3 + i]);
+                *(((char*)data) + i) = atoi(argv[3 + i]);
                 break;
             case 16:
-                *(((int16_t*)data) + i) = atoi(argv[3 + i]);
+                *(((short*)data) + i) = atoi(argv[3 + i]);
                 break;
             case 32:
                 *(((long*)data) + i) = atoi(argv[3 + i]);
@@ -251,8 +265,7 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop, float_atom;
     char        *name;
     int          i;
-    Bool         is_atom = True;
-    float       *data;
+    long        *data;
     int          nelements =  0;
     char*        endptr;
 
@@ -278,17 +291,7 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 2;
 
@@ -306,10 +309,10 @@ set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 	return EXIT_FAILURE;
     }
 
-    data = calloc(nelements, 4);
+    data = calloc(nelements, sizeof(long));
     for (i = 0; i < nelements; i++)
     {
-        *(data + i) = strtod(argv[2 + i], &endptr);
+        *((float*)(data + i)) = strtod(argv[2 + i], &endptr);
 	if(endptr == argv[2 + i]){
 	    fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
 	    return EXIT_FAILURE;
@@ -376,8 +379,6 @@ int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     XDevice     *dev;
     XDeviceInfo *info;
     char        *name;
-    int         i;
-    Bool        is_atom = True;
     Atom        prop;
 
     info = find_device_info(dpy, argv[0], False);
@@ -396,17 +397,7 @@ int delete_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     XDeleteDeviceProperty(dpy, dev, prop);
 
@@ -422,7 +413,7 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     Atom         prop;
     char        *name;
     int          i, j;
-    Bool         is_atom = True;
+    Bool         is_atom;
     Atom        *data;
     int          nelements =  0;
 
@@ -448,17 +439,7 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     name = argv[1];
 
-    for(i = 0; i < strlen(name); i++) {
-	if (!isdigit(name[i])) {
-            is_atom = False;
-	    break;
-	}
-    }
-
-    if (!is_atom)
-        prop = XInternAtom(dpy, name, False);
-    else
-        prop = atoi(name);
+    prop = parse_atom(dpy, name);
 
     nelements = argc - 2;
     data = calloc(nelements, sizeof(Atom));
@@ -490,4 +471,119 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
     return EXIT_SUCCESS;
 }
 
+int
+set_prop(Display *dpy, int argc, char **argv, char *n, char *desc)
+{
+    XDeviceInfo  *info;
+    XDevice      *dev;
+    Atom          prop;
+    Atom          type;
+    char         *name;
+    int           i;
+    Atom          float_atom;
+    int           format, nelements = 0;
+    unsigned long act_nitems, bytes_after;
+    char         *endptr;
+    union {
+        unsigned char *c;
+        short *s;
+        long *l;
+        Atom *a;
+    } data;
 
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
+        return EXIT_FAILURE;
+    }
+
+    info = find_device_info(dpy, argv[0], False);
+    if (!info)
+    {
+        fprintf(stderr, "unable to find device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    dev = XOpenDevice(dpy, info->id);
+    if (!dev)
+    {
+        fprintf(stderr, "unable to open device %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    name = argv[1];
+
+    prop = parse_atom(dpy, name);
+
+    if (prop == None) {
+        fprintf(stderr, "invalid property %s\n", name);
+        return EXIT_FAILURE;
+    }
+
+    float_atom = XInternAtom(dpy, "FLOAT", False);
+
+    nelements = argc - 2;
+    if (XGetDeviceProperty(dpy, dev, prop, 0, 0, False, AnyPropertyType,
+                           &type, &format, &act_nitems, &bytes_after, &data.c)
+            != Success) {
+        fprintf(stderr, "failed to get property type and format for %s\n", name);
+        return EXIT_FAILURE;
+    }
+
+    XFree(data.c);
+
+    if (type == None) {
+        fprintf(stderr, "property %s doesn't exist\n", name);
+        return EXIT_FAILURE;
+    }
+
+    data.c = calloc(nelements, sizeof(long));
+
+    for (i = 0; i < nelements; i++)
+    {
+        if (type == XA_INTEGER) {
+            switch (format)
+            {
+                case 8:
+                    data.c[i] = atoi(argv[2 + i]);
+                    break;
+                case 16:
+                    data.s[i] = atoi(argv[2 + i]);
+                    break;
+                case 32:
+                    data.l[i] = atoi(argv[2 + i]);
+                    break;
+                default:
+                    fprintf(stderr, "unexpected size for property %s", name);
+                    return EXIT_FAILURE;
+            }
+        } else if (type == float_atom) {
+            if (format != 32) {
+                fprintf(stderr, "unexpected format %d for property %s\n",
+                        format, name);
+                return EXIT_FAILURE;
+            }
+            *(float *)(data.l + i) = strtod(argv[2 + i], &endptr);
+            if (endptr == argv[2 + i]) {
+                fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
+                return EXIT_FAILURE;
+            }
+        } else if (type == XA_ATOM) {
+            if (format != 32) {
+                fprintf(stderr, "unexpected format %d for property %s\n",
+                        format, name);
+                return EXIT_FAILURE;
+            }
+            data.a[i] = parse_atom(dpy, argv[2 + i]);
+        } else {
+            fprintf(stderr, "unexpected type for property %s\n", name);
+            return EXIT_FAILURE;
+        }
+    }
+
+    XChangeDeviceProperty(dpy, dev, prop, type, format, PropModeReplace,
+                          data.c, nelements);
+    free(data.c);
+    XCloseDevice(dpy, dev);
+    return EXIT_SUCCESS;
+}

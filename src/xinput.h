@@ -41,47 +41,39 @@
 #define EXIT_FAILURE 0
 #endif
 
-XDeviceInfo*
-find_device_info(
-		 Display	*display,
-		 char		*name,
-		 Bool		only_extended
-		 );
-int
-xi2_find_device_id(Display *display, char *name);
 
+XDeviceInfo* find_device_info( Display *display, char *name, Bool only_extended);
+int xi2_find_device_id(Display *display, char *name);
 int xinput_version(Display* display);
 
-#define DECLARE(name) \
-    int (name) ( \
-		 Display*	display, \
-		 int		argc, \
-		 char		*argv[], \
-		 char		*prog_name, \
-		 char		*prog_desc \
-)
+int get_feedbacks( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_ptr_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int get_button_map( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_button_map( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_pointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 
-DECLARE(get_feedbacks);
-DECLARE(set_ptr_feedback);
-DECLARE(get_button_map);
-DECLARE(set_button_map);
-DECLARE(set_pointer);
-DECLARE(set_mode);
-DECLARE(list);
-DECLARE(test);
-DECLARE(version);
-DECLARE(set_integer_feedback);
-DECLARE(query_state);
-DECLARE(create_master);
-DECLARE(remove_master);
-DECLARE(change_attachment);
-DECLARE(float_device);
-DECLARE(set_clientpointer);
-DECLARE(test_xi2);
-DECLARE(list_props);
-DECLARE(set_int_prop);
-DECLARE(set_float_prop);
-DECLARE(set_atom_prop);
-DECLARE(watch_props);
-DECLARE(delete_prop);
+int set_mode( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int list( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int test( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int version( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_integer_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int query_state( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+
+/* X Input 1.5 */
+int list_props( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_int_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_float_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_atom_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int watch_props( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int delete_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+
+/* X Input 2.0 */
+int create_master( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int remove_master( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int change_attachment( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int float_device( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_clientpointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int test_xi2( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+
 /* end of xinput.h */

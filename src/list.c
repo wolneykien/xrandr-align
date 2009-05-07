@@ -26,7 +26,7 @@
 #include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
 
 static void
-print_info(XDeviceInfo	*info, Bool shortformat)
+print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
 {
     int			i,j;
     XAnyClassPtr	any;
@@ -61,6 +61,9 @@ print_info(XDeviceInfo	*info, Bool shortformat)
 
     if (shortformat)
         return;
+
+    if(info->type != None)
+	printf("\tType is %s\n", XGetAtomName(dpy, info->type));
 
     if (info->num_classes > 0) {
 	any = (XAnyClassPtr) (info->inputclassinfo);
@@ -120,7 +123,7 @@ static int list_xi1(Display     *display,
         do {
             info = XListInputDevices(display, &num_devices);
             for(loop=0; loop<num_devices; loop++) {
-                print_info(info+loop, shortformat);
+                print_info(display, info+loop, shortformat);
             }
         } while(daemon);
     } else {
@@ -133,7 +136,7 @@ static int list_xi1(Display     *display,
 		fprintf(stderr, "unable to find device %s\n", argv[loop]);
 		ret = EXIT_FAILURE;
 	    } else {
-		print_info(info, shortformat);
+		print_info(display, info, shortformat);
 	    }
 	}
 	return ret;
