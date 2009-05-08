@@ -84,7 +84,7 @@ static void print_deviceevent(XIDeviceEvent* event)
 static void print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
 {
     printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
-    printf("    reason: %s\n", (event->reason == SlaveSwitch) ? "SlaveSwitch" :
+    printf("    reason: %s\n", (event->reason == XISlaveSwitch) ? "SlaveSwitch" :
                                 "DeviceChanged");
     print_classes_xi2(dpy, event->classes, event->num_classes);
 }
@@ -93,24 +93,24 @@ static void print_hierarchychangedevent(XIDeviceHierarchyEvent *event)
 {
     int i;
     printf("    Changes happened: %s %s %s %s %s %s %s\n",
-            (event->flags & HF_MasterAdded) ? "[new master]" : "",
-            (event->flags & HF_MasterRemoved) ? "[master removed]" : "",
-            (event->flags & HF_SlaveAdded) ? "[new slave]" : "",
-            (event->flags & HF_SlaveRemoved) ? "[slave removed]" : "",
-            (event->flags & HF_SlaveAttached) ? "[slave attached]" : "",
-            (event->flags & HF_DeviceEnabled) ? "[device enabled]" : "",
-            (event->flags & HF_DeviceDisabled) ? "[device disabled]" : "");
+            (event->flags & XIMasterAdded) ? "[new master]" : "",
+            (event->flags & XIMasterRemoved) ? "[master removed]" : "",
+            (event->flags & XISlaveAdded) ? "[new slave]" : "",
+            (event->flags & XISlaveRemoved) ? "[slave removed]" : "",
+            (event->flags & XISlaveAttached) ? "[slave attached]" : "",
+            (event->flags & XIDeviceEnabled) ? "[device enabled]" : "",
+            (event->flags & XIDeviceDisabled) ? "[device disabled]" : "");
 
     for (i = 0; i < event->num_devices; i++)
     {
         char *use;
         switch(event->info[i].use)
         {
-            case MasterPointer: use = "master pointer";
-            case MasterKeyboard: use = "master keyboard"; break;
-            case SlavePointer: use = "slave pointer";
-            case SlaveKeyboard: use = "slave keyboard"; break;
-            case FloatingSlave: use = "floating slave"; break;
+            case XIMasterPointer: use = "master pointer";
+            case XIMasterKeyboard: use = "master keyboard"; break;
+            case XISlavePointer: use = "slave pointer";
+            case XISlaveKeyboard: use = "slave keyboard"; break;
+            case XIFloatingSlave: use = "floating slave"; break;
                 break;
         }
 
@@ -208,7 +208,7 @@ test_sync_grab(Display *display, Window win)
     XIDeviceEventMask mask;
 
     /* Select for motion events */
-    mask.deviceid = AllDevices;
+    mask.deviceid = XIAllDevices;
     mask.mask_len = 2;
     mask.mask = calloc(2, sizeof(char));
     SetBit(mask.mask, XI_ButtonPress);
@@ -261,7 +261,7 @@ test_xi2(Display	*display,
     XSync(display, False);
 
     /* Select for motion events */
-    mask.deviceid = AllDevices;
+    mask.deviceid = XIAllDevices;
     mask.mask_len = 2;
     mask.mask = calloc(mask.mask_len, sizeof(char));
     SetBit(mask.mask, XI_ButtonPress);
@@ -297,7 +297,7 @@ test_xi2(Display	*display,
         XIUngrabKeysym(display, 3, 0x71, win, nmods - 2, &modifiers[2]);
     }
 
-    mask.deviceid = AllMasterDevices;
+    mask.deviceid = XIAllMasterDevices;
     memset(mask.mask, 0, 2);
     SetBit(mask.mask, XI_RawEvent);
     XISelectEvent(display, DefaultRootWindow(display), &mask, 1);

@@ -193,19 +193,19 @@ print_info_xi2(Display* display, XIDeviceInfo *dev, Bool shortformat)
     printf("%-40s\tid=%d\t[", dev->name, dev->deviceid);
     switch(dev->use)
     {
-        case MasterPointer:
+        case XIMasterPointer:
             printf("master pointer  (%d)]\n", dev->attachment);
             break;
-        case MasterKeyboard:
+        case XIMasterKeyboard:
             printf("master keyboard (%d)]\n", dev->attachment);
             break;
-        case SlavePointer:
+        case XISlavePointer:
             printf("slave  pointer  (%d)]\n", dev->attachment);
             break;
-        case SlaveKeyboard:
+        case XISlaveKeyboard:
             printf("slave  keyboard (%d)]\n", dev->attachment);
             break;
-        case FloatingSlave:
+        case XIFloatingSlave:
             printf("floating slave]\n");
             break;
     }
@@ -242,15 +242,15 @@ list_xi2(Display	*display,
         return EXIT_FAILURE;
     }
 
-    info = XIQueryDevice(display, AllDevices, &ndevices);
+    info = XIQueryDevice(display, XIAllDevices, &ndevices);
     dev = info;
 
     for(i = 0; i < ndevices; i++)
     {
         dev = &info[i];
-        if (dev->use == MasterPointer || dev->use == MasterKeyboard)
+        if (dev->use == XIMasterPointer || dev->use == XIMasterKeyboard)
         {
-            if (dev->use == MasterPointer)
+            if (dev->use == XIMasterPointer)
                 printf("⎡ ");
             else
                 printf("⎣ ");
@@ -260,10 +260,10 @@ list_xi2(Display	*display,
             {
                 XIDeviceInfo* sd = &info[j];
 
-                if ((sd->use == SlavePointer || sd->use == SlaveKeyboard) &&
+                if ((sd->use == XISlavePointer || sd->use == XISlaveKeyboard) &&
                      (sd->attachment == dev->deviceid))
                 {
-                    printf("%s   ↳ ", dev->use == MasterPointer ? "⎜" : " ");
+                    printf("%s   ↳ ", dev->use == XIMasterPointer ? "⎜" : " ");
                     print_info_xi2(display, sd, shortformat);
                 }
             }

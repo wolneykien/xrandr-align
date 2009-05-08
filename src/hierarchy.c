@@ -48,7 +48,7 @@ create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
         return EXIT_FAILURE;
     }
 
-    c.type = CH_CreateMasterDevice;
+    c.type = XICreateMasterDevice;
     c.name = argv[0];
     c.sendCore = (argc >= 2) ? atoi(argv[1]) : 1;
     c.enable = (argc >= 3) ? atoi(argv[2]) : 1;
@@ -81,20 +81,20 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 	return EXIT_FAILURE;
     }
 
-    r.type = CH_RemoveMasterDevice;
+    r.type = XIRemoveMasterDevice;
     r.device = info->deviceid;
     if (argc >= 2)
     {
         if (!strcmp(argv[1], "Floating"))
-            r.returnMode = Floating;
+            r.returnMode = XIFloating;
         else if (!strcmp(argv[1], "AttachToMaster"))
-            r.returnMode = AttachToMaster;
+            r.returnMode = XIAttachToMaster;
         else
             Error(BadValue, "Invalid returnMode.\n");
     } else
-        r.returnMode = Floating;
+        r.returnMode = XIFloating;
 
-    if (r.returnMode == AttachToMaster)
+    if (r.returnMode == XIAttachToMaster)
     {
         r.returnPointer = atoi(argv[2]);
         r.returnKeyboard = atoi(argv[3]);
@@ -133,7 +133,7 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
 	return EXIT_FAILURE;
     }
 
-    c.type = CH_AttachSlave;
+    c.type = XIAttachSlave;
     c.device = sd_info->deviceid;
     c.newMaster = md_info->deviceid;
 
@@ -164,7 +164,7 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
 	return EXIT_FAILURE;
     }
 
-    c.type = CH_DetachSlave;
+    c.type = XIDetachSlave;
     c.device = info->deviceid;
 
     ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);

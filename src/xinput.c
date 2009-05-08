@@ -222,7 +222,7 @@ xi2_find_device_info(Display *display, char *name)
 	id = atoi(name);
     }
 
-    info = XIQueryDevice(display, AllDevices, &ndevices);
+    info = XIQueryDevice(display, XIAllDevices, &ndevices);
     for(i = 0; i < ndevices; i++)
     {
         if ((is_id && info[i].deviceid == id) ||
