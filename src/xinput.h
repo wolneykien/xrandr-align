@@ -41,7 +41,6 @@
 #define EXIT_FAILURE 0
 #endif
 
-
 XDeviceInfo* find_device_info( Display *display, char *name, Bool only_extended);
 #if HAVE_XI2
 XIDeviceInfo* xi2_find_device_info(Display *display, char *name);
