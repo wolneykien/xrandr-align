@@ -21,8 +21,8 @@ XORG_CWARNFLAGS
 PKG_CHECK_MODULES(XINPUT, x11 xext [xi >= 1.2] [inputproto >= 1.5])
 
 # XI2 support
-PKG_CHECK_MODULES(XI2, [xi >= 1.2.99],
-                  HAVE_XI2="yes"; AC_DEFINE(HAVE_XI2, 1, "foo"),
+PKG_CHECK_MODULES(XI2, [xi >= 1.2.99] [inputproto >= 1.9.99.9],
+                  HAVE_XI2="yes"; AC_DEFINE(HAVE_XI2, 1, [XI2 available]),
                   HAVE_XI2="no");
 AM_CONDITIONAL(HAVE_XI2, [ test "$HAVE_XI2" = "yes" ])
 

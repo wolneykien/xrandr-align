@@ -89,15 +89,16 @@ static void print_devicechangedevent(Display *dpy, XIDeviceChangedEvent *event)
     print_classes_xi2(dpy, event->classes, event->num_classes);
 }
 
-static void print_hierarchychangedevent(XIDeviceHierarchyEvent *event)
+static void print_hierarchychangedevent(XIHierarchyEvent *event)
 {
     int i;
-    printf("    Changes happened: %s %s %s %s %s %s %s\n",
+    printf("    Changes happened: %s %s %s %s %s %s %s %s\n",
             (event->flags & XIMasterAdded) ? "[new master]" : "",
             (event->flags & XIMasterRemoved) ? "[master removed]" : "",
             (event->flags & XISlaveAdded) ? "[new slave]" : "",
             (event->flags & XISlaveRemoved) ? "[slave removed]" : "",
             (event->flags & XISlaveAttached) ? "[slave attached]" : "",
+            (event->flags & XISlaveDetached) ? "[slave detached]" : "",
             (event->flags & XIDeviceEnabled) ? "[device enabled]" : "",
             (event->flags & XIDeviceDisabled) ? "[device disabled]" : "");
 
@@ -119,10 +120,22 @@ static void print_hierarchychangedevent(XIDeviceHierarchyEvent *event)
                 use,
                 event->info[i].attachment,
                 (event->info[i].enabled) ? "enabled" : "disabled");
+        if (event->info[i].flags)
+        {
+            printf("    changes: %s %s %s %s %s %s %s %s\n",
+                    (event->info[i].flags & XIMasterAdded) ? "[new master]" : "",
+                    (event->info[i].flags & XIMasterRemoved) ? "[master removed]" : "",
+                    (event->info[i].flags & XISlaveAdded) ? "[new slave]" : "",
+                    (event->info[i].flags & XISlaveRemoved) ? "[slave removed]" : "",
+                    (event->info[i].flags & XISlaveAttached) ? "[slave attached]" : "",
+                    (event->info[i].flags & XISlaveDetached) ? "[slave detached]" : "",
+                    (event->info[i].flags & XIDeviceEnabled) ? "[device enabled]" : "",
+                    (event->info[i].flags & XIDeviceDisabled) ? "[device disabled]" : "");
+        }
     }
 }
 
-static void print_rawevent(XIRawDeviceEvent *event)
+static void print_rawevent(XIRawEvent *event)
 {
     int i;
     double *val, *raw_val;
@@ -205,7 +218,7 @@ test_sync_grab(Display *display, Window win)
 {
     int loop = 3;
     int rc;
-    XIDeviceEventMask mask;
+    XIEventMask mask;
 
     /* Select for motion events */
     mask.deviceid = XIAllDevices;
@@ -252,7 +265,7 @@ test_xi2(Display	*display,
          char	*name,
          char	*desc)
 {
-    XIDeviceEventMask mask;
+    XIEventMask mask;
     Window win;
 
     list(display, argc, argv, name, desc);
@@ -276,7 +289,7 @@ test_xi2(Display	*display,
     SetBit(mask.mask, XI_FocusOut);
     SetBit(mask.mask, XI_HierarchyChanged);
     SetBit(mask.mask, XI_PropertyEvent);
-    XISelectEvent(display, win, &mask, 1);
+    XISelectEvents(display, win, &mask, 1);
     XSync(display, False);
 
     {
@@ -300,7 +313,7 @@ test_xi2(Display	*display,
     mask.deviceid = XIAllMasterDevices;
     memset(mask.mask, 0, 2);
     SetBit(mask.mask, XI_RawEvent);
-    XISelectEvent(display, DefaultRootWindow(display), &mask, 1);
+    XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
 
     free(mask.mask);
 
@@ -330,10 +343,10 @@ test_xi2(Display	*display,
                                              (XIDeviceChangedEvent*)event);
                     break;
                 case XI_HierarchyChanged:
-                    print_hierarchychangedevent((XIDeviceHierarchyEvent*)event);
+                    print_hierarchychangedevent((XIHierarchyEvent*)event);
                     break;
                 case XI_RawEvent:
-                    print_rawevent((XIRawDeviceEvent*)event);
+                    print_rawevent((XIRawEvent*)event);
                     break;
                 case XI_Enter:
                 case XI_Leave:

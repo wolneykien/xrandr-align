@@ -48,12 +48,12 @@ create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
         return EXIT_FAILURE;
     }
 
-    c.type = XICreateMasterDevice;
+    c.type = XICreateMaster;
     c.name = argv[0];
     c.sendCore = (argc >= 2) ? atoi(argv[1]) : 1;
     c.enable = (argc >= 3) ? atoi(argv[2]) : 1;
 
-    return XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
+    return XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
 }
 
 /**
@@ -81,7 +81,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 	return EXIT_FAILURE;
     }
 
-    r.type = XIRemoveMasterDevice;
+    r.type = XIRemoveMaster;
     r.device = info->deviceid;
     if (argc >= 2)
     {
@@ -100,7 +100,7 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
         r.returnKeyboard = atoi(argv[3]);
     }
 
-    ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&r, 1);
+    ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&r, 1);
     return ret;
 }
 
@@ -137,7 +137,7 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
     c.device = sd_info->deviceid;
     c.newMaster = md_info->deviceid;
 
-    ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
+    ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;
 }
 
@@ -167,7 +167,7 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
     c.type = XIDetachSlave;
     c.device = info->deviceid;
 
-    ret = XIChangeDeviceHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
+    ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;
 }
 
