@@ -1,26 +1,26 @@
 Name: xinput
-Version: 1.3.0
+Version: 1.4.2
 Release: alt1
-
 Summary: utility to configure and test XInput devices
 License: MIT/X11
 Group: System/X11
-
 Url: http://xorg.freedesktop.org
-Source: %name-%version.tar.bz2
+Packager: Valery Inozemtsev <shrek@altlinux.ru>
 
-Packager: XOrg Maintainer Team <xorg@packages.altlinux.org>
+Source: %name-%version.tar
+Patch: %name-%version-%release.patch
 
-BuildRequires: libX11-devel libXext-devel libXi-devel xorg-x11-util-macros
+BuildRequires: libX11-devel libXext-devel libXi-devel xorg-util-macros
 
 %description
 xinput - utility to configure and test XInput devices
 
 %prep
 %setup -q
+%patch -p1
 
 %build
-%__autoreconf
+%autoreconf
 %configure
 
 %make_build
@@ -33,5 +33,8 @@ xinput - utility to configure and test XInput devices
 %_man1dir/*
 
 %changelog
+* Thu May 14 2009 Valery Inozemtsev <shrek@altlinux.ru> 1.4.2-alt1
+- 1.4.2
+
 * Thu Dec 20 2007 Valery Inozemtsev <shrek@altlinux.ru> 1.3.0-alt1
 - initial release
