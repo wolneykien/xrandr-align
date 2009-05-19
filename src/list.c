@@ -270,6 +270,16 @@ list_xi2(Display	*display,
         }
     }
 
+    for (i = 0; i < ndevices; i++)
+    {
+        dev = &info[i];
+        if (dev->use == XIFloatingSlave)
+        {
+            printf("∼ ");
+            print_info_xi2(display, dev, shortformat);
+        }
+    }
+
 
     XIFreeDeviceInfo(info);
     return EXIT_SUCCESS;
