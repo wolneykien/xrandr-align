@@ -649,7 +649,13 @@ print_property_xi2(Display *dpy, int deviceid, Atom property)
                                                   the terminating 0 */
                     break;
                 case XA_ATOM:
-                    printf("\"%s\"", XGetAtomName(dpy, *(Atom*)ptr));
+                    {
+                        Atom a = *(Atom*)ptr;
+                        printf("\"%s\" (%d)",
+                                (a) ? XGetAtomName(dpy, a) : "None",
+                                (int)a);
+                        break;
+                    }
                     break;
                 default:
                     if (float_atom != None && act_type == float_atom)
