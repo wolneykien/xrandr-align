@@ -620,6 +620,9 @@ print_property_xi2(Display *dpy, int deviceid, Atom property)
 
         ptr = data;
 
+        if (nitems == 0)
+            printf("<no items>");
+
         for (j = 0; j < nitems; j++)
         {
             switch(act_type)
