@@ -72,6 +72,9 @@ print_property(Display *dpy, XDevice* dev, Atom property)
 
         ptr = data;
 
+        if (nitems == 0)
+            printf("<no items>");
+
         switch(act_format)
         {
             case 8: size = sizeof(char); break;
