@@ -243,7 +243,6 @@ list_xi2(Display	*display,
     }
 
     info = XIQueryDevice(display, XIAllDevices, &ndevices);
-    dev = info;
 
     for(i = 0; i < ndevices; i++)
     {
