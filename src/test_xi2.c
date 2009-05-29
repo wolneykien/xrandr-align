@@ -293,7 +293,7 @@ test_xi2(Display	*display,
     XSync(display, False);
 
     {
-        int modifiers[] = {0, 0x10, 0x1, 0x11};
+        XIGrabModifiers modifiers[] = {{0, 0}, {0, 0x10}, {0, 0x1}, {0, 0x11}};
         int nmods = sizeof(modifiers)/sizeof(modifiers[0]);
 
         mask.deviceid = 2;
