@@ -107,9 +107,9 @@ static void print_hierarchychangedevent(XIHierarchyEvent *event)
         char *use;
         switch(event->info[i].use)
         {
-            case XIMasterPointer: use = "master pointer";
+            case XIMasterPointer: use = "master pointer"; break;
             case XIMasterKeyboard: use = "master keyboard"; break;
-            case XISlavePointer: use = "slave pointer";
+            case XISlavePointer: use = "slave pointer"; break;
             case XISlaveKeyboard: use = "slave keyboard"; break;
             case XIFloatingSlave: use = "floating slave"; break;
                 break;
