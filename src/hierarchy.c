@@ -40,7 +40,7 @@
 int
 create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
 {
-    XICreateMasterInfo c;
+    XIAddMasterInfo c;
 
     if (argc == 0)
     {
@@ -48,9 +48,9 @@ create_master(Display* dpy, int argc, char** argv, char* name, char *desc)
         return EXIT_FAILURE;
     }
 
-    c.type = XICreateMaster;
+    c.type = XIAddMaster;
     c.name = argv[0];
-    c.sendCore = (argc >= 2) ? atoi(argv[1]) : 1;
+    c.send_core = (argc >= 2) ? atoi(argv[1]) : 1;
     c.enable = (argc >= 3) ? atoi(argv[2]) : 1;
 
     return XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
@@ -82,22 +82,22 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
     }
 
     r.type = XIRemoveMaster;
-    r.device = info->deviceid;
+    r.deviceid = info->deviceid;
     if (argc >= 2)
     {
         if (!strcmp(argv[1], "Floating"))
-            r.returnMode = XIFloating;
+            r.return_mode = XIFloating;
         else if (!strcmp(argv[1], "AttachToMaster"))
-            r.returnMode = XIAttachToMaster;
+            r.return_mode = XIAttachToMaster;
         else
-            Error(BadValue, "Invalid returnMode.\n");
+            Error(BadValue, "Invalid return_mode.\n");
     } else
-        r.returnMode = XIFloating;
+        r.return_mode = XIFloating;
 
-    if (r.returnMode == XIAttachToMaster)
+    if (r.return_mode == XIAttachToMaster)
     {
-        r.returnPointer = atoi(argv[2]);
-        r.returnKeyboard = atoi(argv[3]);
+        r.return_pointer = atoi(argv[2]);
+        r.return_keyboard = atoi(argv[3]);
     }
 
     ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&r, 1);
@@ -134,8 +134,8 @@ change_attachment(Display* dpy, int argc, char** argv, char *name, char* desc)
     }
 
     c.type = XIAttachSlave;
-    c.device = sd_info->deviceid;
-    c.newMaster = md_info->deviceid;
+    c.deviceid = sd_info->deviceid;
+    c.new_master = md_info->deviceid;
 
     ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;
@@ -165,7 +165,7 @@ float_device(Display* dpy, int argc, char** argv, char* name, char* desc)
     }
 
     c.type = XIDetachSlave;
-    c.device = info->deviceid;
+    c.deviceid = info->deviceid;
 
     ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
     return ret;

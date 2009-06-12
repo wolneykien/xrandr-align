@@ -102,7 +102,7 @@ static void print_hierarchychangedevent(XIHierarchyEvent *event)
             (event->flags & XIDeviceEnabled) ? "[device enabled]" : "",
             (event->flags & XIDeviceDisabled) ? "[device disabled]" : "");
 
-    for (i = 0; i < event->num_devices; i++)
+    for (i = 0; i < event->num_info; i++)
     {
         char *use;
         switch(event->info[i].use)
