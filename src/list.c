@@ -157,20 +157,20 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
     {
         switch(classes[i]->type)
         {
-            case ButtonClass:
+            case XIButtonClass:
                 {
                     XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
                     printf("\t\tButtons supported: %d\n", b->num_buttons);
 
                 }
                 break;
-            case KeyClass:
+            case XIKeyClass:
                 {
                     XIKeyClassInfo *k = (XIKeyClassInfo*)classes[i];
                     printf("\t\tKeycodes supported: %d\n", k->num_keycodes);
                 }
                 break;
-            case ValuatorClass:
+            case XIValuatorClass:
                 {
                     XIValuatorClassInfo *v = (XIValuatorClassInfo*)classes[i];
                     printf("\t\tDetail for Valuator %d:\n", v->number);
