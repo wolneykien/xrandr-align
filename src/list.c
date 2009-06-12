@@ -155,6 +155,7 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
     printf("\tReporting %d classes:\n", num_classes);
     for (i = 0; i < num_classes; i++)
     {
+        printf("\t\tClass originated from: %d\n", classes[i]->sourceid);
         switch(classes[i]->type)
         {
             case XIButtonClass:
