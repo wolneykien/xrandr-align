@@ -96,8 +96,42 @@ remove_master(Display* dpy, int argc, char** argv, char *name, char *desc)
 
     if (r.return_mode == XIAttachToMaster)
     {
-        r.return_pointer = atoi(argv[2]);
-        r.return_keyboard = atoi(argv[3]);
+        r.return_pointer = 0;
+        if (argc >= 3) {
+            info = xi2_find_device_info(dpy, argv[2]);
+            if (!info) {
+                fprintf(stderr, "unable to find device %s\n", argv[2]);
+                return EXIT_FAILURE;
+            }
+
+            r.return_pointer = info->deviceid;
+        }
+
+        r.return_keyboard = 0;
+        if (argc >= 4) {
+            info = xi2_find_device_info(dpy, argv[3]);
+            if (!info) {
+                fprintf(stderr, "unable to find device %s\n", argv[3]);
+                return EXIT_FAILURE;
+            }
+
+            r.return_keyboard = info->deviceid;
+        }
+
+        if (!r.return_pointer || !r.return_keyboard) {
+            int i, ndevices;
+            info = XIQueryDevice(dpy, XIAllMasterDevices, &ndevices);
+            for(i = 0; i < ndevices; i++) {
+                if (info[i].use == XIMasterPointer && !r.return_pointer)
+                    r.return_pointer = info[i].deviceid;
+                if (info[i].use == XIMasterKeyboard && !r.return_keyboard)
+                    r.return_keyboard = info[i].deviceid;
+                if (r.return_pointer && r.return_keyboard)
+                    break;
+            }
+
+            XIFreeDeviceInfo(info);
+        }
     }
 
     ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&r, 1);
