@@ -150,7 +150,7 @@ void
 print_classes_xi2(Display* display, XIAnyClassInfo **classes,
                   int num_classes)
 {
-    int i;
+    int i, j;
 
     printf("\tReporting %d classes:\n", num_classes);
     for (i = 0; i < num_classes; i++)
@@ -162,6 +162,11 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
                 {
                     XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
                     printf("\t\tButtons supported: %d\n", b->num_buttons);
+                    printf("\t\tButton state:");
+                    for (j = 0; j < b->state.mask_len * 8; j++)
+                        if (XIMaskIsSet(b->state.mask, j))
+                            printf(" %d", j);
+                    printf("\n");
 
                 }
                 break;
