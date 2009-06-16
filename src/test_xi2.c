@@ -29,9 +29,6 @@
 extern void print_classes_xi2(Display*, XIAnyClassInfo **classes,
                               int num_classes);
 
-#define BitIsOn(ptr, bit) (((unsigned char *) (ptr))[(bit)>>3] & (1 << ((bit) & 7)))
-#define SetBit(ptr, bit)  (((unsigned char *) (ptr))[(bit)>>3] |= (1 << ((bit) & 7)))
-
 static Window create_win(Display *dpy)
 {
     Window win = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, 200,
@@ -59,7 +56,7 @@ static void print_deviceevent(XIDeviceEvent* event)
 
     printf("    buttons:");
     for (i = 0; i < event->buttons->mask_len * 8; i++)
-        if (BitIsOn(event->buttons->mask, i))
+        if (XIMaskIsSet(event->buttons->mask, i))
             printf(" %d", i);
     printf("\n");
 
@@ -73,7 +70,7 @@ static void print_deviceevent(XIDeviceEvent* event)
 
     val = event->valuators->values;
     for (i = 0; i < event->valuators->mask_len * 8; i++)
-        if (BitIsOn(event->valuators->mask, i))
+        if (XIMaskIsSet(event->valuators->mask, i))
             printf(" %.2f", *val++);
     printf("\n");
 
@@ -147,7 +144,7 @@ static void print_rawevent(XIRawEvent *event)
     val = event->valuators->values;
     raw_val = event->raw_values;
     for (i = 0; i < event->valuators->mask_len * 8; i++)
-        if (BitIsOn(event->valuators->mask, i))
+        if (XIMaskIsSet(event->valuators->mask, i))
             printf("         %2d: %.2f (%.2f)\n", i, *val++, *raw_val++);
     printf("\n");
 }
@@ -182,7 +179,7 @@ static void print_enterleave(XILeaveEvent* event)
                                  event->same_screen ? "[same screen]" : "");
     printf("    buttons:");
     for (i = 0; i < event->buttons->mask_len * 8; i++)
-        if (BitIsOn(event->buttons->mask, i))
+        if (XIMaskIsSet(event->buttons->mask, i))
             printf(" %d", i);
     printf("\n");
 
@@ -224,7 +221,7 @@ test_sync_grab(Display *display, Window win)
     mask.deviceid = XIAllDevices;
     mask.mask_len = 2;
     mask.mask = calloc(2, sizeof(char));
-    SetBit(mask.mask, XI_ButtonPress);
+    XISetMask(mask.mask, XI_ButtonPress);
 
     if ((rc = XIGrabDevice(display, 2,  win, CurrentTime, None, GrabModeSync,
                            GrabModeAsync, False, &mask)) != GrabSuccess)
@@ -277,18 +274,18 @@ test_xi2(Display	*display,
     mask.deviceid = XIAllDevices;
     mask.mask_len = 2;
     mask.mask = calloc(mask.mask_len, sizeof(char));
-    SetBit(mask.mask, XI_ButtonPress);
-    SetBit(mask.mask, XI_ButtonRelease);
-    SetBit(mask.mask, XI_KeyPress);
-    SetBit(mask.mask, XI_KeyRelease);
-    SetBit(mask.mask, XI_Motion);
-    SetBit(mask.mask, XI_DeviceChanged);
-    SetBit(mask.mask, XI_Enter);
-    SetBit(mask.mask, XI_Leave);
-    SetBit(mask.mask, XI_FocusIn);
-    SetBit(mask.mask, XI_FocusOut);
-    SetBit(mask.mask, XI_HierarchyChanged);
-    SetBit(mask.mask, XI_PropertyEvent);
+    XISetMask(mask.mask, XI_ButtonPress);
+    XISetMask(mask.mask, XI_ButtonRelease);
+    XISetMask(mask.mask, XI_KeyPress);
+    XISetMask(mask.mask, XI_KeyRelease);
+    XISetMask(mask.mask, XI_Motion);
+    XISetMask(mask.mask, XI_DeviceChanged);
+    XISetMask(mask.mask, XI_Enter);
+    XISetMask(mask.mask, XI_Leave);
+    XISetMask(mask.mask, XI_FocusIn);
+    XISetMask(mask.mask, XI_FocusOut);
+    XISetMask(mask.mask, XI_HierarchyChanged);
+    XISetMask(mask.mask, XI_PropertyEvent);
     XISelectEvents(display, win, &mask, 1);
     XSync(display, False);
 
@@ -298,10 +295,10 @@ test_xi2(Display	*display,
 
         mask.deviceid = 2;
         memset(mask.mask, 0, 2);
-        SetBit(mask.mask, XI_KeyPress);
-        SetBit(mask.mask, XI_KeyRelease);
-        SetBit(mask.mask, XI_ButtonPress);
-        SetBit(mask.mask, XI_Motion);
+        XISetMask(mask.mask, XI_KeyPress);
+        XISetMask(mask.mask, XI_KeyRelease);
+        XISetMask(mask.mask, XI_ButtonPress);
+        XISetMask(mask.mask, XI_Motion);
         XIGrabButton(display, 2, 1, win, None, GrabModeAsync, GrabModeAsync,
                 False, &mask, nmods, modifiers);
         XIGrabKeysym(display, 3, 0x71, win, GrabModeAsync, GrabModeAsync,
@@ -312,7 +309,7 @@ test_xi2(Display	*display,
 
     mask.deviceid = XIAllMasterDevices;
     memset(mask.mask, 0, 2);
-    SetBit(mask.mask, XI_RawEvent);
+    XISetMask(mask.mask, XI_RawEvent);
     XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
 
     free(mask.mask);
