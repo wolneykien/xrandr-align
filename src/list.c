@@ -162,6 +162,10 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
                 {
                     XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
                     printf("\t\tButtons supported: %d\n", b->num_buttons);
+                    printf("\t\tButton labels:");
+                    for (j = 0; j < b->num_buttons; j++)
+                        printf(" %s", (b->labels[j]) ? XGetAtomName(display, b->labels[j]) : "None");
+                    printf("\n");
                     printf("\t\tButton state:");
                     for (j = 0; j < b->state.mask_len * 8; j++)
                         if (XIMaskIsSet(b->state.mask, j))
@@ -180,7 +184,7 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
                 {
                     XIValuatorClassInfo *v = (XIValuatorClassInfo*)classes[i];
                     printf("\t\tDetail for Valuator %d:\n", v->number);
-                    printf("\t\t  Name: %s\n", XGetAtomName(display, v->name));
+                    printf("\t\t  Label: %s\n", v->label ?  XGetAtomName(display, v->label) : "None");
                     printf("\t\t  Range: %f - %f\n", v->min, v->max);
                     printf("\t\t  Resolution: %d units/m\n", v->resolution);
                     printf("\t\t  Mode: %s\n", v->mode == Absolute ? "absolute" :
