@@ -189,6 +189,8 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
                     printf("\t\t  Resolution: %d units/m\n", v->resolution);
                     printf("\t\t  Mode: %s\n", v->mode == Absolute ? "absolute" :
                             "relative");
+                    if (v->mode == Absolute)
+                        printf("\t\t  Current value: %f\n", v->value);
                 }
                 break;
         }
