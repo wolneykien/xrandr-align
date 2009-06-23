@@ -83,11 +83,11 @@ static entry drivers[] =
     },
 #if HAVE_XI2
     { "create-master",
-      "<id> [sendCore (dflt:1)] [enable (dflt:1)]",
+      "<id> [<sendCore (dflt:1)>] [<enable (dflt:1)>]",
       create_master
     },
     { "remove-master",
-      "<id> [returnMode (dflt:Floating)] [returnPointer] [returnKeyboard]",
+      "<id> [<returnMode (dflt:Floating)>] [<returnPointer>] [<returnKeyboard>]",
       remove_master
     },
     { "reattach",
