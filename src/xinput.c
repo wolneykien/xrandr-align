@@ -87,7 +87,7 @@ static entry drivers[] =
       create_master
     },
     { "remove-master",
-      "<id> [<returnMode (dflt:Floating)>] [<returnPointer>] [<returnKeyboard>]",
+      "<id> [Floating|AttachToMaster (dflt:Floating)] [<returnPointer>] [<returnKeyboard>]",
       remove_master
     },
     { "reattach",
