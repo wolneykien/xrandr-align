@@ -60,10 +60,10 @@ static void print_deviceevent(XIDeviceEvent* event)
             printf(" %d", i);
     printf("\n");
 
-    printf("    modifiers: locked 0x%x latched 0x%x base 0x%x\n",
+    printf("    modifiers: locked %#x latched %#x base %#x\n",
             event->mods->locked, event->mods->latched,
             event->mods->base);
-    printf("    group: locked 0x%x latched 0x%x base 0x%x\n",
+    printf("    group: locked %#x latched %#x base %#x\n",
             event->group->locked, event->group->latched,
             event->group->base);
     printf("    valuators:");
@@ -183,10 +183,10 @@ static void print_enterleave(XILeaveEvent* event)
             printf(" %d", i);
     printf("\n");
 
-    printf("    modifiers: locked 0x%x latched 0x%x base 0x%x\n",
+    printf("    modifiers: locked %#x latched %#x base %#x\n",
             event->mods->locked, event->mods->latched,
             event->mods->base);
-    printf("    group: locked 0x%x latched 0x%x base 0x%x\n",
+    printf("    group: locked %#x latched %#x base %#x\n",
             event->group->locked, event->group->latched,
             event->group->base);
 
