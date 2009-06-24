@@ -36,10 +36,8 @@ static Window create_win(Display *dpy)
     Window subwindow = XCreateSimpleWindow(dpy, win, 50, 50, 50, 50, 0, 0,
             BlackPixel(dpy, 0));
 
-    XSelectInput(dpy, win, ExposureMask);
     XMapWindow(dpy, subwindow);
-    XMapWindow(dpy, win);
-    XFlush(dpy);
+    XSelectInput(dpy, win, ExposureMask);
     return win;
 }
 
@@ -268,8 +266,6 @@ test_xi2(Display	*display,
     list(display, argc, argv, name, desc);
     win = create_win(display);
 
-    XSync(display, False);
-
     /* Select for motion events */
     mask.deviceid = XIAllDevices;
     mask.mask_len = 2;
@@ -287,6 +283,7 @@ test_xi2(Display	*display,
     XISetMask(mask.mask, XI_HierarchyChanged);
     XISetMask(mask.mask, XI_PropertyEvent);
     XISelectEvents(display, win, &mask, 1);
+    XMapWindow(display, win);
     XSync(display, False);
 
     {
