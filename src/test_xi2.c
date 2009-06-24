@@ -240,7 +240,7 @@ test_sync_grab(Display *display, Window win)
         XIEvent ev;
 
         XNextEvent(display, (XEvent*)&ev);
-        if (ev.type == GenericEvent)
+        if (ev.type == GenericEvent && ev.extension == xi_opcode )
         {
             XIDeviceEvent *event = (XIDeviceEvent*)&ev;
             print_deviceevent(event);
@@ -325,7 +325,7 @@ test_xi2(Display	*display,
     {
         XIEvent ev;
         XNextEvent(display, (XEvent*)&ev);
-        if (ev.type == GenericEvent)
+        if (ev.type == GenericEvent && ev.extension == xi_opcode)
         {
             XIDeviceEvent *event = (XIDeviceEvent*)&ev;
 

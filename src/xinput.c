@@ -25,6 +25,8 @@
 #include <ctype.h>
 #include <string.h>
 
+int xi_opcode;
+
 typedef int (*prog)(Display* display, int argc, char *argv[],
 		    char *prog_name, char *prog_desc);
 
@@ -257,6 +259,7 @@ main(int argc, char * argv[])
     Display	*display;
     entry	*driver = drivers;
     char        *func;
+    int event, error;
 
     if (argc < 2) {
 	usage();
@@ -268,6 +271,11 @@ main(int argc, char * argv[])
     if (display == NULL) {
 	fprintf(stderr, "Unable to connect to X server\n");
 	return EXIT_FAILURE;
+    }
+
+    if (!XQueryExtension(display, "XInputExtension", &xi_opcode, &event, &error)) {
+        printf("X Input extension not available.\n");
+        return EXIT_FAILURE;
     }
 
     func = argv[1];
