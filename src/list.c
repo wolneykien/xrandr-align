@@ -161,10 +161,15 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
             case XIButtonClass:
                 {
                     XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
+                    char *name;
                     printf("\t\tButtons supported: %d\n", b->num_buttons);
                     printf("\t\tButton labels:");
                     for (j = 0; j < b->num_buttons; j++)
-                        printf(" %s", (b->labels[j]) ? XGetAtomName(display, b->labels[j]) : "None");
+                    {
+                        name = (b->labels[j]) ? XGetAtomName(display, b->labels[j]) : NULL;
+                        printf(" %s", (name) ? name : "None");
+                        XFree(name);
+                    }
                     printf("\n");
                     printf("\t\tButton state:");
                     for (j = 0; j < b->state.mask_len * 8; j++)
@@ -183,14 +188,17 @@ print_classes_xi2(Display* display, XIAnyClassInfo **classes,
             case XIValuatorClass:
                 {
                     XIValuatorClassInfo *v = (XIValuatorClassInfo*)classes[i];
+                    char *name = v->label ?  XGetAtomName(display, v->label) : NULL;
+
                     printf("\t\tDetail for Valuator %d:\n", v->number);
-                    printf("\t\t  Label: %s\n", v->label ?  XGetAtomName(display, v->label) : "None");
+                    printf("\t\t  Label: %s\n",  (name) ? name : "None");
                     printf("\t\t  Range: %f - %f\n", v->min, v->max);
                     printf("\t\t  Resolution: %d units/m\n", v->resolution);
                     printf("\t\t  Mode: %s\n", v->mode == Absolute ? "absolute" :
                             "relative");
                     if (v->mode == Absolute)
                         printf("\t\t  Current value: %f\n", v->value);
+                    XFree(name);
                 }
                 break;
         }
