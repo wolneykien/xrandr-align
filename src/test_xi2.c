@@ -53,22 +53,22 @@ static void print_deviceevent(XIDeviceEvent* event)
     printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
 
     printf("    buttons:");
-    for (i = 0; i < event->buttons->mask_len * 8; i++)
-        if (XIMaskIsSet(event->buttons->mask, i))
+    for (i = 0; i < event->buttons.mask_len * 8; i++)
+        if (XIMaskIsSet(event->buttons.mask, i))
             printf(" %d", i);
     printf("\n");
 
-    printf("    modifiers: locked %#x latched %#x base %#x\n",
-            event->mods->locked, event->mods->latched,
-            event->mods->base);
-    printf("    group: locked %#x latched %#x base %#x\n",
-            event->group->locked, event->group->latched,
-            event->group->base);
+    printf("    modifiers: locked %#x latched %#x base %#x effective: %#x\n",
+            event->mods.locked, event->mods.latched,
+            event->mods.base, event->mods.effective);
+    printf("    group: locked %#x latched %#x base %#x effective: %#x\n",
+            event->group.locked, event->group.latched,
+            event->group.base, event->group.effective);
     printf("    valuators:");
 
-    val = event->valuators->values;
-    for (i = 0; i < event->valuators->mask_len * 8; i++)
-        if (XIMaskIsSet(event->valuators->mask, i))
+    val = event->valuators.values;
+    for (i = 0; i < event->valuators.mask_len * 8; i++)
+        if (XIMaskIsSet(event->valuators.mask, i))
             printf(" %.2f", *val++);
     printf("\n");
 
@@ -139,10 +139,10 @@ static void print_rawevent(XIRawEvent *event)
     printf("    detail: %d\n", event->detail);
     printf("    valuators:\n");
 
-    val = event->valuators->values;
+    val = event->valuators.values;
     raw_val = event->raw_values;
-    for (i = 0; i < event->valuators->mask_len * 8; i++)
-        if (XIMaskIsSet(event->valuators->mask, i))
+    for (i = 0; i < event->valuators.mask_len * 8; i++)
+        if (XIMaskIsSet(event->valuators.mask, i))
             printf("         %2d: %.2f (%.2f)\n", i, *val++, *raw_val++);
     printf("\n");
 }
@@ -176,17 +176,17 @@ static void print_enterleave(XILeaveEvent* event)
     printf("    flags: %s %s\n", event->focus ? "[focus]" : "",
                                  event->same_screen ? "[same screen]" : "");
     printf("    buttons:");
-    for (i = 0; i < event->buttons->mask_len * 8; i++)
-        if (XIMaskIsSet(event->buttons->mask, i))
+    for (i = 0; i < event->buttons.mask_len * 8; i++)
+        if (XIMaskIsSet(event->buttons.mask, i))
             printf(" %d", i);
     printf("\n");
 
-    printf("    modifiers: locked %#x latched %#x base %#x\n",
-            event->mods->locked, event->mods->latched,
-            event->mods->base);
-    printf("    group: locked %#x latched %#x base %#x\n",
-            event->group->locked, event->group->latched,
-            event->group->base);
+    printf("    modifiers: locked %#x latched %#x base %#x effective: %#x\n",
+            event->mods.locked, event->mods.latched,
+            event->mods.base, event->mods.effective);
+    printf("    group: locked %#x latched %#x base %#x effective: %#x\n",
+            event->group.locked, event->group.latched,
+            event->group.base, event->group.effective);
 
     printf("    root x/y:  %.2f / %.2f\n", event->root_x, event->root_y);
     printf("    event x/y: %.2f / %.2f\n", event->event_x, event->event_y);
@@ -245,7 +245,6 @@ test_sync_grab(Display *display, Window win)
             XIDeviceEvent *event = (XIDeviceEvent*)&ev;
             print_deviceevent(event);
             XIAllowEvents(display, 2, SyncPointer, CurrentTime);
-            XIFreeEventData(&ev);
         }
     }
 
@@ -323,41 +322,42 @@ test_xi2(Display	*display,
 
     while(1)
     {
-        XIEvent ev;
+        XEvent ev;
+        XGenericEventCookie *cookie = (XGenericEventCookie*)&ev.xcookie;
         XNextEvent(display, (XEvent*)&ev);
-        if (ev.type == GenericEvent && ev.extension == xi_opcode)
-        {
-            XIDeviceEvent *event = (XIDeviceEvent*)&ev;
 
-            printf("EVENT type %d\n", event->evtype);
-            switch (event->evtype)
+        if (XGetEventData(display, cookie) &&
+            cookie->type == GenericEvent &&
+            cookie->extension == xi_opcode)
+        {
+            printf("EVENT type %d\n", cookie->evtype);
+            switch (cookie->evtype)
             {
                 case XI_DeviceChanged:
-                    print_devicechangedevent(display,
-                                             (XIDeviceChangedEvent*)event);
+                    print_devicechangedevent(display, cookie->data);
                     break;
                 case XI_HierarchyChanged:
-                    print_hierarchychangedevent((XIHierarchyEvent*)event);
+                    print_hierarchychangedevent(cookie->data);
                     break;
                 case XI_RawEvent:
-                    print_rawevent((XIRawEvent*)event);
+                    print_rawevent(cookie->data);
                     break;
                 case XI_Enter:
                 case XI_Leave:
                 case XI_FocusIn:
                 case XI_FocusOut:
-                    print_enterleave((XILeaveEvent*)event);
+                    print_enterleave(cookie->data);
                     break;
                 case XI_PropertyEvent:
-                    print_propertyevent(display, (XIPropertyEvent*)event);
+                    print_propertyevent(display, cookie->data);
                     break;
                 default:
-                    print_deviceevent(event);
+                    print_deviceevent(cookie->data);
                     break;
             }
         }
 
-        XIFreeEventData(&ev);
+        XFreeEventData(display, cookie);
     }
 
     XDestroyWindow(display, win);
