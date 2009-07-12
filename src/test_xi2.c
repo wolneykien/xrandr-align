@@ -196,6 +196,7 @@ static void print_enterleave(XILeaveEvent* event)
 static void print_propertyevent(Display *display, XIPropertyEvent* event)
 {
     char *changed;
+    char *name;
 
     if (event->what == XIPropertyDeleted)
         changed = "deleted";
@@ -203,10 +204,11 @@ static void print_propertyevent(Display *display, XIPropertyEvent* event)
         changed = "created";
     else
         changed = "modified";
-
-    printf("     property: %ld '%s'\n", event->property, XGetAtomName(display, event->property));
+    name = XGetAtomName(display, event->property);
+    printf("     property: %ld '%s'\n", event->property, name);
     printf("     changed: %s\n", changed);
 
+    XFree(name);
 }
 void
 test_sync_grab(Display *display, Window win)
