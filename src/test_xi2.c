@@ -269,7 +269,7 @@ test_xi2(Display	*display,
 
     /* Select for motion events */
     mask.deviceid = XIAllDevices;
-    mask.mask_len = 2;
+    mask.mask_len = XIMaskLen(XI_RawMotion);
     mask.mask = calloc(mask.mask_len, sizeof(char));
     XISetMask(mask.mask, XI_ButtonPress);
     XISetMask(mask.mask, XI_ButtonRelease);
@@ -296,6 +296,7 @@ test_xi2(Display	*display,
         XISetMask(mask.mask, XI_KeyPress);
         XISetMask(mask.mask, XI_KeyRelease);
         XISetMask(mask.mask, XI_ButtonPress);
+        XISetMask(mask.mask, XI_ButtonRelease);
         XISetMask(mask.mask, XI_Motion);
         XIGrabButton(display, 2, 1, win, None, GrabModeAsync, GrabModeAsync,
                 False, &mask, nmods, modifiers);
@@ -307,7 +308,11 @@ test_xi2(Display	*display,
 
     mask.deviceid = XIAllMasterDevices;
     memset(mask.mask, 0, 2);
-    XISetMask(mask.mask, XI_RawEvent);
+    XISetMask(mask.mask, XI_RawKeyPress);
+    XISetMask(mask.mask, XI_RawKeyRelease);
+    XISetMask(mask.mask, XI_RawButtonPress);
+    XISetMask(mask.mask, XI_RawButtonRelease);
+    XISetMask(mask.mask, XI_RawMotion);
     XISelectEvents(display, DefaultRootWindow(display), &mask, 1);
 
     free(mask.mask);
@@ -341,7 +346,11 @@ test_xi2(Display	*display,
                 case XI_HierarchyChanged:
                     print_hierarchychangedevent(cookie->data);
                     break;
-                case XI_RawEvent:
+                case XI_RawKeyPress:
+                case XI_RawKeyRelease:
+                case XI_RawButtonPress:
+                case XI_RawButtonRelease:
+                case XI_RawMotion:
                     print_rawevent(cookie->data);
                     break;
                 case XI_Enter:
