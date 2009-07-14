@@ -156,21 +156,21 @@ static void print_enterleave(XILeaveEvent* event)
             event->root, event->event, event->child);
     switch(event->mode)
     {
-        case NotifyNormal:       mode = "NotifyNormal"; break;
-        case NotifyGrab:         mode = "NotifyGrab"; break;
-        case NotifyUngrab:       mode = "NotifyUngrab"; break;
-        case NotifyWhileGrabbed: mode = "NotifyWhileGrabbed"; break;
+        case XINotifyNormal:       mode = "NotifyNormal"; break;
+        case XINotifyGrab:         mode = "NotifyGrab"; break;
+        case XINotifyUngrab:       mode = "NotifyUngrab"; break;
+        case XINotifyWhileGrabbed: mode = "NotifyWhileGrabbed"; break;
     }
     switch (event->detail)
     {
-        case NotifyAncestor: detail = "NotifyAncestor"; break;
-        case NotifyVirtual: detail = "NotifyVirtual"; break;
-        case NotifyInferior: detail = "NotifyInferior"; break;
-        case NotifyNonlinear: detail = "NotifyNonlinear"; break;
-        case NotifyNonlinearVirtual: detail = "NotifyNonlinearVirtual"; break;
-        case NotifyPointer: detail = "NotifyPointer"; break;
-        case NotifyPointerRoot: detail = "NotifyPointerRoot"; break;
-        case NotifyDetailNone: detail = "NotifyDetailNone"; break;
+        case XINotifyAncestor: detail = "NotifyAncestor"; break;
+        case XINotifyVirtual: detail = "NotifyVirtual"; break;
+        case XINotifyInferior: detail = "NotifyInferior"; break;
+        case XINotifyNonlinear: detail = "NotifyNonlinear"; break;
+        case XINotifyNonlinearVirtual: detail = "NotifyNonlinearVirtual"; break;
+        case XINotifyPointer: detail = "NotifyPointer"; break;
+        case XINotifyPointerRoot: detail = "NotifyPointerRoot"; break;
+        case XINotifyDetailNone: detail = "NotifyDetailNone"; break;
     }
     printf("    mode: %s (detail %s)\n", mode, detail);
     printf("    flags: %s %s\n", event->focus ? "[focus]" : "",
