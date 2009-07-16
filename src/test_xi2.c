@@ -161,6 +161,8 @@ static void print_enterleave(XILeaveEvent* event)
         case XINotifyGrab:         mode = "NotifyGrab"; break;
         case XINotifyUngrab:       mode = "NotifyUngrab"; break;
         case XINotifyWhileGrabbed: mode = "NotifyWhileGrabbed"; break;
+        case XINotifyPassiveGrab:  mode = "NotifyPassiveGrab"; break;
+        case XINotifyPassiveUngrab:mode = "NotifyPassiveUngrab"; break;
     }
     switch (event->detail)
     {
