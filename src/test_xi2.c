@@ -303,10 +303,10 @@ test_xi2(Display	*display,
         XISetMask(mask.mask, XI_Motion);
         XIGrabButton(display, 2, 1, win, None, GrabModeAsync, GrabModeAsync,
                 False, &mask, nmods, modifiers);
-        XIGrabKeysym(display, 3, 0x71, win, GrabModeAsync, GrabModeAsync,
+        XIGrabKeycode(display, 3, 24 /* q */, win, GrabModeAsync, GrabModeAsync,
                 False, &mask, nmods, modifiers);
         XIUngrabButton(display, 3, 1, win, nmods - 2, &modifiers[2]);
-        XIUngrabKeysym(display, 3, 0x71, win, nmods - 2, &modifiers[2]);
+        XIUngrabKeycode(display, 3, 24 /* q */, win, nmods - 2, &modifiers[2]);
     }
 
     mask.deviceid = XIAllMasterDevices;
