@@ -48,6 +48,7 @@ static void print_deviceevent(XIDeviceEvent* event)
 
     printf("    device: %d (%d)\n", event->deviceid, event->sourceid);
     printf("    detail: %d\n", event->detail);
+    printf("    flags: %s\n", (event->flags & XIKeyRepeat) ? "repeat" : "");
 
     printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
     printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
