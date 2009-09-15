@@ -198,144 +198,6 @@ list_props_xi1(Display *dpy, int argc, char** argv, char* name, char *desc)
     return EXIT_SUCCESS;
 }
 
-int
-set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
-{
-    XDeviceInfo *info;
-    XDevice     *dev;
-    Atom         prop;
-    char        *name;
-    int          i;
-    char        *data;
-    int          format, nelements =  0;
-
-    if (argc < 3)
-    {
-        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
-        return EXIT_FAILURE;
-    }
-
-    info = find_device_info(dpy, argv[0], False);
-    if (!info)
-    {
-        fprintf(stderr, "unable to find device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    dev = XOpenDevice(dpy, info->id);
-    if (!dev)
-    {
-        fprintf(stderr, "unable to open device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    name = argv[1];
-
-    prop = parse_atom(dpy, name);
-
-    nelements = argc - 3;
-    format    = atoi(argv[2]);
-    if (format != 8 && format != 16 && format != 32)
-    {
-        fprintf(stderr, "Invalid format %d\n", format);
-        return EXIT_FAILURE;
-    }
-
-    data = calloc(nelements, sizeof(long));
-    for (i = 0; i < nelements; i++)
-    {
-        switch(format)
-        {
-            case 8:
-                *(((char*)data) + i) = atoi(argv[3 + i]);
-                break;
-            case 16:
-                *(((short*)data) + i) = atoi(argv[3 + i]);
-                break;
-            case 32:
-                *(((long*)data) + i) = atoi(argv[3 + i]);
-                break;
-        }
-    }
-
-    XChangeDeviceProperty(dpy, dev, prop, XA_INTEGER, format, PropModeReplace,
-                          (unsigned char*)data, nelements);
-
-    free(data);
-    XCloseDevice(dpy, dev);
-    return EXIT_SUCCESS;
-}
-
-int
-set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
-{
-    XDeviceInfo *info;
-    XDevice     *dev;
-    Atom         prop, float_atom;
-    char        *name;
-    int          i;
-    long        *data;
-    int          nelements =  0;
-    char*        endptr;
-
-    if (argc < 2)
-    {
-        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
-        return EXIT_FAILURE;
-    }
-
-    info = find_device_info(dpy, argv[0], False);
-    if (!info)
-    {
-        fprintf(stderr, "unable to find device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    dev = XOpenDevice(dpy, info->id);
-    if (!dev)
-    {
-        fprintf(stderr, "unable to open device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    name = argv[1];
-
-    prop = parse_atom(dpy, name);
-
-    nelements = argc - 2;
-
-    float_atom = XInternAtom(dpy, "FLOAT", False);
-
-    if (float_atom == (Atom)0)
-    {
-	fprintf(stderr, "no FLOAT atom present in server\n");
-	return EXIT_FAILURE;
-    }
-
-    if (sizeof(float) != 4)
-    {
-	fprintf(stderr, "sane FP required\n");
-	return EXIT_FAILURE;
-    }
-
-    data = calloc(nelements, sizeof(long));
-    for (i = 0; i < nelements; i++)
-    {
-        *((float*)(data + i)) = strtod(argv[2 + i], &endptr);
-	if(endptr == argv[2 + i]){
-	    fprintf(stderr, "argument %s could not be parsed\n", argv[2 + i]);
-	    return EXIT_FAILURE;
-	}
-    }
-
-    XChangeDeviceProperty(dpy, dev, prop, float_atom, 32, PropModeReplace,
-                          (unsigned char*)data, nelements);
-
-    free(data);
-    XCloseDevice(dpy, dev);
-    return EXIT_SUCCESS;
-}
-
 
 int watch_props(Display *dpy, int argc, char** argv, char* n, char *desc)
 {
@@ -411,72 +273,6 @@ delete_prop_xi1(Display *dpy, int argc, char** argv, char* n, char *desc)
 
     XDeleteDeviceProperty(dpy, dev, prop);
 
-    XCloseDevice(dpy, dev);
-    return EXIT_SUCCESS;
-}
-
-int
-set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
-{
-    XDeviceInfo *info;
-    XDevice     *dev;
-    Atom         prop;
-    char        *name;
-    int          i, j;
-    Bool         is_atom;
-    Atom        *data;
-    int          nelements =  0;
-
-    if (argc < 3)
-    {
-        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
-        return EXIT_FAILURE;
-    }
-
-    info = find_device_info(dpy, argv[0], False);
-    if (!info)
-    {
-        fprintf(stderr, "unable to find device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    dev = XOpenDevice(dpy, info->id);
-    if (!dev)
-    {
-        fprintf(stderr, "unable to open device %s\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    name = argv[1];
-
-    prop = parse_atom(dpy, name);
-
-    nelements = argc - 2;
-    data = calloc(nelements, sizeof(Atom));
-    for (i = 0; i < nelements; i++)
-    {
-        is_atom = True;
-        name = argv[2 + i];
-        for(j = 0; j < strlen(name); j++) {
-            if (!isdigit(name[j])) {
-                is_atom = False;
-                break;
-            }
-        }
-
-        if (!is_atom)
-            data[i] = XInternAtom(dpy, name, False);
-        else
-        {
-            data[i] = atoi(name);
-            XFree(XGetAtomName(dpy, data[i]));
-        }
-    }
-
-    XChangeDeviceProperty(dpy, dev, prop, XA_ATOM, 32, PropModeReplace,
-                          (unsigned char*)data, nelements);
-
-    free(data);
     XCloseDevice(dpy, dev);
     return EXIT_SUCCESS;
 }
@@ -910,6 +706,51 @@ do_set_prop(Display *display, Atom type, int format, int argc, char *argv[], cha
         return do_set_prop_xi2(display, type, format, argc, argv, name, desc);
 #endif
     return do_set_prop_xi1(display, type, format, argc, argv, name, desc);
+}
+
+int
+set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    return do_set_prop(dpy, XA_ATOM, 32, argc, argv, n, desc);
+}
+
+int
+set_int_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    int          i;
+    int          format;
+
+    if (argc < 3)
+    {
+        fprintf(stderr, "Usage: xinput %s %s\n", n, desc);
+        return EXIT_FAILURE;
+    }
+
+    format    = atoi(argv[2]);
+    if (format != 8 && format != 16 && format != 32)
+    {
+        fprintf(stderr, "Invalid format %d\n", format);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 3; i < argc; i++)
+        argv[i - 1] = argv[i];
+
+    return do_set_prop(dpy, XA_INTEGER, format, argc - 1, argv, n, desc);
+}
+
+int
+set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+{
+    Atom float_atom = XInternAtom(dpy, "FLOAT", False);
+
+    if (sizeof(float) != 4)
+    {
+	fprintf(stderr, "sane FP required\n");
+	return EXIT_FAILURE;
+    }
+
+    return do_set_prop(dpy, float_atom, 32, argc, argv, n, desc);
 }
 
 int set_prop(Display *display, int argc, char *argv[], char *name,
