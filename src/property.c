@@ -915,6 +915,46 @@ do_set_prop(Display *display, Atom type, int format, int argc, char *argv[], cha
 int set_prop(Display *display, int argc, char *argv[], char *name,
              char *desc)
 {
-    return do_set_prop(display, None, 0, argc, argv, name, desc);
-}
+    Atom type = None;
+    int format = 0;
+    int i = 0, j;
 
+    while (i < argc) {
+        char *option = strchr(argv[i], '=');
+        /* skip non-option arguments */
+        if (strncmp(argv[i], "--", 2) || !option) {
+            i++;
+            continue;
+        }
+
+        if (!strncmp(argv[i], "--type=", strlen("--type="))) {
+            if (!strcmp(option + 1, "int")) {
+                type = XA_INTEGER;
+            } else if (!strcmp(option + 1, "float")) {
+                type = XInternAtom(display, "FLOAT", False);
+                format = 32;
+            } else if (!strcmp(option + 1, "atom")) {
+                type = XA_ATOM;
+                format = 32;
+            } else {
+                fprintf(stderr, "unknown property type %s\n", option + 1);
+                return EXIT_FAILURE;
+            }
+        } else if (!strncmp(argv[i], "--format=", strlen("--format="))) {
+            format = atoi(option + 1);
+            if (format != 8 && format != 16 && format != 32) {
+                fprintf(stderr, "invalid property format %s\n", option + 1);
+                return EXIT_FAILURE;
+            }
+        } else {
+            fprintf(stderr, "invalid option %s\n", argv[i]);
+            return EXIT_FAILURE;
+        }
+
+        for (j = i; j + 1 < argc; j++)
+            argv[j] = argv[j + 1];
+        argc--;
+    }
+
+    return do_set_prop(display, type, format, argc, argv, name, desc);
+}
