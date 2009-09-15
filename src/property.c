@@ -482,16 +482,16 @@ set_atom_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
 }
 
 static int
-set_prop_xi1(Display *dpy, int argc, char **argv, char *n, char *desc)
+do_set_prop_xi1(Display *dpy, Atom type, int format, int argc, char **argv, char *n, char *desc)
 {
     XDeviceInfo  *info;
     XDevice      *dev;
     Atom          prop;
-    Atom          type;
+    Atom          old_type;
     char         *name;
     int           i;
     Atom          float_atom;
-    int           format, nelements = 0;
+    int           old_format, nelements = 0;
     unsigned long act_nitems, bytes_after;
     char         *endptr;
     union {
@@ -533,17 +533,26 @@ set_prop_xi1(Display *dpy, int argc, char **argv, char *n, char *desc)
     float_atom = XInternAtom(dpy, "FLOAT", False);
 
     nelements = argc - 2;
-    if (XGetDeviceProperty(dpy, dev, prop, 0, 0, False, AnyPropertyType,
-                           &type, &format, &act_nitems, &bytes_after, &data.c)
-            != Success) {
-        fprintf(stderr, "failed to get property type and format for %s\n", name);
-        return EXIT_FAILURE;
+    if (type == None || format == 0) {
+        if (XGetDeviceProperty(dpy, dev, prop, 0, 0, False, AnyPropertyType,
+                               &old_type, &old_format, &act_nitems,
+                               &bytes_after, &data.c) != Success) {
+            fprintf(stderr, "failed to get property type and format for %s\n",
+                    name);
+            return EXIT_FAILURE;
+        } else {
+            if (type == None)
+                type = old_type;
+            if (format == 0)
+                format = old_format;
+        }
+
+        XFree(data.c);
     }
 
-    XFree(data.c);
-
     if (type == None) {
-        fprintf(stderr, "property %s doesn't exist\n", name);
+        fprintf(stderr, "property %s doesn't exist, you need to specify "
+                "its type and format\n", name);
         return EXIT_FAILURE;
     }
 
@@ -755,15 +764,15 @@ delete_prop_xi2(Display *dpy, int argc, char** argv, char* n, char *desc)
 }
 
 static int
-set_prop_xi2(Display *dpy, int argc, char **argv, char *n, char *desc)
+do_set_prop_xi2(Display *dpy, Atom type, int format, int argc, char **argv, char *n, char *desc)
 {
     XIDeviceInfo *info;
     Atom          prop;
-    Atom          type;
+    Atom          old_type;
     char         *name;
     int           i;
     Atom          float_atom;
-    int           format, nelements = 0;
+    int           old_format, nelements = 0;
     unsigned long act_nitems, bytes_after;
     char         *endptr;
     union {
@@ -797,17 +806,26 @@ set_prop_xi2(Display *dpy, int argc, char **argv, char *n, char *desc)
     float_atom = XInternAtom(dpy, "FLOAT", False);
 
     nelements = argc - 2;
-    if (XIGetProperty(dpy, info->deviceid, prop, 0, 0, False, AnyPropertyType,
-                      &type, &format, &act_nitems, &bytes_after, &data.c)
-            != Success) {
-        fprintf(stderr, "failed to get property type and format for %s\n", name);
-        return EXIT_FAILURE;
+    if (type == None || format == 0) {
+        if (XIGetProperty(dpy, info->deviceid, prop, 0, 0, False,
+                          AnyPropertyType, &old_type, &old_format, &act_nitems,
+                          &bytes_after, &data.c) != Success) {
+            fprintf(stderr, "failed to get property type and format for %s\n",
+                    name);
+            return EXIT_FAILURE;
+        } else {
+            if (type == None)
+                type = old_type;
+            if (format == 0)
+                format = old_format;
+        }
+
+        XFree(data.c);
     }
 
-    XFree(data.c);
-
     if (type == None) {
-        fprintf(stderr, "property %s doesn't exist\n", name);
+        fprintf(stderr, "property %s doesn't exist, you need to specify "
+                "its type and format\n", name);
         return EXIT_FAILURE;
     }
 
@@ -884,12 +902,19 @@ int delete_prop(Display *display, int argc, char *argv[], char *name,
 
 }
 
-int set_prop(Display *display, int argc, char *argv[], char *name,
-             char *desc)
+static int
+do_set_prop(Display *display, Atom type, int format, int argc, char *argv[], char *name, char *desc)
 {
 #ifdef HAVE_XI2
     if (xinput_version(display) == XI_2_Major)
-        return set_prop_xi2(display, argc, argv, name, desc);
+        return do_set_prop_xi2(display, type, format, argc, argv, name, desc);
 #endif
-    return set_prop_xi1(display, argc, argv, name, desc);
+    return do_set_prop_xi1(display, type, format, argc, argv, name, desc);
 }
+
+int set_prop(Display *display, int argc, char *argv[], char *name,
+             char *desc)
+{
+    return do_set_prop(display, None, 0, argc, argv, name, desc);
+}
+
