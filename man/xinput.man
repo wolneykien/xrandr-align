@@ -1,5 +1,5 @@
 .\" $Id: xinput.man,v 1.5 1997/06/09 16:06:31 fred Exp $
-.TH xinput 1 "$Date: 1997/06/09 16:06:31 $" "Frederic Lepied"
+.TH xinput 1 __xorgversion__
 
 .SH NAME
 xinput - utility to configure and test XInput devices
