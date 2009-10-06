@@ -1,5 +1,5 @@
 .\" $Id: xinput.man,v 1.5 1997/06/09 16:06:31 fred Exp $
-.TH xinput 1 "$Date: 1997/06/09 16:06:31 $" "Frederic Lepied"
+.TH xinput 1 __xorgversion__
 
 .SH NAME
 xinput - utility to configure and test XInput devices
@@ -67,6 +67,12 @@ are 8, 16, or 32, depending on the property.
 .TP 8
 .B xinput set-float-prop \fIdevice_name\fP \fIproperty\fP \fIvalue\fP
 Sets a float property for the device.
+.PP
+.TP 8
+.B xinput set\-prop [\-\-type=\fIatom|float|int\fP] [\-\-format=\fI8|16|32\fP] \fIdevice_name\fP \fIproperty\fP \fIvalue\fP [...]
+Set the property to the given value(s).  If not specified, the format and type
+of the property are left as-is.  The arguments are interpreted according to the
+property type.
 .PP
 .TP 8
 .B xinput watch-props \fIdevice_name\fP

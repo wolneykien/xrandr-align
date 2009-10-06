@@ -34,9 +34,6 @@ print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
     XButtonInfoPtr	b;
     XValuatorInfoPtr	v;
     XAxisInfoPtr	a;
-#if HAVE_XI2
-    XAttachInfoPtr      att;
-#endif
 
     printf("\"%s\"\tid=%ld\t[", info->name, info->id);
 
@@ -98,12 +95,6 @@ print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
 		    printf ("\t\tResolution is %d\n", a->resolution);
 		}
 		break;
-#if HAVE_XI2
-            case AttachClass:
-                att = (XAttachInfoPtr)any;
-                printf("\tAttached to %d\n", att->attached);
-                break;
-#endif
 	    default:
 		printf ("unknown class\n");
 	    }
@@ -112,12 +103,11 @@ print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
     }
 }
 
-int
-list(Display	*display,
-     int	argc,
-     char	*argv[],
-     char	*name,
-     char	*desc)
+static int list_xi1(Display     *display,
+                    int	        argc,
+                    char        *argv[],
+                    char        *name,
+                    char        *desc)
 {
     XDeviceInfo		*info;
     int			loop;
@@ -129,44 +119,12 @@ list(Display	*display,
 
     if (argc == 0 || shortformat || daemon) {
 	int		num_devices;
-        XEvent  ev;
-
-#if HAVE_XI2
-        if (daemon)
-        {
-            XiSelectEvent(display, DefaultRootWindow(display), NULL,
-                          XI_DeviceHierarchyChangedMask |
-                          XI_DeviceClassesChangedMask);
-        }
-#endif
 
         do {
             info = XListInputDevices(display, &num_devices);
             for(loop=0; loop<num_devices; loop++) {
                 print_info(display, info+loop, shortformat);
             }
-
-#if HAVE_XI2
-            /* just wait for the next generic event to come along */
-            while (daemon && !XNextEvent(display, &ev))
-            {
-                if (ev.type == GenericEvent)
-                {
-                    XGenericEvent* gev = (XGenericEvent*)&ev;
-                    /* we just assume that extension is IReqCode, pretty save
-                       since we don't register for other events. */
-                    if (gev->evtype == XI_DeviceHierarchyChangedNotify)
-                    {
-                        printf("Hierarchy change.\n");
-                    } else if (gev->evtype == XI_DeviceClassesChangedNotify)
-                    {
-                        printf("Device classes changed.\n");
-                        free(((XDeviceClassesChangedEvent*)&ev)->inputclassinfo);
-                    }
-                    break;
-                }
-            }
-#endif
         } while(daemon);
     } else {
 	int	ret = EXIT_SUCCESS;
@@ -184,6 +142,181 @@ list(Display	*display,
 	return ret;
     }
     return EXIT_SUCCESS;
+}
+
+#ifdef HAVE_XI2
+/* also used from test_xi2.c */
+void
+print_classes_xi2(Display* display, XIAnyClassInfo **classes,
+                  int num_classes)
+{
+    int i, j;
+
+    printf("\tReporting %d classes:\n", num_classes);
+    for (i = 0; i < num_classes; i++)
+    {
+        printf("\t\tClass originated from: %d\n", classes[i]->sourceid);
+        switch(classes[i]->type)
+        {
+            case XIButtonClass:
+                {
+                    XIButtonClassInfo *b = (XIButtonClassInfo*)classes[i];
+                    char *name;
+                    printf("\t\tButtons supported: %d\n", b->num_buttons);
+                    printf("\t\tButton labels:");
+                    for (j = 0; j < b->num_buttons; j++)
+                    {
+                        name = (b->labels[j]) ? XGetAtomName(display, b->labels[j]) : NULL;
+                        printf(" %s", (name) ? name : "None");
+                        XFree(name);
+                    }
+                    printf("\n");
+                    printf("\t\tButton state:");
+                    for (j = 0; j < b->state.mask_len * 8; j++)
+                        if (XIMaskIsSet(b->state.mask, j))
+                            printf(" %d", j);
+                    printf("\n");
+
+                }
+                break;
+            case XIKeyClass:
+                {
+                    XIKeyClassInfo *k = (XIKeyClassInfo*)classes[i];
+                    printf("\t\tKeycodes supported: %d\n", k->num_keycodes);
+                }
+                break;
+            case XIValuatorClass:
+                {
+                    XIValuatorClassInfo *v = (XIValuatorClassInfo*)classes[i];
+                    char *name = v->label ?  XGetAtomName(display, v->label) : NULL;
+
+                    printf("\t\tDetail for Valuator %d:\n", v->number);
+                    printf("\t\t  Label: %s\n",  (name) ? name : "None");
+                    printf("\t\t  Range: %f - %f\n", v->min, v->max);
+                    printf("\t\t  Resolution: %d units/m\n", v->resolution);
+                    printf("\t\t  Mode: %s\n", v->mode == Absolute ? "absolute" :
+                            "relative");
+                    if (v->mode == Absolute)
+                        printf("\t\t  Current value: %f\n", v->value);
+                    XFree(name);
+                }
+                break;
+        }
+    }
+
+    printf("\n");
+}
+
+static void
+print_info_xi2(Display* display, XIDeviceInfo *dev, Bool shortformat)
+{
+    printf("%-40s\tid=%d\t[", dev->name, dev->deviceid);
+    switch(dev->use)
+    {
+        case XIMasterPointer:
+            printf("master pointer  (%d)]\n", dev->attachment);
+            break;
+        case XIMasterKeyboard:
+            printf("master keyboard (%d)]\n", dev->attachment);
+            break;
+        case XISlavePointer:
+            printf("slave  pointer  (%d)]\n", dev->attachment);
+            break;
+        case XISlaveKeyboard:
+            printf("slave  keyboard (%d)]\n", dev->attachment);
+            break;
+        case XIFloatingSlave:
+            printf("floating slave]\n");
+            break;
+    }
+
+    if (shortformat)
+        return;
+
+    if (!dev->enabled)
+        printf("\tThis device is disabled\n");
+
+    print_classes_xi2(display, dev->classes, dev->num_classes);
+}
+
+
+int
+list_xi2(Display	*display,
+         int	argc,
+         char	*argv[],
+         char	*name,
+         char	*desc)
+{
+    int major = XI_2_Major,
+        minor = XI_2_Minor;
+    int ndevices;
+    int i, j, shortformat;
+    XIDeviceInfo *info, *dev;
+
+    shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
+
+    if (XIQueryVersion(display, &major, &minor) != Success ||
+        (major * 1000 + minor) < (XI_2_Major * 1000 + XI_2_Minor))
+    {
+        fprintf(stderr, "XI2 not supported.\n");
+        return EXIT_FAILURE;
+    }
+
+    info = XIQueryDevice(display, XIAllDevices, &ndevices);
+
+    for(i = 0; i < ndevices; i++)
+    {
+        dev = &info[i];
+        if (dev->use == XIMasterPointer || dev->use == XIMasterKeyboard)
+        {
+            if (dev->use == XIMasterPointer)
+                printf("⎡ ");
+            else
+                printf("⎣ ");
+
+            print_info_xi2(display, dev, shortformat);
+            for (j = 0; j < ndevices; j++)
+            {
+                XIDeviceInfo* sd = &info[j];
+
+                if ((sd->use == XISlavePointer || sd->use == XISlaveKeyboard) &&
+                     (sd->attachment == dev->deviceid))
+                {
+                    printf("%s   ↳ ", dev->use == XIMasterPointer ? "⎜" : " ");
+                    print_info_xi2(display, sd, shortformat);
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < ndevices; i++)
+    {
+        dev = &info[i];
+        if (dev->use == XIFloatingSlave)
+        {
+            printf("∼ ");
+            print_info_xi2(display, dev, shortformat);
+        }
+    }
+
+
+    XIFreeDeviceInfo(info);
+    return EXIT_SUCCESS;
+}
+#endif
+
+int
+list(Display	*display,
+     int	argc,
+     char	*argv[],
+     char	*name,
+     char	*desc)
+{
+#ifdef HAVE_XI2
+    if (xinput_version(display) == XI_2_Major)
+        return list_xi2(display, argc, argv, name, desc);
+#endif
+    return list_xi1(display, argc, argv, name, desc);
 }
 
 /* end of list.c */
