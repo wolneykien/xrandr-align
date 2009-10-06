@@ -1,5 +1,5 @@
 Name: xinput
-Version: 1.4.2
+Version: 1.4.99.3
 Release: alt1
 Summary: utility to configure and test XInput devices
 License: MIT/X11
@@ -33,6 +33,9 @@ xinput - utility to configure and test XInput devices
 %_man1dir/*
 
 %changelog
+* Tue Oct 06 2009 Valery Inozemtsev <shrek@altlinux.ru> 1.4.99.3-alt1
+- 1.4.99.3
+
 * Thu May 14 2009 Valery Inozemtsev <shrek@altlinux.ru> 1.4.2-alt1
 - 1.4.2
 
