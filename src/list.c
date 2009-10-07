@@ -104,42 +104,15 @@ print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
 }
 
 static int list_xi1(Display     *display,
-                    int	        argc,
-                    char        *argv[],
-                    char        *name,
-                    char        *desc)
+                    int	        shortformat)
 {
     XDeviceInfo		*info;
     int			loop;
-    int                 shortformat = False;
-    int                 daemon = False;
+    int                 num_devices;
 
-    shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
-    daemon = (argc == 1 && strcmp(argv[0], "--loop") == 0);
-
-    if (argc == 0 || shortformat || daemon) {
-	int		num_devices;
-
-        do {
-            info = XListInputDevices(display, &num_devices);
-            for(loop=0; loop<num_devices; loop++) {
-                print_info(display, info+loop, shortformat);
-            }
-        } while(daemon);
-    } else {
-	int	ret = EXIT_SUCCESS;
-
-	for(loop=0; loop<argc; loop++) {
-	    info = find_device_info(display, argv[loop], False);
-
-	    if (!info) {
-		fprintf(stderr, "unable to find device %s\n", argv[loop]);
-		ret = EXIT_FAILURE;
-	    } else {
-		print_info(display, info, shortformat);
-	    }
-	}
-	return ret;
+    info = XListInputDevices(display, &num_devices);
+    for(loop=0; loop<num_devices; loop++) {
+        print_info(display, info+loop, shortformat);
     }
     return EXIT_SUCCESS;
 }
@@ -240,20 +213,15 @@ print_info_xi2(Display* display, XIDeviceInfo *dev, Bool shortformat)
 }
 
 
-int
-list_xi2(Display	*display,
-         int	argc,
-         char	*argv[],
-         char	*name,
-         char	*desc)
+static int
+list_xi2(Display *display,
+         int     shortformat)
 {
     int major = XI_2_Major,
         minor = XI_2_Minor;
     int ndevices;
-    int i, j, shortformat;
+    int i, j;
     XIDeviceInfo *info, *dev;
-
-    shortformat = (argc == 1 && strcmp(argv[0], "--short") == 0);
 
     if (XIQueryVersion(display, &major, &minor) != Success ||
         (major * 1000 + minor) < (XI_2_Major * 1000 + XI_2_Minor))
@@ -312,11 +280,44 @@ list(Display	*display,
      char	*name,
      char	*desc)
 {
+    int shortformat = (argc >= 1 && strcmp(argv[0], "--short") == 0);
+    int longformat = (argc >= 1 && strcmp(argv[0], "--long") == 0);
+    int arg_dev = shortformat || longformat;
+
+    if (argc > arg_dev)
+    {
 #ifdef HAVE_XI2
-    if (xinput_version(display) == XI_2_Major)
-        return list_xi2(display, argc, argv, name, desc);
+        if (xinput_version(display) == XI_2_Major)
+        {
+            XIDeviceInfo *info = xi2_find_device_info(display, argv[arg_dev]);
+
+            if (!info) {
+                fprintf(stderr, "unable to find device %s\n", argv[arg_dev]);
+                return EXIT_FAILURE;
+            } else {
+                print_info_xi2(display, info, shortformat);
+                return EXIT_SUCCESS;
+            }
+        } else
 #endif
-    return list_xi1(display, argc, argv, name, desc);
+        {
+            XDeviceInfo *info = find_device_info(display, argv[arg_dev], False);
+
+            if (!info) {
+                fprintf(stderr, "unable to find device %s\n", argv[arg_dev]);
+                return EXIT_FAILURE;
+            } else {
+                print_info(display, info, shortformat);
+                return EXIT_SUCCESS;
+            }
+        }
+    } else {
+#ifdef HAVE_XI2
+        if (xinput_version(display) == XI_2_Major)
+            return list_xi2(display, !longformat);
+#endif
+        return list_xi1(display, !longformat);
+    }
 }
 
 /* end of list.c */

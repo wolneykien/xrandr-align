@@ -6,7 +6,9 @@ xinput - utility to configure and test XInput devices
 
 .SH SYNOPSIS
 .B xinput
-[version] [list [\fIdevice_name\fP]] [set-pointer \fIdevice_name\fP]
+[version]
+[list [--short || --long] [\fIdevice_name\fP]]
+[set-pointer \fIdevice_name\fP]
 [get-feedbacks \fIdevice_name\fP]
 [set-mode \fIdevice_name\fP \fIABSOLUTE|RELATIVE\fP]
 [set-ptr-feedback \fIdevice_name\fP \fIthreshold\fP \fInum\fP \fIdenom\fP]
@@ -22,10 +24,12 @@ test if the XInput extension is available and return the version number
 of the program.
 .PP
 .TP 8
-.B xinput list [\fIdevice_name\fP]
-If no argument is given list all the input devices showing all their
-features. If an argument is given, show all the feature of \fIdevice_name\fP.
-Uses XListInputDevices(3).
+.B xinput list [--short || --long] [\fIdevice_name\fP]
+If no argument is given list all the input devices. If an argument is given,
+show all the features of \fIdevice_name\fP. Uses XListInputDevices(3).
+If --long is provided, the output includes detailed information about the
+capabilities of each devices. Otherwise, or if --short is provided, only the
+device names and some minimal information is listed.
 .PP
 .TP 8
 .B xinput get-feedbacks \fIdevice_name\fP
