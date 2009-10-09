@@ -13,7 +13,8 @@ a device and change input device settings.
 .TP 8
 .B --version
 Test if the X Input extension is available and return the version number
-of the program. This option does not require a device name.
+of the program and the version supported by the server. This option does not
+require a device name.
 .PP
 .TP 8
 .B --list [--short || --long] [\fIdevice\fP]
