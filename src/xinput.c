@@ -68,7 +68,7 @@ static entry drivers[] =
      set_mode
     },
     {"list",
-     "[--loop || --short || <device name>...]",
+     "[--short || --long] [<device name>...]",
      list
     },
     {"query-state",
@@ -78,10 +78,6 @@ static entry drivers[] =
     {"test",
      "[-proximity] <device name>",
      test
-    },
-    {"version",
-     "",
-     version
     },
 #if HAVE_XI2
     { "create-master",
@@ -140,6 +136,37 @@ static entry drivers[] =
     {NULL, NULL, NULL
     }
 };
+
+static const char version_id[] = VERSION;
+
+int
+print_version()
+{
+    XExtensionVersion	*version;
+    Display *display;
+
+    printf("xinput version %s\n", version_id);
+
+    display = XOpenDisplay(NULL);
+
+    printf("XI version on server: ");
+
+    if (display == NULL)
+        printf("Failed to open display.\n");
+    else {
+        version = XGetExtensionVersion(display, INAME);
+        if (!version || (version == (XExtensionVersion*) NoSuchExtension))
+            printf(" Extension not supported.\n");
+        else {
+            printf("%d.%d\n", version->major_version,
+                    version->minor_version);
+            XFree(version);
+            return 0;
+        }
+    }
+
+    return 1;
+}
 
 int
 xinput_version(Display	*display)
@@ -266,6 +293,13 @@ main(int argc, char * argv[])
 	return EXIT_FAILURE;
     }
 
+    func = argv[1];
+    while((*func) == '-') func++;
+
+    if (strcmp("version", func) == 0) {
+        return print_version(argv[0]);
+    }
+
     display = XOpenDisplay(NULL);
 
     if (display == NULL) {
@@ -277,9 +311,6 @@ main(int argc, char * argv[])
         printf("X Input extension not available.\n");
         return EXIT_FAILURE;
     }
-
-    func = argv[1];
-    while((*func) == '-') func++;
 
     if (!xinput_version(display)) {
 	fprintf(stderr, "%s extension not available\n", INAME);

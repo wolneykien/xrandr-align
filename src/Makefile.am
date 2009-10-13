@@ -39,7 +39,6 @@ xinput_SOURCES = \
     state.c \
     property.c \
     test.c \
-    version.c \
     xinput.c \
     xinput.h \
     $(xinput2_files)
