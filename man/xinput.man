@@ -39,7 +39,11 @@ Change the mode of \fIdevice\fP.
 .PP
 .TP 8
 .B --set-ptr-feedback \fIdevice\fP \fIthreshold\fP \fInum\fP \fIdenom\fP
-Change the acceleration of \fIdevice\fP.
+Change the pointer acceleration (or feedback) parameters of \fIdevice\fP.
+The xset(1) man page has more details. For X.Org Server 1.7
+and above, there are additional device properties pertaining to pointer
+acceleration. These do not replace, but complement the pointer feedback
+setting.
 .PP
 .TP 8
 .B --set-integer-feedback \fIdevice\fP \fIindex\fP \fIvalue\fP
@@ -103,7 +107,8 @@ device.
 .PP
 \fIproperty\fP can be the property as a string or the Atom value.
 .PP
-
+.SH "SEE ALSO"
+X(__miscmansuffix__), xset(1)
 .SH COPYRIGHT
 Copyright 1996,1997, Frederic Lepied.
 .PP
