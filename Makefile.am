@@ -21,7 +21,7 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src man
 
-
+MAINTAINERCLEANFILES = ChangeLog INSTALL
 
 .PHONY: ChangeLog INSTALL
 
