@@ -19,7 +19,7 @@ require a device name.
 .TP 8
 .B --list [--short || --long] [\fIdevice\fP]
 If no argument is given list all the input devices. If an argument is given,
-show all the features of \fIdevice\fP. Uses XListInputDevices(3).
+show all the features of \fIdevice\fP.
 If --long is provided, the output includes detailed information about the
 capabilities of each devices. Otherwise, or if --short is provided, only the
 device names and some minimal information is listed.
