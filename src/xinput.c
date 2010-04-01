@@ -236,6 +236,7 @@ XIDeviceInfo*
 xi2_find_device_info(Display *display, char *name)
 {
     XIDeviceInfo *info;
+    XIDeviceInfo *found = NULL;
     int ndevices;
     Bool is_id = True;
     int i, id = -1;
@@ -257,12 +258,20 @@ xi2_find_device_info(Display *display, char *name)
         if ((is_id && info[i].deviceid == id) ||
                 (!is_id && strcmp(info[i].name, name) == 0))
         {
-            return &info[i];
+            if (found) {
+                fprintf(stderr,
+                        "Warning: There are multiple devices named '%s'.\n"
+                        "To ensure the correct one is selected, please use "
+                        "the device ID instead.\n\n", name);
+                XIFreeDeviceInfo(info);
+                return NULL;
+            } else {
+                found = &info[i];
+            }
         }
     }
 
-    XIFreeDeviceInfo(info);
-    return NULL;
+    return found;
 }
 #endif
 
