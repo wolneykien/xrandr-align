@@ -1,0 +1,13 @@
+object 13d9a0906acca18a268b8898addc1a192c5a2b12
+type commit
+tag xinput-1.5.3
+tagger Peter Hutterer <peter.hutterer@who-t.net> 1289447791 +1000
+
+xinput 1.5.3
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEABECAAYFAkzbaW8ACgkQ4jt+cLRn8L8dmwCfbXQbB6y1lTo9EDGegmHbuIUx
+VAwAoLokop41z+gnCDPmhL4AC/TuoOi5
+=PQR0
+-----END PGP SIGNATURE-----
