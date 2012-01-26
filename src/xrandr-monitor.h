@@ -56,7 +56,7 @@ int set_pointer( Display* display, int argc, char *argv[], char *prog_name, char
 
 int set_mode( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int list_input( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int list_output( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int test( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int version( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int set_integer_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);

@@ -30,6 +30,8 @@ xinput2_files = hierarchy.c setcp.c test_xi2.c
 endif
 
 xrandr_monitor_SOURCES = \
+    common.h \
+    common.c \
     buttonmap.c \
     feedback.c \
     list.c \

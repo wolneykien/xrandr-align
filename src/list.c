@@ -31,6 +31,7 @@
  *
  */
 
+#include "common.h"
 #include "xrandr-monitor.h"
 #include <string.h>
 #include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
@@ -336,57 +337,37 @@ list_input(Display	*display,
 }
 
 int
-list_output(Display	*display,
+list_output(Display *display,
 	    int	argc,
-	    char	*argv[],
-	    char	*name,
-	    char	*desc)
+	    const char *argv[],
+	    const char *progname,
+	    const char *usage)
 {
   
-  XRRScreenResources  *res;
-  Window root;
-  long screen;
-  int c;
+  int screen;
+  int ret = EXIT_FAILURE;
 
-  if (argc >= 1 && strncmp(argv[0], "--screen", 8) == 0) {
-    char *option = strchr(argv[0], '=');
-    if (option && strlen (option) > 1) {
-      char *endptr;
-      screen = strtol(option + 1, &endptr, 0);
-      if (endptr == option + 1) {
-	fprintf (stderr, "Invalid number: %s\n", option + 1);
-	return EXIT_FAILURE;
+  ret = get_screen (display, argc, argv, progname, usage, &screen);
+  if (ret == EXIT_SUCCESS) {
+    XRRScreenResources *res;
+    Window root;
+    int c;
+
+    root = RootWindow (display, screen);
+    res = XRRGetScreenResourcesCurrent (display, root);
+
+    for (c = 0; c < res->ncrtc; c++) {
+      int o;
+      XRRCrtcInfo *crtc = XRRGetCrtcInfo (display, res, res->crtcs[c]);
+
+      for (o = 0; o < crtc->noutput; o++) {
+	XRROutputInfo *out = XRRGetOutputInfo (display, res, crtc->outputs[o]);
+	printf ("%s\tid=%lu\n", out->name, (unsigned long)crtc->outputs[o]);
       }
-    } else {
-      fprintf (stderr, "Usage: xrandr-monitor list --screen=NUMBER\n");
-      return EXIT_FAILURE;
-    }
-  } else {
-    screen = -1;
-  }
-
-  if (screen < 0)
-    screen = DefaultScreen (display);
-  if (screen >= ScreenCount (display)) {
-    fprintf (stderr, "Invalid screen number %ld (display has %d)\n",
-	     screen, ScreenCount (display));
-    return EXIT_FAILURE;
-  }
-
-  root = RootWindow (display, (int) screen);
-  res = XRRGetScreenResourcesCurrent (display, root);
-
-  for (c = 0; c < res->ncrtc; c++) {
-    int o;
-    XRRCrtcInfo *crtc = XRRGetCrtcInfo (display, res, res->crtcs[c]);
-
-    for (o = 0; o < crtc->noutput; o++) {
-      XRROutputInfo *out = XRRGetOutputInfo (display, res, crtc->outputs[o]);
-      printf ("%s\tid=%lu\n", out->name, (unsigned long)crtc->outputs[o]);
     }
   }
 
-  return EXIT_SUCCESS;
+  return ret;
 }
 
 /* end of list.c */
