@@ -33,6 +33,7 @@
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <X11/extensions/Xrandr.h>
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 1

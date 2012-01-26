@@ -21,8 +21,8 @@
 
 bin_PROGRAMS = xrandr-monitor
 
-AM_CFLAGS = $(XINPUT_CFLAGS)
-xrandr_monitor_LDADD = $(XINPUT_LIBS)
+AM_CFLAGS = $(XINPUT_CFLAGS) $(XRANDR_CFLAGS)
+xrandr_monitor_LDADD = $(XINPUT_LIBS) $(XRANDR_LIBS)
 
 
 if HAVE_XI2

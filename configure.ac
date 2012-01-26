@@ -21,6 +21,7 @@ AC_PROG_SED
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XINPUT, x11 xext [xi >= 1.2] [inputproto >= 1.5])
+PKG_CHECK_MODULES(XRANDR, xrandr >= 1.3 xrender x11 xproto >= 7.0.17)
 
 # XI2 support
 PKG_CHECK_MODULES(XI2, [xi >= 1.2.99.2] [inputproto >= 1.9.99.15],
@@ -30,6 +31,8 @@ AM_CONDITIONAL(HAVE_XI2, [ test "$HAVE_XI2" = "yes" ])
 
 AC_SUBST(XINPUT_CFLAGS)
 AC_SUBST(XINPUT_LIBS)
+AC_SUBST(XRANDR_CFLAGS)
+AC_SUBST(XRANDR_LIBS)
 AC_SUBST(HAVE_XI2)
 
 AC_SUBST(VERSION)
