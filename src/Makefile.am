@@ -40,6 +40,6 @@ xrandr_monitor_SOURCES = \
     property.c \
     test.c \
     xrandr-monitor.c \
-    xinput.h \
+    xrandr-monitor.h \
     $(xinput2_files)
 

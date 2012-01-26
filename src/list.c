@@ -21,7 +21,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <string.h>
 #include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
 

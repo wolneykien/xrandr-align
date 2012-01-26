@@ -31,7 +31,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <ctype.h>
 #include <string.h>
 

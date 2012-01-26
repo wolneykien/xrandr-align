@@ -21,7 +21,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 
 int
 query_state(Display	*display,

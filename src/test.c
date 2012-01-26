@@ -21,7 +21,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <string.h>
 
 #define INVALID_EVENT_TYPE	-1

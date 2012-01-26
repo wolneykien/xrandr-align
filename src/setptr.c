@@ -21,7 +21,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 
 int
 set_pointer(Display	*display,

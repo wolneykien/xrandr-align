@@ -25,7 +25,7 @@
  *
  */
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <string.h>
 
 #define Error(error, ...) \

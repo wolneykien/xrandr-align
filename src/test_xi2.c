@@ -23,7 +23,7 @@
  */
 
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <string.h>
 
 extern void print_classes_xi2(Display*, XIAnyClassInfo **classes,

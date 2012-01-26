@@ -26,7 +26,7 @@
  */
 
 
-#include "xinput.h"
+#include "xrandr-monitor.h"
 #include <string.h>
 
 int
