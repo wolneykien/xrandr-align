@@ -254,6 +254,7 @@ usage(void)
 
     fprintf(stderr, "usage :\n");
 
+    fprintf(stderr, "\txrandr-monitor version\n");
     while(pdriver->func_name) {
 	fprintf(stderr, "\txrandr-monitor %s %s\n", pdriver->func_name,
 		pdriver->arg_desc);
