@@ -7,7 +7,7 @@
  * Copyright © 2002 Hewlett Packard Company, Inc.
  * Copyright © 2006 Intel Corporation
  *
- * xrandr-monitor:
+ * xrandr-align:
  *
  * Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
  *
@@ -32,7 +32,7 @@
  */
 
 #include "common.h"
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 #include <string.h>
 #include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
 #include <X11/extensions/Xrandr.h>

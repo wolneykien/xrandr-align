@@ -7,7 +7,7 @@
  * Copyright © 2002 Hewlett Packard Company, Inc.
  * Copyright © 2006 Intel Corporation
  *
- * xrandr-monitor:
+ * xrandr-align:
  *
  * Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
  *

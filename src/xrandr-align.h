@@ -79,4 +79,4 @@ int float_device( Display* display, int argc, char *argv[], char *prog_name, cha
 int set_clientpointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int test_xi2( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 
-/* end of xrandr-monitor.h */
+/* end of xrandr-align.h */

@@ -21,7 +21,7 @@
  *
  */
 
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 
 int
 set_integer_feedback(Display	*display,

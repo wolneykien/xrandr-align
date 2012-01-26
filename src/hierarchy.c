@@ -25,7 +25,7 @@
  *
  */
 
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 #include <string.h>
 
 #define Error(error, ...) \

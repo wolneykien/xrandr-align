@@ -19,17 +19,17 @@
 #  TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 #  PERFORMANCE OF THIS SOFTWARE.
 
-bin_PROGRAMS = xrandr-monitor
+bin_PROGRAMS = xrandr-align
 
 AM_CFLAGS = $(XINPUT_CFLAGS) $(XRANDR_CFLAGS)
-xrandr_monitor_LDADD = $(XINPUT_LIBS) $(XRANDR_LIBS)
+xrandr_align_LDADD = $(XINPUT_LIBS) $(XRANDR_LIBS)
 
 
 if HAVE_XI2
 xinput2_files = hierarchy.c setcp.c test_xi2.c
 endif
 
-xrandr_monitor_SOURCES = \
+xrandr_align_SOURCES = \
     common.h \
     common.c \
     buttonmap.c \
@@ -41,7 +41,7 @@ xrandr_monitor_SOURCES = \
     state.c \
     property.c \
     test.c \
-    xrandr-monitor.c \
-    xrandr-monitor.h \
+    xrandr-align.c \
+    xrandr-align.h \
     $(xinput2_files)
 

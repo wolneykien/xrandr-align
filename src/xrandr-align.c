@@ -7,7 +7,7 @@
  * Copyright © 2002 Hewlett Packard Company, Inc.
  * Copyright © 2006 Intel Corporation
  *
- * xrandr-monitor:
+ * xrandr-align:
  *
  * Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
  *
@@ -31,7 +31,7 @@
  *
  */
 
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 #include <ctype.h>
 #include <string.h>
 
@@ -69,7 +69,7 @@ print_version()
     XExtensionVersion	*version;
     Display *display;
 
-    printf("xrandr-monitor version %s\n", version_id);
+    printf("xrandr-align version %s\n", version_id);
 
     display = XOpenDisplay(NULL);
 
@@ -258,9 +258,9 @@ usage(void)
 
     fprintf(stderr, "usage :\n");
 
-    fprintf(stderr, "\txrandr-monitor version\n");
+    fprintf(stderr, "\txrandr-align version\n");
     while(pdriver->func_name) {
-	fprintf(stderr, "\txrandr-monitor %s %s\n", pdriver->func_name,
+	fprintf(stderr, "\txrandr-align %s %s\n", pdriver->func_name,
 		pdriver->arg_desc);
 	pdriver++;
     }
@@ -319,4 +319,4 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
 }
 
-/* end of xrandr-monitor.c */
+/* end of xrandr-align.c */

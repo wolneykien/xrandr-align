@@ -21,7 +21,7 @@
  *
  */
 
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 #include <string.h>
 
 int

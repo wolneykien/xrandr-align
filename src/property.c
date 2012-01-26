@@ -32,7 +32,7 @@
 #include <X11/Xatom.h>
 #include <X11/extensions/XIproto.h>
 
-#include "xrandr-monitor.h"
+#include "xrandr-align.h"
 
 static Atom parse_atom(Display *dpy, char *name) {
     Bool is_atom = True;
