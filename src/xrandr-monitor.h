@@ -33,7 +33,6 @@
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/extensions/Xrandr.h>
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 1
@@ -57,6 +56,7 @@ int set_pointer( Display* display, int argc, char *argv[], char *prog_name, char
 
 int set_mode( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int list_input( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int list_output( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int test( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int version( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int set_integer_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);

@@ -1,5 +1,15 @@
 /*
+ * Original xinput:
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
+ *
+ * Original xrandr:
+ * Copyright © 2001 Keith Packard, member of The XFree86 Project, Inc.
+ * Copyright © 2002 Hewlett Packard Company, Inc.
+ * Copyright © 2006 Intel Corporation
+ *
+ * xrandr-monitor:
+ *
+ * Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
@@ -24,6 +34,7 @@
 #include "xrandr-monitor.h"
 #include <string.h>
 #include <X11/extensions/XIproto.h> /* for XI_Device***ChangedNotify */
+#include <X11/extensions/Xrandr.h>
 
 static void
 print_info(Display* dpy, XDeviceInfo	*info, Bool shortformat)
@@ -322,6 +333,60 @@ list_input(Display	*display,
 #endif
         return list_xi1(display, !longformat);
     }
+}
+
+int
+list_output(Display	*display,
+	    int	argc,
+	    char	*argv[],
+	    char	*name,
+	    char	*desc)
+{
+  
+  XRRScreenResources  *res;
+  Window root;
+  long screen;
+  int c;
+
+  if (argc >= 1 && strncmp(argv[0], "--screen", 8) == 0) {
+    char *option = strchr(argv[0], '=');
+    if (option && strlen (option) > 1) {
+      char *endptr;
+      screen = strtol(option + 1, &endptr, 0);
+      if (endptr == option + 1) {
+	fprintf (stderr, "Invalid number: %s\n", option + 1);
+	return EXIT_FAILURE;
+      }
+    } else {
+      fprintf (stderr, "Usage: xrandr-monitor list --screen=NUMBER\n");
+      return EXIT_FAILURE;
+    }
+  } else {
+    screen = -1;
+  }
+
+  if (screen < 0)
+    screen = DefaultScreen (display);
+  if (screen >= ScreenCount (display)) {
+    fprintf (stderr, "Invalid screen number %ld (display has %d)\n",
+	     screen, ScreenCount (display));
+    return EXIT_FAILURE;
+  }
+
+  root = RootWindow (display, (int) screen);
+  res = XRRGetScreenResourcesCurrent (display, root);
+
+  for (c = 0; c < res->ncrtc; c++) {
+    int o;
+    XRRCrtcInfo *crtc = XRRGetCrtcInfo (display, res, res->crtcs[c]);
+
+    for (o = 0; o < crtc->noutput; o++) {
+      XRROutputInfo *out = XRRGetOutputInfo (display, res, crtc->outputs[o]);
+      printf ("%s\tid=%lu\n", out->name, (unsigned long)crtc->outputs[o]);
+    }
+  }
+
+  return EXIT_SUCCESS;
 }
 
 /* end of list.c */

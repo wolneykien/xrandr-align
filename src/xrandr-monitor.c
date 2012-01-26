@@ -53,6 +53,10 @@ static entry drivers[] =
      "[--short || --long] [<device name>...]",
      list_input
     },
+    {"list-output",
+     "[--screen=NUMBER]",
+     list_output
+    },
     {NULL, NULL, NULL
     }
 };
