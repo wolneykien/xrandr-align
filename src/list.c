@@ -278,7 +278,7 @@ list_xi2(Display *display,
 #endif
 
 int
-list(Display	*display,
+list_input(Display	*display,
      int	argc,
      char	*argv[],
      char	*name,

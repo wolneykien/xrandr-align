@@ -21,7 +21,7 @@
 
 
 appmandir = $(APP_MAN_DIR)
-appman_PRE = xinput.man
+appman_PRE = xrandr-monitor.man
 appman_DATA = $(appman_PRE:man=@APP_MAN_SUFFIX@)
 
 EXTRA_DIST = $(appman_PRE)

@@ -55,7 +55,7 @@ int set_button_map( Display* display, int argc, char *argv[], char *prog_name, c
 int set_pointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 
 int set_mode( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int list( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int list_input( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int test( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int version( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int set_integer_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);

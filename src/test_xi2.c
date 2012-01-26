@@ -296,7 +296,7 @@ test_xi2(Display	*display,
     XIEventMask mask;
     Window win;
 
-    list(display, argc, argv, name, desc);
+    list_input(display, argc, argv, name, desc);
     win = create_win(display);
 
     /* Select for motion events */

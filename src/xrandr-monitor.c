@@ -39,99 +39,9 @@ typedef struct
 
 static entry drivers[] =
 {
-    {"get-feedbacks",
-     "<device name>",
-     get_feedbacks
-    },
-    {"set-ptr-feedback",
-     "<device name> <threshold> <num> <denom>",
-     set_ptr_feedback
-    },
-    {"set-integer-feedback",
-     "<device name> <feedback id> <value>",
-     set_integer_feedback
-    },
-    {"get-button-map",
-     "<device name>",
-     get_button_map
-    },
-    {"set-button-map",
-     "<device name> <map button 1> [<map button 2> [...]]",
-     set_button_map
-    },
-    {"set-pointer",
-     "<device name> [<x index> <y index>]",
-     set_pointer
-    },
-    {"set-mode",
-     "<device name> ABSOLUTE|RELATIVE",
-     set_mode
-    },
-    {"list",
+    {"list-input",
      "[--short || --long] [<device name>...]",
-     list
-    },
-    {"query-state",
-     "<device name>",
-     query_state
-    },
-    {"test",
-     "[-proximity] <device name>",
-     test
-    },
-#if HAVE_XI2
-    { "create-master",
-      "<id> [<sendCore (dflt:1)>] [<enable (dflt:1)>]",
-      create_master
-    },
-    { "remove-master",
-      "<id> [Floating|AttachToMaster (dflt:Floating)] [<returnPointer>] [<returnKeyboard>]",
-      remove_master
-    },
-    { "reattach",
-      "<id> <master>",
-      change_attachment
-    },
-    { "float",
-      "<id>",
-      float_device
-    },
-    { "set-cp",
-      "<window> <device>",
-      set_clientpointer
-    },
-    { "test-xi2",
-      "<device>",
-      test_xi2,
-    },
-#endif
-    { "list-props",
-      "<device> [<device> ...]",
-      list_props
-    },
-    { "set-int-prop",
-      "<device> <property> <format (8, 16, 32)> <val> [<val> ...]",
-      set_int_prop
-    },
-    { "set-float-prop",
-      "<device> <property> <val> [<val> ...]",
-      set_float_prop
-    },
-    { "set-atom-prop",
-      "<device> <property> <val> [<val> ...]",
-      set_atom_prop
-    },
-    { "watch-props",
-      "<device>",
-      watch_props
-    },
-    { "delete-prop",
-      "<device> <property>",
-      delete_prop
-    },
-    { "set-prop",
-      "<device> [--type=atom|float|int] [--format=8|16|32] <property> <val> [<val> ...]",
-      set_prop
+     list_input
     },
     {NULL, NULL, NULL
     }
@@ -145,7 +55,7 @@ print_version()
     XExtensionVersion	*version;
     Display *display;
 
-    printf("xinput version %s\n", version_id);
+    printf("xrandr-monitor version %s\n", version_id);
 
     display = XOpenDisplay(NULL);
 
@@ -313,7 +223,7 @@ usage(void)
     fprintf(stderr, "usage :\n");
 
     while(pdriver->func_name) {
-	fprintf(stderr, "\txinput %s %s\n", pdriver->func_name,
+	fprintf(stderr, "\txrandr-monitor %s %s\n", pdriver->func_name,
 		pdriver->arg_desc);
 	pdriver++;
     }
@@ -372,4 +282,4 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
 }
 
-/* end of xinput.c */
+/* end of xrandr-monitor.c */
