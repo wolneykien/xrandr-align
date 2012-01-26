@@ -363,8 +363,11 @@ list_output(Display *display,
       for (o = 0; o < crtc->noutput; o++) {
 	XRROutputInfo *out = XRRGetOutputInfo (display, res, crtc->outputs[o]);
 	printf ("%s\tid=%lu\n", out->name, (unsigned long)crtc->outputs[o]);
+	XRRFreeOutputInfo (out);
       }
+      XRRFreeCrtcInfo (crtc);
     }
+    XRRFreeScreenResources (res);
   }
 
   return ret;
