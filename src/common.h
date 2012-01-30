@@ -35,13 +35,14 @@
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
-const char
-*get_argval (int argc,
-	     const char *argv[],
-	     const char *argname,
-	     const char *funcname,
-	     const char *usage,
-	     const char *defval);
+int
+get_argval (int argc,
+	    const char *argv[],
+	    const char *argname,
+	    const char *funcname,
+	    const char *usage,
+	    const char *defval,
+	    const char **outval);
 
 int
 get_screen (Display *display,

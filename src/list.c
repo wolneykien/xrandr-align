@@ -351,21 +351,15 @@ list_output(Display *display,
   if (ret == EXIT_SUCCESS) {
     XRRScreenResources *res;
     Window root;
-    int c;
+    int o;
 
     root = RootWindow (display, screen);
     res = XRRGetScreenResourcesCurrent (display, root);
 
-    for (c = 0; c < res->ncrtc; c++) {
-      int o;
-      XRRCrtcInfo *crtc = XRRGetCrtcInfo (display, res, res->crtcs[c]);
-
-      for (o = 0; o < crtc->noutput; o++) {
-	XRROutputInfo *out = XRRGetOutputInfo (display, res, crtc->outputs[o]);
-	printf ("%s\tid=%lu\n", out->name, (unsigned long)crtc->outputs[o]);
-	XRRFreeOutputInfo (out);
-      }
-      XRRFreeCrtcInfo (crtc);
+    for (o = 0; o < res->noutput; o++) {
+      XRROutputInfo *out = XRRGetOutputInfo (display, res, res->outputs[o]);
+      printf ("%s\tid=%lu\n", out->name, (unsigned long)res->outputs[o]);
+      XRRFreeOutputInfo (out);
     }
     XRRFreeScreenResources (res);
   }

@@ -34,13 +34,14 @@
 #include "string.h"
 #include "common.h"
 
-const char
-*get_argval (int argc,
-	     const char *argv[],
-	     const char *argname,
-	     const char *funcname,
-	     const char *usage,
-	     const char *defval)
+int
+get_argval (int argc,
+	    const char *argv[],
+	    const char *argname,
+	    const char *funcname,
+	    const char *usage,
+	    const char *defval,
+	    const char **outval)
 {
   int i;
 
@@ -53,16 +54,18 @@ const char
 	  strlen (eq) < 2)
 	{
 	  fprintf (stderr, "Usage: %s %s\n", funcname, usage);
-	  return NULL;
+	  return EXIT_FAILURE;
 	}
       else
 	{
-	  return eq + 1;
+	  *outval = eq + 1;
+	  return EXIT_SUCCESS;
 	}
     }
   }
 
-  return defval;
+  *outval = defval;
+  return EXIT_SUCCESS;
 }
 
 int
@@ -75,27 +78,30 @@ get_screen (Display *display,
 {
   long screen;
   const char *screenarg;
+  int ret;
 
-  screenarg = get_argval (argc, argv, "screen", funcname, usage, "-1");
-  if (screenarg == NULL) {
-    return EXIT_FAILURE;
-  } else {
+  ret = get_argval (argc, argv, "screen", funcname, usage, "-1", &screenarg);
+  if (ret != EXIT_FAILURE) {
     char *endptr;
     screen = strtol (screenarg, &endptr, 0);
     if (endptr == screenarg) {
       fprintf (stderr, "Invalid number: %s\n", screenarg);
-      return EXIT_FAILURE;
+      ret = EXIT_FAILURE;
     }
   }
 
-  if (screen < 0) {
-    screen = DefaultScreen (display);
-  } else if (screen >= ScreenCount (display)) {
-    fprintf (stderr, "Invalid screen number %ld (display has %d)\n",
-	     screen, ScreenCount (display));
-    return EXIT_FAILURE;
+  if (ret != EXIT_FAILURE) {
+    if (screen < 0) {
+      screen = DefaultScreen (display);
+    } else if (screen >= ScreenCount (display)) {
+      fprintf (stderr, "Invalid screen number %ld (display has %d)\n",
+	       screen, ScreenCount (display));
+      ret = EXIT_FAILURE;
+    }
   }
 
-  *retscreen = (int)screen;
-  return EXIT_SUCCESS;
+  if (ret != EXIT_FAILURE) {
+    *retscreen = (int)screen;
+  }
+  return ret;
 }
