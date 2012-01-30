@@ -277,11 +277,23 @@ main(int argc, char * argv[])
     entry	*driver = drivers;
     char        *func;
     int event, error;
+    int argoffs;
 
     if (argc < 2) {
-        func = "align";
+      func = "align";
+      argoffs = 0;
     } else {
-      func = argv[1];
+      int i = 1;
+      while (i < argc && (*argv[i]) == '-') {
+	i++;
+      }
+      if (i < argc) {
+	func = argv[i];
+	argoffs = i;
+      } else {
+	func = "align";
+	argoffs = 0;
+      }
     }
 
     while((*func) == '-') func++;
@@ -309,7 +321,7 @@ main(int argc, char * argv[])
 
     while(driver->func_name) {
 	if (strcmp(driver->func_name, func) == 0) {
-	    int	r = (*driver->func)(display, argc-2, argv+2,
+	    int	r = (*driver->func)(display, argc - argoffs, argv + argoffs,
 				    driver->func_name, driver->arg_desc);
 	    XSync(display, False);
 	    XCloseDisplay(display);
