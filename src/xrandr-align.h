@@ -48,36 +48,11 @@ XIDeviceInfo* xi2_find_device_info(Display *display, char *name);
 int xinput_version(Display* display);
 #endif
 
-int get_feedbacks( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_ptr_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int get_button_map( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_button_map( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_pointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-
-int set_mode( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int list_input( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int apply_transform (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
-int test( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int version( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_integer_feedback( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int query_state( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 
 /* X Input 1.5 */
-int list_props( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_int_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 int set_float_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_atom_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int watch_props( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int delete_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-
-/* X Input 2.0 */
-int create_master( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int remove_master( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int change_attachment( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int float_device( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int set_clientpointer( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
-int test_xi2( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
 
 /* end of xrandr-align.h */
