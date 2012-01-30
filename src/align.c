@@ -31,36 +31,66 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <X11/Xlib.h>
+#include "common.h"
+#include "xrandr-align.h"
+#include <string.h>
 #include <X11/extensions/Xrandr.h>
 
 int
-get_argval (int argc,
-	    const char *argv[],
-	    const char *argname,
-	    const char *funcname,
-	    const char *usage,
-	    const char *defval,
-	    const char **outval);
+apply_transform (Display *display,
+		 int argc,
+		 const char *argv[],
+		 const char *funcname,
+		 const char *usage)
+{
+  XRROutputInfo *output;
+  int ret;
+  const char *inputarg;
 
-int
-get_screen (Display *display,
-	    int argc,
-	    const char *argv[],
-	    const char *funcname,
-	    const char *usage,
-	    int *retscreen);
+  ret = get_argval (argc, argv, "input", funcname, usage, "2", &inputarg);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
 
-int
-check_output (XRRScreenResources *res,
-	      int outid);
+  ret = get_output (display, argc, argv, funcname, usage, &output);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
 
-int
-get_output (Display *display,
-	    int	argc,
-	    const char *argv[],
-	    const char *funcname,
-	    const char *usage,
-	    XRROutputInfo **retoutput);
+  if (ret != EXIT_FAILURE) {
+    XRRCrtcTransformAttributes *transform;
+    Status status;
+
+    status = XRRGetCrtcTransform (display, output->crtc, &transform);
+    if (status) {
+      static char strmx[3][3][8];
+      static const char *args[11];
+      int i, j;
+
+      args[0] = inputarg;
+      args[1] = "115";
+      for (j = 0; j < 3; j++) {
+	for (i = 0; i < 3; i++) {
+	  XFixed v = transform->currentTransform.matrix[j][i];
+	  snprintf (strmx[j][i], 8, "%8.6f", XFixedToDouble (v));
+	  args[2 + i + j*3] = strmx[j][i];
+	}
+      }
+      fprintf (stderr, "Debug: set-float-prop");
+      for (i = 0; i < 11; i++) {
+	fprintf (stderr, " %s", args[i]);
+      }
+      fprintf (stderr, "\n");
+      set_float_prop(display, 11, args, funcname, usage);
+      XFree (transform);
+    } else {
+      fprintf (stderr, "Unable to get the current transformation\n");
+      ret = EXIT_FAILURE;
+    }
+  }
+
+  XRRFreeOutputInfo (output);
+  return ret;
+}
+
+/* end of align.c */

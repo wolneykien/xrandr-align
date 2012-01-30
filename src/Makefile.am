@@ -41,6 +41,7 @@ xrandr_align_SOURCES = \
     state.c \
     property.c \
     test.c \
+    align.c \
     xrandr-align.c \
     xrandr-align.h \
     $(xinput2_files)

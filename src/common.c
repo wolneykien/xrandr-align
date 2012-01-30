@@ -105,3 +105,85 @@ get_screen (Display *display,
   }
   return ret;
 }
+
+int
+check_output (XRRScreenResources *res,
+	      int outid)
+{
+  int o;
+
+  for (o = 0; o < res->noutput; o++) {
+    if (res->outputs[o] == outid) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int
+get_output (Display *display,
+	    int	argc,
+	    const char *argv[],
+	    const char *funcname,
+	    const char *usage,
+	    XRROutputInfo **retoutput)
+{
+  int ret;
+  int screen;
+  const char *outname;
+
+  ret = get_argval (argc, argv, "output", funcname, usage, "", &outname);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
+  ret = get_screen (display, argc, argv, funcname, usage, &screen);
+  if (ret != EXIT_FAILURE) {
+    XRRScreenResources *res;
+    Window root;
+    int outnum;
+
+    root = RootWindow (display, screen);
+    res = XRRGetScreenResourcesCurrent (display, root);
+
+    *retoutput = NULL;
+    if (strlen (outname) == 0) {
+      outnum = XRRGetOutputPrimary (display, root);
+      if (!check_output (res, outnum)) {
+	outnum = res->outputs[0];
+      }
+      *retoutput = XRRGetOutputInfo (display, res, outnum);
+    } else {
+      char *endptr;
+      outnum = (int) strtol (outname, &endptr, 0);
+      if (endptr != NULL && strlen (endptr) != 0) {
+	int o;
+	ret = EXIT_FAILURE;
+	for (o = 0; o < res->noutput; o++) {
+	  XRROutputInfo *out = XRRGetOutputInfo (display, res, res->outputs[o]);
+	  if (strncmp (out->name, outname, 256) == 0) {
+	    *retoutput = out;
+	    ret = EXIT_SUCCESS;
+	  } else {
+	    XRRFreeOutputInfo (out);
+	  }
+	}
+	if (*retoutput == NULL) {
+	  fprintf (stderr, "Output '%s' not found\n", outname);
+	  ret = EXIT_FAILURE;
+	}
+      } else {
+	if (check_output (res, outnum)) {
+	  *retoutput = XRRGetOutputInfo (display, res, outnum);
+	} else {
+	  fprintf (stderr, "Output with id=%i not found\n", outnum);
+	  ret = EXIT_FAILURE;
+	}
+      }
+    }
+    XRRFreeScreenResources (res);
+  }
+
+  return ret;
+}

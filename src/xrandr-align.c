@@ -57,6 +57,10 @@ static entry drivers[] =
      "[--screen=NUMBER]",
      list_output
     },
+    {"align",
+     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
+     apply_transform
+    },
     {NULL, NULL, NULL
     }
 };
