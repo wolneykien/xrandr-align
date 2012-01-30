@@ -279,11 +279,11 @@ main(int argc, char * argv[])
     int event, error;
 
     if (argc < 2) {
-	usage();
-	return EXIT_FAILURE;
+        func = "align";
+    } else {
+      func = argv[1];
     }
 
-    func = argv[1];
     while((*func) == '-') func++;
 
     if (strcmp("version", func) == 0) {
