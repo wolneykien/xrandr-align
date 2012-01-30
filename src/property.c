@@ -34,7 +34,7 @@
 
 #include "xrandr-align.h"
 
-static Atom parse_atom(Display *dpy, char *name) {
+static Atom parse_atom(Display *dpy, const char *name) {
     Bool is_atom = True;
     int i;
 
@@ -52,13 +52,13 @@ static Atom parse_atom(Display *dpy, char *name) {
 }
 
 static int
-do_set_prop_xi1(Display *dpy, Atom type, int format, int argc, char **argv, char *n, char *desc)
+do_set_prop_xi1(Display *dpy, Atom type, int format, int argc, const char **argv, const char *n, const char *desc)
 {
     XDeviceInfo  *info;
     XDevice      *dev;
     Atom          prop;
     Atom          old_type;
-    char         *name;
+    const char    *name;
     int           i;
     Atom          float_atom;
     int           old_format, nelements = 0;
@@ -179,12 +179,12 @@ do_set_prop_xi1(Display *dpy, Atom type, int format, int argc, char **argv, char
 
 #if HAVE_XI2
 static int
-do_set_prop_xi2(Display *dpy, Atom type, int format, int argc, char **argv, char *n, char *desc)
+do_set_prop_xi2(Display *dpy, Atom type, int format, int argc, const char **argv, const char *n, const char *desc)
 {
     XIDeviceInfo *info;
     Atom          prop;
     Atom          old_type;
-    char         *name;
+    const char    *name;
     int           i;
     Atom          float_atom;
     int           old_format, nelements = 0;
@@ -296,7 +296,7 @@ do_set_prop_xi2(Display *dpy, Atom type, int format, int argc, char **argv, char
 #endif
 
 static int
-do_set_prop(Display *display, Atom type, int format, int argc, char *argv[], char *name, char *desc)
+do_set_prop(Display *display, Atom type, int format, int argc, const char *argv[], const char *name, const char *desc)
 {
 #ifdef HAVE_XI2
     if (xinput_version(display) == XI_2_Major)
@@ -306,7 +306,7 @@ do_set_prop(Display *display, Atom type, int format, int argc, char *argv[], cha
 }
 
 int
-set_float_prop(Display *dpy, int argc, char** argv, char* n, char *desc)
+set_float_prop(Display *dpy, int argc, const char** argv, const char* n, const char *desc)
 {
     Atom float_atom = XInternAtom(dpy, "FLOAT", False);
 

@@ -291,10 +291,10 @@ list_xi2(Display *display,
 
 int
 list_input(Display	*display,
-     int	argc,
-     char	*argv[],
-     char	*name,
-     char	*desc)
+	   int argc,
+	   const char	*argv[],
+	   const char	*name,
+	   const char	*desc)
 {
     int shortformat = (argc >= 1 && strcmp(argv[0], "--short") == 0);
     int longformat = (argc >= 1 && strcmp(argv[0], "--long") == 0);

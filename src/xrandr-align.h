@@ -42,17 +42,17 @@
 #endif
 
 extern int xi_opcode; /* xinput extension op code */
-XDeviceInfo* find_device_info( Display *display, char *name, Bool only_extended);
+XDeviceInfo* find_device_info( Display *display, const char *name, Bool only_extended);
 #if HAVE_XI2
-XIDeviceInfo* xi2_find_device_info(Display *display, char *name);
+XIDeviceInfo* xi2_find_device_info(Display *display, const char *name);
 int xinput_version(Display* display);
 #endif
 
-int list_input( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int list_input( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int apply_transform (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
 
 /* X Input 1.5 */
-int set_float_prop( Display* display, int argc, char *argv[], char *prog_name, char *prog_desc);
+int set_float_prop( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 
 /* end of xrandr-align.h */

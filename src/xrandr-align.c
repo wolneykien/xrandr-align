@@ -37,8 +37,8 @@
 
 int xi_opcode;
 
-typedef int (*prog)(Display* display, int argc, char *argv[],
-		    char *prog_name, char *prog_desc);
+typedef int (*prog)(Display* display, int argc, const char *argv[],
+		    const char *prog_name, const char *prog_desc);
 
 typedef struct
 {
@@ -139,7 +139,7 @@ xinput_version(Display	*display)
 
 XDeviceInfo*
 find_device_info(Display	*display,
-		 char		*name,
+		 const char    	*name,
 		 Bool		only_extended)
 {
     XDeviceInfo	*devices;
@@ -192,7 +192,7 @@ Bool is_keyboard(int use)
     return use == XIMasterKeyboard || use == XISlaveKeyboard;
 }
 
-Bool device_matches(XIDeviceInfo *info, char *name)
+Bool device_matches(XIDeviceInfo *info, const char *name)
 {
     if (strcmp(info->name, name) == 0) {
         return True;
@@ -214,7 +214,7 @@ Bool device_matches(XIDeviceInfo *info, char *name)
 }
 
 XIDeviceInfo*
-xi2_find_device_info(Display *display, char *name)
+xi2_find_device_info(Display *display, const char *name)
 {
     XIDeviceInfo *info;
     XIDeviceInfo *found = NULL;
@@ -271,11 +271,11 @@ usage(void)
 }
 
 int
-main(int argc, char * argv[])
+main(int argc, const char * argv[])
 {
     Display	*display;
     entry	*driver = drivers;
-    char        *func;
+    const char  *func;
     int event, error;
     int argoffs;
 
