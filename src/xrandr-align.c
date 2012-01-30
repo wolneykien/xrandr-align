@@ -281,7 +281,7 @@ main(int argc, char * argv[])
 
     if (argc < 2) {
       func = "align";
-      argoffs = 0;
+      argoffs = 1;
     } else {
       int i = 1;
       while (i < argc && (*argv[i]) == '-') {
@@ -289,10 +289,10 @@ main(int argc, char * argv[])
       }
       if (i < argc) {
 	func = argv[i];
-	argoffs = i;
+	argoffs = i + 1;
       } else {
 	func = "align";
-	argoffs = 0;
+	argoffs = 1;
       }
     }
 
