@@ -36,6 +36,7 @@
 #include <string.h>
 
 int xi_opcode;
+int verbose = 0;
 
 typedef int (*prog)(Display* display, int argc, const char *argv[],
 		    const char *prog_name, const char *prog_desc);
@@ -260,7 +261,7 @@ usage(void)
 {
     entry	*pdriver = drivers;
 
-    fprintf(stderr, "usage :\n");
+    fprintf(stderr, "usage txrandr-align [ -v | --verbose ] [function-name]:\n");
 
     fprintf(stderr, "\txrandr-align version\n");
     while(pdriver->func_name) {
@@ -285,6 +286,10 @@ main(int argc, const char * argv[])
     } else {
       int i = 1;
       while (i < argc && (*argv[i]) == '-') {
+	if (strncmp (argv[i], "-v", 2) == 0 || \
+	    strncmp (argv[i], "--verbose", 9) == 0) {
+	  verbose = 1;
+	}
 	i++;
       }
       if (i < argc) {

@@ -76,11 +76,13 @@ apply_transform (Display *display,
 	  args[2 + i + j*3] = strmx[j][i];
 	}
       }
-      /*fprintf (stderr, "Debug: set-float-prop");
-      for (i = 0; i < 11; i++) {
-	fprintf (stderr, " %s", args[i]);
+      if (verbose) {
+	fprintf (stderr, "Debug: set-float-prop");
+	for (i = 0; i < 11; i++) {
+	  fprintf (stderr, " %s", args[i]);
+	}
+	fprintf (stderr, "\n");
       }
-      fprintf (stderr, "\n");*/
       set_float_prop(display, 11, args, funcname, usage);
       XFree (transform);
     } else {

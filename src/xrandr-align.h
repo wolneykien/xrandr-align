@@ -48,6 +48,8 @@ XIDeviceInfo* xi2_find_device_info(Display *display, const char *name);
 int xinput_version(Display* display);
 #endif
 
+extern int verbose;
+
 int list_input( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int apply_transform (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
