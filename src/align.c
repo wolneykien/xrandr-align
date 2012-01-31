@@ -46,8 +46,14 @@ apply_transform (Display *display,
   XRROutputInfo *output;
   int ret;
   const char *inputarg;
+  int screen;
 
-  ret = get_argval (argc, argv, "input", funcname, usage, "2", &inputarg);
+  ret = get_screen (display, argc, argv, funcname, usage, &screen);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
+  ret = get_argval (argc, argv, "input", funcname, usage, "Virtual core pointer", &inputarg);
   if (ret == EXIT_FAILURE) {
     return ret;
   }
@@ -58,21 +64,64 @@ apply_transform (Display *display,
   }
 
   if (ret != EXIT_FAILURE) {
+    Window root;
+    XRRScreenResources *res;
+    XRRCrtcInfo *crtc;
     XRRCrtcTransformAttributes *transform;
     Status status;
+    double amx[3][3];
+    double sina, cosa;
+
+    root = RootWindow (display, screen);
+    res = XRRGetScreenResourcesCurrent (display, root);
+
+    crtc = XRRGetCrtcInfo (display, res, output->crtc);
+  
+    if (verbose) {
+      fprintf (stderr, "Output: %s\n", output->name);
+      fprintf (stderr, "CRTC: (%i, %i) (%u, %u) %u\n", crtc->x, crtc->y, crtc->width, crtc->height, crtc->rotation);
+    }
+
+    switch (crtc->rotation) {
+      case 2: sina = 1;
+              cosa = 0;
+              break;
+      case 3: sina = 0;
+              cosa = -1;
+              break;
+      default: sina = 0;
+               cosa = 1;
+    }
+    amx[0][0] = cosa;
+    amx[0][1] = -sina;
+    amx[0][2] = 0;
+    amx[1][0] = sina;
+    amx[1][1] = cosa;
+    amx[1][2] = 0;
+    amx[2][0] = 0;
+    amx[2][1] = 0;
+    amx[2][2] = 1;
 
     status = XRRGetCrtcTransform (display, output->crtc, &transform);
     if (status) {
       static char strmx[3][3][8];
       static const char *args[11];
+      double mx[3][3];
       int i, j;
 
-      args[0] = inputarg;
-      args[1] = "115";
       for (j = 0; j < 3; j++) {
 	for (i = 0; i < 3; i++) {
-	  XFixed v = transform->currentTransform.matrix[j][i];
-	  snprintf (strmx[j][i], 8, "%8.6f", XFixedToDouble (v));
+	  XFixed fv = transform->currentTransform.matrix[j][i];
+          mx[j][i] = XFixedToDouble (fv);
+        }
+      }
+
+      args[0] = inputarg;
+      args[1] = "Coordinate Transformation Matrix";
+      for (j = 0; j < 3; j++) {
+	for (i = 0; i < 3; i++) {
+          double v = mx[0][i]*amx[j][0] + mx[1][i]*amx[j][1] + mx[2][i]*amx[j][2];
+	  snprintf (strmx[j][i], 8, "%8.6f", v);
 	  args[2 + i + j*3] = strmx[j][i];
 	}
       }
@@ -89,6 +138,8 @@ apply_transform (Display *display,
       fprintf (stderr, "Unable to get the current transformation\n");
       ret = EXIT_FAILURE;
     }
+    XRRFreeCrtcInfo (crtc);
+    XRRFreeScreenResources (res);
   }
 
   XRRFreeOutputInfo (output);
