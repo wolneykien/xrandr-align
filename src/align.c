@@ -65,45 +65,95 @@ apply_transform (Display *display,
 
   if (ret != EXIT_FAILURE) {
     Window root;
+    XRRScreenConfiguration *sconf;
     XRRScreenResources *res;
     XRRCrtcInfo *crtc;
     XRRCrtcTransformAttributes *transform;
     Status status;
     double amx[3][3];
     double sina, cosa;
+    double hscale, vscale, hoffs, voffs;
+    XRRScreenSize *ssize;
+    int nsizes;
+    Rotation srot;
 
     root = RootWindow (display, screen);
     res = XRRGetScreenResourcesCurrent (display, root);
-
+    sconf = XRRGetScreenInfo (display, root);
+    ssize = XRRConfigSizes(sconf, &nsizes) + XRRConfigCurrentConfiguration (sconf, &srot);
     crtc = XRRGetCrtcInfo (display, res, output->crtc);
   
     if (verbose) {
+      fprintf (stderr, "Screen: (%u, %u) 0x%02x\n", ssize->width, ssize->height, srot);
       fprintf (stderr, "Output: %s\n", output->name);
-      fprintf (stderr, "CRTC: (%i, %i) (%u, %u) %u\n", crtc->x, crtc->y, crtc->width, crtc->height, crtc->rotation);
+      fprintf (stderr, "CRTC: (%i, %i) (%u, %u) 0x%02x\n", crtc->x, crtc->y, crtc->width, crtc->height, crtc->rotation);
+    }
+
+    switch (srot) {
+    case 1:
+    case 4:
+      hscale = (double)crtc->width/(double)ssize->width;
+      vscale = (double)crtc->height/(double)ssize->height;
+      break;
+    case 2:
+    case 8:
+      hscale = (double)crtc->width/(double)ssize->height;
+      vscale = (double)crtc->height/(double)ssize->width;
+      break;
+    default:
+      ret = EXIT_FAILURE;
+      fprintf (stderr, "The screen rotation/reflection 0x%02x is not supported yet. Sorry.\n", srot);
     }
 
     switch (crtc->rotation) {
-      case 2: sina = 1;
-              cosa = 0;
-              break;
-      case 3: sina = 0;
-              cosa = -1;
-              break;
-      default: sina = 0;
-               cosa = 1;
+    case 1:
+      sina = 0;
+      cosa = 1;
+      hoffs = 0;
+      voffs = 0;
+      break;
+    case 2:
+      sina = 1;
+      cosa = 0;
+      hoffs = 1;
+      voffs = 0;
+      break;
+    case 4:
+      sina = 0;
+      cosa = -1;
+      hoffs = 1;
+      voffs = 1;
+      break;
+    case 8:
+      sina = -1;
+      cosa = 0;
+      hoffs = 0;
+      voffs = 1;
+      break;
+    default:
+      ret = EXIT_FAILURE;
+      fprintf (stderr, "The rotation/reflection 0x%02x is not supported yet. Sorry.\n", crtc->rotation);
     }
-    amx[0][0] = cosa;
-    amx[0][1] = -sina;
-    amx[0][2] = 0;
-    amx[1][0] = sina;
-    amx[1][1] = cosa;
-    amx[1][2] = 0;
-    amx[2][0] = 0;
-    amx[2][1] = 0;
-    amx[2][2] = 1;
 
-    status = XRRGetCrtcTransform (display, output->crtc, &transform);
-    if (status) {
+    if (ret != EXIT_FAILURE) {
+      amx[0][0] = cosa*hscale;
+      amx[0][1] = -sina*hscale;
+      amx[0][2] = hoffs*hscale + crtc->x/ssize->width;
+      amx[1][0] = sina*vscale;
+      amx[1][1] = cosa*vscale;
+      amx[1][2] = voffs*vscale + crtc->y/ssize->height;
+      amx[2][0] = 0;
+      amx[2][1] = 0;
+      amx[2][2] = 1;
+
+      status = XRRGetCrtcTransform (display, output->crtc, &transform);
+      if (!status) {
+	fprintf (stderr, "Unable to get the current transformation\n");
+	ret = EXIT_FAILURE;
+      }
+    }
+
+    if (ret != EXIT_FAILURE) {
       static char strmx[3][3][8];
       static const char *args[11];
       double mx[3][3];
@@ -134,12 +184,10 @@ apply_transform (Display *display,
       }
       set_float_prop(display, 11, args, funcname, usage);
       XFree (transform);
-    } else {
-      fprintf (stderr, "Unable to get the current transformation\n");
-      ret = EXIT_FAILURE;
     }
     XRRFreeCrtcInfo (crtc);
     XRRFreeScreenResources (res);
+    XRRFreeScreenConfigInfo (sconf);
   }
 
   XRRFreeOutputInfo (output);
