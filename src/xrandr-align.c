@@ -58,7 +58,7 @@ static entry drivers[] =
      "[--screen=NUMBER]",
      list_output
     },
-    {"align",
+    {"[align]",
      "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
      apply_transform
     },
