@@ -325,7 +325,8 @@ main(int argc, const char * argv[])
     }
 
     while(driver->func_name) {
-	if (strcmp(driver->func_name, func) == 0) {
+      if (strcmp (driver->func_name, func) == 0 ||
+	  *driver->func_name == '[' && strncmp (driver->func_name + 1, func, strlen (func)) == 0) {
 	    int	r = (*driver->func)(display, argc - argoffs, argv + argoffs,
 				    driver->func_name, driver->arg_desc);
 	    XSync(display, False);
