@@ -1,4 +1,16 @@
+#
+#  Original xinput:
+#  Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
 #  Copyright 2005 Adam Jackson.
+#
+#  Original xrandr:
+#  Copyright © 2001 Keith Packard, member of The XFree86 Project, Inc.
+#  Copyright © 2002 Hewlett Packard Company, Inc.
+#  Copyright © 2006 Intel Corporation
+#
+#  xrandr-align:
+#
+#  Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a
 #  copy of this software and associated documentation files (the "Software"),
