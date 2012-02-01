@@ -182,7 +182,7 @@ apply_transform (Display *display,
 	}
 	fprintf (stderr, "\n");
       }
-      set_float_prop(display, 11, args, funcname, usage);
+      ret = set_float_prop(display, 11, args, funcname, usage);
       XFree (transform);
     }
     XRRFreeCrtcInfo (crtc);
