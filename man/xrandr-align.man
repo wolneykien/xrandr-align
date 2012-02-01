@@ -1,163 +1,105 @@
-.TH xinput 1 __xorgversion__
+.TH xrandr-align 1
 
 .SH NAME
-xinput - utility to configure and test X input devices
+xrandr-align - utility to align an X input device in accordance with
+the screen rotation
 
 .SH SYNOPSIS
-.B xinput [OPTIONS] [DEVICE]
+.B xrandr-align [OPTIONS] [FUNCTION] [FUNCTION-OPTIONS]
 
 .SH DESCRIPTION
-xinput is a utility to list available input devices, query information about
-a device and change input device settings.
+xrandr-align is a utility to align an X input device in accordance
+with the screen rotation, panning and scale parameters controlled by
+the X RandR extension. In addition the utility can list available
+input devices and screen outputs.
+
 .SH OPTIONS
 .TP 8
-.B --version
-Test if the X Input extension is available and return the version number
-of the program and the version supported by the server. This option does not
-require a device name.
+.B -v | --verbose
+Turns on the verbose output mode.
+
+.SH FUNCTIONS
+.TP 8
+.B version
+Prints out the program version and the versions of XInput and XRandR
+extensions available on the running X server. This function does not
+require any additional options.
 .PP
 .TP 8
-.B --list [--short || --long] [\fIdevice\fP]
-If no argument is given list all the input devices. If an argument is given,
-show all the features of \fIdevice\fP.
-If --long is provided, the output includes detailed information about the
-capabilities of each devices. Otherwise, or if --short is provided, only the
-device names and some minimal information is listed.
+.B list-input [--short | --long] [\fIdevice\fP]
+If no argument is given list all available input devices. If an
+argument is given, show all the features of the given \fIdevice\fP.
+If --long is provided, the output includes detailed information about
+the capabilities of each devices. Otherwise, or if --short is
+provided, only the device names and some minimal information is
+listed.
 .PP
 .TP 8
-.B --get-feedbacks \fIdevice\fP
-Display the feedbacks of \fIdevice\fP.
+.B list-output [--screen=\fInumber\fP]
+If no argument is given list all available screen outputs. Optionally
+the screen \fnumber\fP can be specified.
 .PP
 .TP 8
-.B --set-pointer \fIdevice\fP
-Switch \fIdevice\fP in core pointer.
-This option does nothing on X servers 1.5 and later.
-.PP
-.TP 8
-.B --set-mode \fIdevice\fP \fIABSOLUTE|RELATIVE\fP
-Change the mode of \fIdevice\fP.
-.PP
-.TP 8
-.B --set-ptr-feedback \fIdevice\fP \fIthreshold\fP \fInum\fP \fIdenom\fP
-Change the pointer acceleration (or feedback) parameters of \fIdevice\fP.
-The xset(1) man page has more details. For X.Org Server 1.7
-and above, there are additional device properties pertaining to pointer
-acceleration. These do not replace, but complement the pointer feedback
-setting.
-.PP
-.TP 8
-.B --set-integer-feedback \fIdevice\fP \fIindex\fP \fIvalue\fP
-Change the value of an integer feedback of \fIdevice\fP.
-.PP
-.TP 8
-.B --set-button-map \fIdevice\fP \fImap_button_1\fP [\fImap_button_2\fP [\fI...\fP]]
-Change the button mapping of \fIdevice\fP. The buttons are specified in
-physical order (starting with button 1) and are mapped to the logical button
-provided. 0 disables a button. The default button mapping for a device is 1
-2 3 4 5 6 etc.
-.PP
-.TP 8
-.B --query-state \fIdevice\fP
-Query the device state.
-.PP
-.TP 8
-.B --list-props \fIdevice\fP [\fIdevice\fP [\fI...\fP]]
-Lists properties that can be set for the given device(s).
-.PP
-.TP 8
-.B --set-int-prop \fIdevice\fP \fIproperty\fP \fIformat\fP \fIvalue\fP
-Sets an integer property for the device.  Appropriate values for \fIformat\fP
-are 8, 16, or 32, depending on the property. Deprecated, use
-.B --set-prop
-instead.
-.PP
-.TP 8
-.B --set-float-prop \fIdevice\fP \fIproperty\fP \fIvalue\fP
-Sets a float property for the device. Deprecated, use
-.B --set-prop
-instead.
-.PP
-.TP 8
-.B --set\-prop [\-\-type=\fIatom|float|int\fP] [\-\-format=\fI8|16|32\fP] \fIdevice\fP \fIproperty\fP \fIvalue\fP [...]
-Set the property to the given value(s).  If not specified, the format and type
-of the property are left as-is.  The arguments are interpreted according to the
-property type.
-.PP
-.TP 8
-.B --watch-props \fIdevice\fP
-Prints to standard out when property changes occur.
-.PP
-.TP 8
-.B --delete-prop \fIdevice\fP \fIproperty\fP
-Delete the property from the device.
-.PP
-.TP 8
-.B --test [-proximity] \fIdevice\fP
-Register all extended events from \fIdevice\fP and enter an endless
-loop displaying events received. If the -proximity is given, ProximityIn
-and ProximityOut are registered.
-.PP
-.TP 8
-.B --test_xi2
-Register for a number of XI2 events and display them. This option does not
-take a device argument.
-.PP
-.TP 8
-.B --create-master \fIprefix\fP [sendCore] [enable]
-Create a new pair of master devices on an XI2-enabled server with the given
-\fIprefix\fP. The server will create one master pointer named "\fIprefix\fP
-pointer" and one master keyboard named "\fIprefix\fP keyboard".  If
-\fIsendCore\fP is 1, this pair of master devices is set to send core events
-(default).  If \fIenable\fP is 1, this master device pair will be enabled
-immediately (default).
-.PP
-.TP 8
-.B --remove-master \fImaster\fP [Floating|AttachToMaster] [returnPointer] [returnKeyboard]
-Remove \fImaster\fP  and its paired master device. Attached slave devices
-are set floating if \fIFloating\fP is specified or the argument is omitted.
-If the second argument is \fIAttachToMaster\fP, \fIreturnPointer\fP
-specifies the master pointer to attach all slave pointers to and
-\fIreturnKeyboard\fP specifies the master keyboard to attach all slave
-keyboards to.
-.PP
-.TP 8
-.B --reattach \fIslave\fP \fImaster\fP
-Reattach \fIslave\fP to \fImaster\fP.
-.PP
-.TP 8
-.B --float \fIslave\fP
-Remove \fIslave\fP from its current master device.
-.PP
-.TP 8
-.B --set-cp \fIwindow\fP \fImaster\fP
-Set the ClientPointer for the client owning \fIwindow\fP to \fImaster\fP.
-\fImaster\fP must specify a master pointer.
-.PP
-\fIdevice\fP can be the device name as a string or the XID of the
-device.
-.PP
-\fIslave\fP can be the device name as a string or the XID of a slave
-device.
-.PP
-\fImaster\fP can be the device name as a string or the XID of a master
-device.
-.PP
-\fIproperty\fP can be the property as a string or the Atom value.
-.PP
+.B align [--input=\fIdevice\fP] [--screen=\fInumber\fP] [--output=\fIoutput\fP]
+The default function. It is called when no function name is given. It
+queries the current screen configuration and applies the current
+coordinate transformation to the input device. If options is given
+then the Core Pointer and the Primary Output (or the first available
+output) is used in correspondence. The name or the ID of the input
+device can be specified with the \fIinput\fP. The name or ID of the
+output can explicitly specified with the \fIoutput\fP option. For
+multiple screen configuration the output selection can be narrowed by
+specifying the screen \fInumber\fP.
+
+.SH ENVIRONMENT
+The program uses the \fBDISPLAY\fP environment variable specifying the
+X display to connect.
+
 .SH "SEE ALSO"
-X(__miscmansuffix__), xset(1)
+xinput(1), xrandr(1)
+
+.SH LICENSE
+Permission to use, copy, modify, distribute, and sell this software
+and its documentation for any purpose is  hereby granted without fee,
+provided that the  above copyright   notice appear  in   all  copies
+and  that both  that copyright  notice   and   this  permission
+notice  appear  in  supporting documentation, and that   the  name of
+the authors  not  be  used  in advertising or publicity pertaining to
+distribution of the software without specific,  written prior
+permission. The authors  make  no representations about the
+suitability of this software for any purpose.  It is provided "as is"
+without express or implied warranty.
+
+THE AUTHORS DISCLAIM ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
+INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS,
+IN NO EVENT  SHALL THE AUTHORS  BE   LIABLE   FOR ANY  SPECIAL,
+INDIRECT   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+RESULTING FROM LOSS OF USE, DATA  OR PROFITS, WHETHER  IN  AN ACTION
+OF  CONTRACT,  NEGLIGENCE OR OTHER TORTIOUS  ACTION, ARISING    OUT OF
+OR   IN  CONNECTION  WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 .SH COPYRIGHT
-Copyright 1996,1997, Frederic Lepied.
+Copyright 2012, Paul Wolneykien, ALT Linux Ltd.
 .PP
+Original \fBxinput\fP utility:
+.nf
+Copyright 1996,1997, Frederic Lepied.
 Copyright 2008, Philip Langdale.
+.PP
+Original \fBxrandr\fP utility:
+.nf
+Copyright 2001 Keith Packard.
 
 .SH AUTHORS
 
 .nf
+Paul Wolneykien <manowar@altlinux.org>
 Philip Langdale, <philipl@alumni.utexas.net>
 Frederic Lepied, France <Frederic.Lepied@sugix.frmug.org>
 Peter Hutterer <peter.hutterer@who-t.net>
 Julien Cristau <jcristau@debian.org>
 Thomas Jaeger <ThJaeger@gmail.com>
+Keith Packard, Open Source Technology Center, Intel Corporation
+Jim Gettys, Cambridge Research Laboratory, HP Labs, HP
 and more.
 .fi
