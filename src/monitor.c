@@ -43,6 +43,7 @@ monitor (Display *display,
 	 const char *funcname,
 	 const char *usage)
 {
+  RROutput outputid;
   XRROutputInfo *output;
   int ret;
   const char *inputarg;
@@ -59,7 +60,7 @@ monitor (Display *display,
     return ret;
   }
 
-  ret = get_output (display, argc, argv, funcname, usage, &output);
+  ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
   if (ret == EXIT_FAILURE) {
     return ret;
   }
@@ -73,7 +74,7 @@ monitor (Display *display,
     Window root;
 
     if (verbose) {
-      fprintf (stderr, "Monitoring the output: %s\n", output->name);
+      fprintf (stderr, "Monitoring the output: %s id=%u\n", output->name, (unsigned int)outputid);
     }
     
     root = RootWindow (display, screen);
@@ -85,6 +86,7 @@ monitor (Display *display,
       XRRNotifyEvent *ne;
       XRROutputChangeNotifyEvent *oce;
       XRRCrtcChangeNotifyEvent *cce;
+      int escreen;
 
       XNextEvent(display, &event);
 
@@ -94,6 +96,20 @@ monitor (Display *display,
 	if (verbose) {
 	  fprintf (stderr, "Get a RRScreenChangeNotifyEvent: (%u, %u) 0x%02x\n", sce->width, sce->height, sce->rotation);
 	}
+	escreen = XRRRootToScreen (sce->display, sce->root);
+	if (escreen == screen) {
+	  ret = apply_transform (sce->display, sce->root, output->crtc, inputarg);
+	  if (ret != EXIT_FAILURE) {
+	    root = sce->root;
+	    XRRFreeOutputInfo (output);
+	    ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
+	    if (verbose) {
+	      fprintf (stderr, "Monitoring the output: %s id=%u\n", output->name, (unsigned int)outputid);
+	    }
+	  }
+	} else if (verbose) {
+	  fprintf (stderr, "Skip this event due to another screen number: %i\n", escreen);
+	}
 	break;
       case RRNotify:
 	ne = (XRRNotifyEvent *) &event;
@@ -101,13 +117,27 @@ monitor (Display *display,
 	case RRNotify_OutputChange:
 	  oce = (XRROutputChangeNotifyEvent *) ne;
 	  if (verbose) {
-	    fprintf (stderr, "Get a RROutputChangeNotifyEvent: %u 0x%02x\n", (unsigned int)oce->output, oce->rotation);
+	    fprintf (stderr, "Get a RROutputChangeNotifyEvent: %u %u 0x%02x\n", (unsigned int)oce->output, (unsigned int)oce->crtc, oce->rotation);
+	  }
+	  if (oce->output == outputid) {
+	    if (oce->crtc) {
+	      ret = apply_transform (oce->display, root, oce->crtc, inputarg);
+	    } else {
+	      fprintf (stderr, "Output is disconnected: skip this event\n");
+	    }
+	  } else if (verbose) {
+	    fprintf (stderr, "Skip this event due to another output ID: %u\n", (unsigned int)oce->output);
 	  }
 	  break;
 	case RRNotify_CrtcChange:
 	  cce = (XRRCrtcChangeNotifyEvent *) ne;
 	  if (verbose) {
 	    fprintf (stderr, "Get a RRCrtcChangeNotifyEvent: (%i, %i) (%u, %u) 0x%02x\n", cce->x, cce->y, cce->width, cce->height, cce->rotation);
+	  }
+	  if (output->crtc == cce->crtc) {
+	    ret = apply_transform (cce->display, root, cce->crtc, inputarg);
+	  } else if (verbose) {
+	    fprintf (stderr, "Skip this event due to another CRTC ID: %u\n", (unsigned int)cce->crtc);
 	  }
 	  break;
 	}

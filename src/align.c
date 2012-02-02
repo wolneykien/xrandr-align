@@ -43,6 +43,7 @@ align (Display *display,
        const char *funcname,
        const char *usage)
 {
+  RROutput outputid;
   XRROutputInfo *output;
   int ret;
   const char *inputarg;
@@ -58,7 +59,7 @@ align (Display *display,
     return ret;
   }
 
-  ret = get_output (display, argc, argv, funcname, usage, &output);
+  ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
   if (ret == EXIT_FAILURE) {
     return ret;
   }

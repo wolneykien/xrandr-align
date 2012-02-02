@@ -127,6 +127,7 @@ get_output (Display *display,
 	    const char *argv[],
 	    const char *funcname,
 	    const char *usage,
+	    RROutput *retoutputid,
 	    XRROutputInfo **retoutput)
 {
   int ret;
@@ -154,6 +155,7 @@ get_output (Display *display,
 	outnum = res->outputs[0];
       }
       *retoutput = XRRGetOutputInfo (display, res, outnum);
+      *retoutputid = outnum;
     } else {
       char *endptr;
       outnum = (int) strtol (outname, &endptr, 0);
@@ -164,6 +166,7 @@ get_output (Display *display,
 	  XRROutputInfo *out = XRRGetOutputInfo (display, res, res->outputs[o]);
 	  if (strncmp (out->name, outname, 256) == 0) {
 	    *retoutput = out;
+      	    *retoutputid = res->outputs[o];
 	    ret = EXIT_SUCCESS;
 	  } else {
 	    XRRFreeOutputInfo (out);
@@ -176,6 +179,7 @@ get_output (Display *display,
       } else {
 	if (check_output (res, outnum)) {
 	  *retoutput = XRRGetOutputInfo (display, res, outnum);
+	  *retoutputid = outnum;
 	} else {
 	  fprintf (stderr, "Output with id=%i not found\n", outnum);
 	  ret = EXIT_FAILURE;

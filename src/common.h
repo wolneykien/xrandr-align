@@ -63,4 +63,5 @@ get_output (Display *display,
 	    const char *argv[],
 	    const char *funcname,
 	    const char *usage,
+	    RROutput *retoutputid,
 	    XRROutputInfo **retoutput);
