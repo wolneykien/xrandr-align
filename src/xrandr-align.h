@@ -43,6 +43,7 @@
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <X11/extensions/Xrandr.h>
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 1
@@ -62,7 +63,8 @@ extern int verbose;
 
 int list_input( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
-int apply_transform (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
+int align (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
+int apply_transform (Display *display, Window root, RRCrtc crtcnum, const char *input_name);
 
 /* X Input 1.5 */
 int set_float_prop( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);

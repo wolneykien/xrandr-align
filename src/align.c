@@ -37,11 +37,11 @@
 #include <X11/extensions/Xrandr.h>
 
 int
-apply_transform (Display *display,
-		 int argc,
-		 const char *argv[],
-		 const char *funcname,
-		 const char *usage)
+align (Display *display,
+       int argc,
+       const char *argv[],
+       const char *funcname,
+       const char *usage)
 {
   XRROutputInfo *output;
   int ret;
@@ -65,6 +65,30 @@ apply_transform (Display *display,
 
   if (ret != EXIT_FAILURE) {
     Window root;
+
+    if (verbose) {
+      fprintf (stderr, "Output: %s\n", output->name);
+    }
+    
+    root = RootWindow (display, screen);
+    ret = apply_transform (display, root, output->crtc, inputarg);
+  }
+
+  XRRFreeOutputInfo (output);
+  return ret;
+}
+
+int
+apply_transform (Display *display,
+		 Window root,
+		 RRCrtc crtcnum,
+		 const char *input_name)
+{
+  int ret;
+
+  ret = EXIT_SUCCESS;
+
+  if (ret != EXIT_FAILURE) {
     XRRScreenConfiguration *sconf;
     XRRScreenResources *res;
     XRRCrtcInfo *crtc;
@@ -76,16 +100,14 @@ apply_transform (Display *display,
     XRRScreenSize *ssize;
     int nsizes;
     Rotation srot;
-
-    root = RootWindow (display, screen);
+    
     res = XRRGetScreenResourcesCurrent (display, root);
     sconf = XRRGetScreenInfo (display, root);
     ssize = XRRConfigSizes(sconf, &nsizes) + XRRConfigCurrentConfiguration (sconf, &srot);
-    crtc = XRRGetCrtcInfo (display, res, output->crtc);
+    crtc = XRRGetCrtcInfo (display, res, crtcnum);
   
     if (verbose) {
       fprintf (stderr, "Screen: (%u, %u) 0x%02x\n", ssize->width, ssize->height, srot);
-      fprintf (stderr, "Output: %s\n", output->name);
       fprintf (stderr, "CRTC: (%i, %i) (%u, %u) 0x%02x\n", crtc->x, crtc->y, crtc->width, crtc->height, crtc->rotation);
     }
 
@@ -146,7 +168,7 @@ apply_transform (Display *display,
       amx[2][1] = 0;
       amx[2][2] = 1;
 
-      status = XRRGetCrtcTransform (display, output->crtc, &transform);
+      status = XRRGetCrtcTransform (display, crtcnum, &transform);
       if (!status) {
 	fprintf (stderr, "Unable to get the current transformation\n");
 	ret = EXIT_FAILURE;
@@ -166,7 +188,7 @@ apply_transform (Display *display,
         }
       }
 
-      args[0] = inputarg;
+      args[0] = input_name;
       args[1] = "Coordinate Transformation Matrix";
       for (j = 0; j < 3; j++) {
 	for (i = 0; i < 3; i++) {
@@ -182,7 +204,7 @@ apply_transform (Display *display,
 	}
 	fprintf (stderr, "\n");
       }
-      ret = set_float_prop(display, 11, args, funcname, usage);
+      ret = set_float_prop(display, 11, args, "set-float-prop", ": error calling function, please report a bug.");
       XFree (transform);
     }
     XRRFreeCrtcInfo (crtc);
@@ -190,7 +212,6 @@ apply_transform (Display *display,
     XRRFreeScreenConfigInfo (sconf);
   }
 
-  XRRFreeOutputInfo (output);
   return ret;
 }
 
