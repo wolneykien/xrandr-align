@@ -65,6 +65,7 @@ int list_input( Display* display, int argc, const char *argv[], const char *prog
 int list_output( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);
 int align (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
 int apply_transform (Display *display, Window root, RRCrtc crtcnum, const char *input_name);
+int monitor (Display *display, int argc, const char *argv[], const char *funcname, const char *usage);
 
 /* X Input 1.5 */
 int set_float_prop( Display* display, int argc, const char *argv[], const char *prog_name, const char *prog_desc);

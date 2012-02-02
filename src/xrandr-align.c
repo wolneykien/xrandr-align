@@ -62,6 +62,10 @@ static entry drivers[] =
      "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
      align
     },
+    {"monitor",
+     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
+     monitor
+    },
     {NULL, NULL, NULL
     }
 };

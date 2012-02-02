@@ -40,6 +40,7 @@ xrandr_align_SOURCES = \
     list.c \
     property.c \
     align.c \
+    monitor.c \
     xrandr-align.c \
     xrandr-align.h \
     $(xinput2_files)
