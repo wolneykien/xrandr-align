@@ -101,7 +101,7 @@ monitor (Display *display,
 	case RRNotify_OutputChange:
 	  oce = (XRROutputChangeNotifyEvent *) ne;
 	  if (verbose) {
-	    fprintf (stderr, "Get a RROutputChangeNotifyEvent: 0x%02x\n", oce->rotation);
+	    fprintf (stderr, "Get a RROutputChangeNotifyEvent: %u 0x%02x\n", (unsigned int)oce->output, oce->rotation);
 	  }
 	  break;
 	case RRNotify_CrtcChange:
