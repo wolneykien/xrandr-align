@@ -43,11 +43,22 @@ the screen \fnumber\fP can be specified.
 .B align [--input=\fIdevice\fP] [--screen=\fInumber\fP] [--output=\fIoutput\fP]
 The default function. It is called when no function name is given. It
 queries the current screen configuration and applies the current
-coordinate transformation to the input device. If options is given
+coordinate transformation to the input device. If no options are given
 then the Core Pointer and the Primary Output (or the first available
 output) is used in correspondence. The name or the ID of the input
 device can be specified with the \fIinput\fP. The name or ID of the
 output can explicitly specified with the \fIoutput\fP option. For
+multiple screen configuration the output selection can be narrowed by
+specifying the screen \fInumber\fP.
+.PP
+.TP 8
+.B monitor [--input=\fIdevice\fP] [--screen=\fInumber\fP] [--output=\fIoutput\fP]
+Listens for screen (CRTC, output) change events from RandR end applies
+each coordinate transformation to the input device. If no options are
+given then the Core Pointer and the Primary Output (or the first
+available output) is used in correspondence. The name or the ID of the
+input device can be specified with the \fIinput\fP. The name or ID of
+the output can explicitly specified with the \fIoutput\fP option. For
 multiple screen configuration the output selection can be narrowed by
 specifying the screen \fInumber\fP.
 

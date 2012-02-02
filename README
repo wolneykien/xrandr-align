@@ -9,6 +9,9 @@ with the screen rotation, panning and scale parameters controlled by
 the X RandR extension. In addition the utility can list available
 input devices and screen outputs.
 
+The `monitor' command is used to apply the transformations dynamically
+listening to the events from the RandR extension.
+
 Requirements
 ============
 
