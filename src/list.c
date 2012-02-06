@@ -233,18 +233,9 @@ static int
 list_xi2(Display *display,
          int     shortformat)
 {
-    int major = XI_2_Major,
-        minor = XI_2_Minor;
     int ndevices;
     int i, j;
     XIDeviceInfo *info, *dev;
-
-    if (XIQueryVersion(display, &major, &minor) != Success ||
-        (major * 1000 + minor) < (XI_2_Major * 1000 + XI_2_Minor))
-    {
-        fprintf(stderr, "XI2 not supported.\n");
-        return EXIT_FAILURE;
-    }
 
     info = XIQueryDevice(display, XIAllDevices, &ndevices);
 
@@ -329,8 +320,13 @@ list_input(Display	*display,
         }
     } else {
 #ifdef HAVE_XI2
-        if (xinput_version(display) == XI_2_Major)
-            return list_xi2(display, !longformat);
+        int major = XI_2_Major, minor = XI_2_Minor;
+        if (xinput_version(display) == XI_2_Major &&
+            XIQueryVersion(display, &major, &minor) == Success &&
+            (major * 1000 + minor) >= (XI_2_Major * 1000 + XI_2_Minor))
+        {
+                return list_xi2(display, !longformat);
+        }
 #endif
         return list_xi1(display, !longformat);
     }
