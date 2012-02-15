@@ -297,6 +297,11 @@ main(int argc, const char * argv[])
 	if (strncmp (argv[i], "-v", 2) == 0 || \
 	    strncmp (argv[i], "--verbose", 9) == 0) {
 	  verbose = 1;
+	} else if (strncmp (argv[i], "-h", 2) == 0 ||	\
+		   strncmp (argv[i], "--help", 6) == 0 || \
+		   strncmp (argv[i], "--usage", 7) == 0) {
+	  usage();
+	  return EXIT_SUCCESS;
 	}
 	i++;
       }
