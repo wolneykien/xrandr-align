@@ -41,6 +41,7 @@ xrandr_align_SOURCES = \
     property.c \
     align.c \
     monitor.c \
+    gravitate.c \
     xrandr-align.c \
     xrandr-align.h \
     $(xinput2_files)

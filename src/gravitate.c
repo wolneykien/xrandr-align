@@ -1,5 +1,15 @@
 /*
+ * Original xinput:
  * Copyright 1996 by Frederic Lepied, France. <Frederic.Lepied@sugix.frmug.org>
+ *
+ * Original xrandr:
+ * Copyright © 2001 Keith Packard, member of The XFree86 Project, Inc.
+ * Copyright © 2002 Hewlett Packard Company, Inc.
+ * Copyright © 2006 Intel Corporation
+ *
+ * xrandr-align:
+ *
+ * Copyright © 2012 Paul Wolneykien <manowar@altlinux.org>, ALT Linux Ltd.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is  hereby granted without fee, provided that
@@ -37,7 +47,7 @@ static int           proximity_out_type = INVALID_EVENT_TYPE;
 static int
 register_events(Display		*dpy,
 		XDeviceInfo	*info,
-		char		*dev_name,
+		const char	*dev_name,
 		Bool		handle_proximity)
 {
     int			number = 0;	/* number of events registered */
@@ -93,107 +103,122 @@ register_events(Display		*dpy,
     return number;
 }
 
-static void
-print_events(Display	*dpy)
+int
+align_output (Display *display,
+	      int screen,
+	      RROutput outputid,
+	      const XRROutputInfo *output,
+	      double tratio)
 {
-    XEvent        Event;
+  XEvent e;
 
-    while(1) {
-	XNextEvent(dpy, &Event);
+  while (1) {
+    XNextEvent(display, &e);
 
-	if (Event.type == motion_type) {
-	    int	loop;
-	    XDeviceMotionEvent *motion = (XDeviceMotionEvent *) &Event;
+    if (e.type == motion_type) {
+      XDeviceMotionEvent *m = (XDeviceMotionEvent *) &e;
 
-	    printf("motion ");
+      if (m->axes_count > 1) {
+	Rotation rot;
+	double ratio;
+	double x, y;
 
-	    for(loop=0; loop<motion->axes_count; loop++) {
-		printf("a[%d]=%d ", motion->first_axis + loop, motion->axis_data[loop]);
-	    }
-	    printf("\n");
-	} else if ((Event.type == button_press_type) ||
-		   (Event.type == button_release_type)) {
-	    int	loop;
-	    XDeviceButtonEvent *button = (XDeviceButtonEvent *) &Event;
-
-	    printf("button %s %d ", (Event.type == button_release_type) ? "release" : "press  ",
-		   button->button);
-
-	    for(loop=0; loop<button->axes_count; loop++) {
-		printf("a[%d]=%d ", button->first_axis + loop, button->axis_data[loop]);
-	    }
-	    printf("\n");
-	} else if ((Event.type == key_press_type) ||
-		   (Event.type == key_release_type)) {
-	    int	loop;
-	    XDeviceKeyEvent *key = (XDeviceKeyEvent *) &Event;
-
-	    printf("key %s %d ", (Event.type == key_release_type) ? "release" : "press  ",
-		   key->keycode);
-
-	    for(loop=0; loop<key->axes_count; loop++) {
-		printf("a[%d]=%d ", key->first_axis + loop, key->axis_data[loop]);
-	    }
-	    printf("\n");
-	} else if ((Event.type == proximity_out_type) ||
-		   (Event.type == proximity_in_type)) {
-	    int	loop;
-	    XProximityNotifyEvent *prox = (XProximityNotifyEvent *) &Event;
-
-	    printf("proximity %s ", (Event.type == proximity_in_type) ? "in " : "out");
-
-	    for(loop=0; loop<prox->axes_count; loop++) {
-		printf("a[%d]=%d ", prox->first_axis + loop, prox->axis_data[loop]);
-	    }
-	    printf("\n");
+	x = m->axis_data[m->first_axis];
+	y = m->axis_data[m->first_axis + 1];
+	if (verbose) {
+	  fprintf (stderr, "X: %f, Y: %f\n", x, y);
 	}
-	else {
-	    printf("what's that %d\n", Event.type);
+	ratio = y/x;
+	if (ratio >= tratio || ratio <= -tratio) {
+	  if (y < 0) {
+	    rot = RR_Rotate_180;
+	    if (verbose) {
+	      fprintf (stderr, "Orientation: inverted\n");
+	    }
+	  } else {
+	    rot = RR_Rotate_0;
+	    if (verbose) {
+	      fprintf (stderr, "Orientation: normal\n");
+	    }
+	  }
+	} else {
+	  if (x < 0) {
+	    rot = RR_Rotate_270;
+	    if (verbose) {
+	      fprintf (stderr, "Orientation: right\n");
+	    }
+	  } else {
+	    rot = RR_Rotate_90;
+	    if (verbose) {
+	      fprintf (stderr, "Orientation: left\n");
+	    }
+	  }
 	}
+      }
     }
+  }
+
+  return EXIT_SUCCESS;
 }
 
 int
-test(Display	*display,
-     int	argc,
-     char	*argv[],
-     char	*name,
-     char	*desc)
+gravitate (Display *display,
+	   int argc,
+	   const char *argv[],
+	   const char *funcname,
+	   const char *usage)
 {
-    XDeviceInfo		*info;
+  RROutput outputid;
+  XRROutputInfo *output;
+  int ret;
+  const char *inputarg;
+  XDeviceInfo *input;
+  int screen;
+  int event_base, error_base;
+  double ratio;
+  const char *ratioarg;
+  char *ratioend;
 
-    if (argc != 1 && argc != 2) {
-	fprintf(stderr, "usage: xinput %s %s\n", name, desc);
-	return EXIT_FAILURE;
-    } else {
-	Bool	handle_proximity = False;
-	int	idx = 0;
+  ret = get_screen (display, argc, argv, funcname, usage, &screen);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
 
-	if (argc == 2) {
-	    if (strcmp("-proximity", argv[0]) != 0) {
-		fprintf(stderr, "usage: xinput %s %s\n", name, desc);
-		return EXIT_FAILURE;
-	    }
-	    handle_proximity = 1;
-	    idx = 1;
-	}
-
-	info = find_device_info(display, argv[idx], True);
-
-	if (!info) {
-	    fprintf(stderr, "unable to find device %s\n", argv[idx]);
-	    return EXIT_FAILURE;
-	} else {
-	    if (register_events(display, info, argv[idx], handle_proximity)) {
-		print_events(display);
-	    }
-	    else {
-		fprintf(stderr, "no event registered...\n");
-		return EXIT_FAILURE;
-	    }
-	}
+  ret = get_argval (argc, argv, "ratio", funcname, usage, "2.0", &ratioarg);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  } else {
+    ratio = strtod (ratioarg, &ratioend);
+    if (ratioend != NULL && strlen (ratioend) > 0) {
+      fprintf (stderr, "Invalid number: %s\n", ratioarg);
+      return EXIT_FAILURE;
     }
-    return EXIT_FAILURE;
+  }
+
+  ret = get_argval (argc, argv, "input", funcname, usage, "Virtual core pointer", &inputarg);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+  input = find_device_info(display, inputarg, False);
+  if (!input) {
+    fprintf(stderr, "Unable to find device: %s\n", inputarg);
+    ret = EXIT_FAILURE;
+    return ret;
+  }
+
+  ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
+
+  if (ret != EXIT_FAILURE) {
+    if (register_events(display, input, inputarg, False)) {
+      ret = align_output (display, screen, outputid, output, ratio);
+    } else {
+      fprintf(stderr, "Unable to register for input events.\n");
+      ret = EXIT_FAILURE;
+    }
+  }
+
+  XRRFreeOutputInfo (output);
+  return ret;
 }
 
-/* end of test.c */
+/* end of gravitate.c */

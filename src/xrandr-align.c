@@ -66,6 +66,10 @@ static entry drivers[] =
      "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
      monitor
     },
+    {"gravitate",
+     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV] [--ratio=NUMBER]",
+     gravitate
+    },
     {NULL, NULL, NULL
     }
 };
