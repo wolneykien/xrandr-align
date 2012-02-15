@@ -113,13 +113,13 @@ apply_transform (Display *display,
     }
 
     switch (srot) {
-    case 1:
-    case 4:
+    case RR_Rotate_0:
+    case RR_Rotate_180:
       hscale = (double)crtc->width/(double)ssize->width;
       vscale = (double)crtc->height/(double)ssize->height;
       break;
-    case 2:
-    case 8:
+    case RR_Rotate_90:
+    case RR_Rotate_270:
       hscale = (double)crtc->width/(double)ssize->height;
       vscale = (double)crtc->height/(double)ssize->width;
       break;
@@ -129,25 +129,25 @@ apply_transform (Display *display,
     }
 
     switch (crtc->rotation) {
-    case 1:
+    case RR_Rotate_0:
       sina = 0;
       cosa = 1;
       hoffs = 0;
       voffs = 0;
       break;
-    case 2:
+    case RR_Rotate_90:
       sina = 1;
       cosa = 0;
       hoffs = 1;
       voffs = 0;
       break;
-    case 4:
+    case RR_Rotate_180:
       sina = 0;
       cosa = -1;
       hoffs = 1;
       voffs = 1;
       break;
-    case 8:
+    case RR_Rotate_270:
       sina = -1;
       cosa = 0;
       hoffs = 0;
