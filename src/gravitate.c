@@ -143,14 +143,14 @@ align_output (Display *display,
 	  }
 	} else {
 	  if (x < 0) {
-	    rot = RR_Rotate_270;
-	    if (verbose) {
-	      fprintf (stderr, "Orientation: right\n");
-	    }
-	  } else {
 	    rot = RR_Rotate_90;
 	    if (verbose) {
 	      fprintf (stderr, "Orientation: left\n");
+	    }
+	  } else {
+	    rot = RR_Rotate_270;
+	    if (verbose) {
+	      fprintf (stderr, "Orientation: right\n");
 	    }
 	  }
 	}
