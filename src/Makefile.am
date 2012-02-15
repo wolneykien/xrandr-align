@@ -24,23 +24,11 @@ bin_PROGRAMS = xrandr-align
 AM_CFLAGS = $(XINPUT_CFLAGS) $(XRANDR_CFLAGS)
 xrandr_align_LDADD = $(XINPUT_LIBS) $(XRANDR_LIBS)
 
-
-if HAVE_XI2
-xinput2_files = hierarchy.c setcp.c test_xi2.c
-endif
-
 xrandr_align_SOURCES = \
     common.h \
     common.c \
-    buttonmap.c \
-    feedback.c \
     list.c \
-    setint.c \
-    setmode.c \
-    setptr.c \
-    state.c \
     property.c \
-    test.c \
     align.c \
     xrandr-align.c \
     xrandr-align.h \
