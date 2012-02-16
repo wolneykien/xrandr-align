@@ -55,19 +55,19 @@ static entry drivers[] =
      list_input
     },
     {"list-output",
-     "[--screen=NUMBER]",
+     "[--screen=INT]",
      list_output
     },
     {"[align]",
-     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
+     "[--screen=INT] [--input=INDEV] [--output=OUTDEV]",
      align
     },
     {"monitor",
-     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV]",
+     "[--screen=INT] [--input=INDEV] [--output=OUTDEV]",
      monitor
     },
     {"gravitate",
-     "[--screen=NUMBER] [--input=INDEV] [--output=OUTDEV] [--ratio=NUMBER]",
+     "[--screen=INT] [--input=INDEV] [--output=OUTDEV] [--ratio=FLOAT] [--threshold=FLOAT]",
      gravitate
     },
     {NULL, NULL, NULL

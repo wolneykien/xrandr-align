@@ -150,13 +150,62 @@ current_rotation (Display *display,
 }
 
 int
+get_thresholds (XDeviceInfo *info,
+		double thr,
+		double *xthr,
+		double *ythr)
+{
+    XAnyClassPtr any;
+    XValuatorInfoPtr v;
+    XAxisInfoPtr a;
+    int i, j;
+
+    if (info->num_classes > 0) {
+        any = (XAnyClassPtr) (info->inputclassinfo);
+	for (i = 0; i < info->num_classes; i++) {
+	    if (any->class == ValuatorClass) {
+		v = (XValuatorInfoPtr) any;
+
+		if (v->num_axes < 2) {
+		    continue;
+		}
+
+		a = (XAxisInfoPtr) ((char *) v + sizeof (XValuatorInfo));
+		*xthr = (a->max_value - a->min_value) * thr;
+		a++;
+		*ythr = (a->max_value - a->min_value) * thr;
+
+		return EXIT_SUCCESS;
+	    }
+	}
+    }
+
+    return EXIT_FAILURE;
+}
+
+int
 read_events (Display *display,
 	     Window root,
 	     /*	const XRROutputInfo *output,*/
-	     double tratio)
+	     XDeviceInfo *input,
+	     double tratio,
+	     double thr)
 {
   XEvent e;
   Rotation crot;
+  double xthr, ythr;
+  int ret;
+
+  if (! register_events(display, input, "", False)) {
+    fprintf(stderr, "Unable to register for input events.\n");
+    return EXIT_FAILURE;
+  }
+
+  ret = get_thresholds (input, thr, &xthr, &ythr);
+  if (ret != EXIT_SUCCESS) {
+    fprintf (stderr, "Unable to calculate the threshold values for the axes\n");
+    return ret;
+  }
 
   crot = current_rotation (display, root);
 /*
@@ -172,7 +221,7 @@ read_events (Display *display,
       XDeviceMotionEvent *m = (XDeviceMotionEvent *) &e;
 
       if (m->axes_count > 1) {
-	Rotation rot;
+	Rotation rot = 0;
 	double ratio;
 	double x, y;
 	int ret;
@@ -181,19 +230,19 @@ read_events (Display *display,
 	y = m->axis_data[m->first_axis + 1];
 	ratio = y/x;
 	if (ratio >= tratio || ratio <= -tratio) {
-	  if (y < 0) {
+	  if (y < -ythr) {
 	    rot = RR_Rotate_180;
-	  } else {
+	  } else if (y > ythr) {
 	    rot = RR_Rotate_0;
 	  }
 	} else {
-	  if (x < 0) {
+	  if (x < -xthr) {
 	    rot = RR_Rotate_90;
-	  } else {
+	  } else if (x > xthr) {
 	    rot = RR_Rotate_270;
 	  }
 	}
-	if (rot != crot) {
+	if (rot && rot != crot) {
 	  if (verbose) {
 	    fprintf (stderr, "X: %f, Y: %f\n", x, y);
 	    fprintf (stderr, "Orientation changed: %u\n", (unsigned int) rot);
@@ -209,7 +258,7 @@ read_events (Display *display,
     }
   }
 
-  return EXIT_SUCCESS;
+  return ret;
 }
 
 int
@@ -229,6 +278,9 @@ gravitate (Display *display,
   double ratio;
   const char *ratioarg;
   char *ratioend;
+  double thr;
+  const char *thrarg;
+  char *thrend;
 
   ret = get_screen (display, argc, argv, funcname, usage, &screen);
   if (ret == EXIT_FAILURE) {
@@ -242,6 +294,17 @@ gravitate (Display *display,
     ratio = strtod (ratioarg, &ratioend);
     if (ratioend != NULL && strlen (ratioend) > 0) {
       fprintf (stderr, "Invalid number: %s\n", ratioarg);
+      return EXIT_FAILURE;
+    }
+  }
+
+  ret = get_argval (argc, argv, "threshold", funcname, usage, "0.12", &thrarg);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  } else {
+    thr = strtod (thrarg, &thrend);
+    if (thrend != NULL && strlen (thrend) > 0) {
+      fprintf (stderr, "Invalid number: %s\n", thrarg);
       return EXIT_FAILURE;
     }
   }
@@ -263,12 +326,7 @@ gravitate (Display *display,
     Window root;
 
     root = RootWindow (display, screen);
-    if (register_events(display, input, inputarg, False)) {
-      ret = read_events (display, root, ratio);
-    } else {
-      fprintf(stderr, "Unable to register for input events.\n");
-      ret = EXIT_FAILURE;
-    }
+    ret = read_events (display, root, input, ratio, thr);
   }
 
   /*  XRRFreeOutputInfo (output); */
