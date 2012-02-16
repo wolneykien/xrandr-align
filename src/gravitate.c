@@ -71,6 +71,7 @@ register_events(Display		*dpy,
     if (device->num_classes > 0) {
 	for (ip = device->classes, i=0; i<info->num_classes; ip++, i++) {
 	    switch (ip->input_class) {
+/*
 	    case KeyClass:
 		DeviceKeyPress(device, key_press_type, event_list[number]); number++;
 		DeviceKeyRelease(device, key_release_type, event_list[number]); number++;
@@ -80,7 +81,7 @@ register_events(Display		*dpy,
 		DeviceButtonPress(device, button_press_type, event_list[number]); number++;
 		DeviceButtonRelease(device, button_release_type, event_list[number]); number++;
 		break;
-
+*/
 	    case ValuatorClass:
 		DeviceMotionNotify(device, motion_type, event_list[number]); number++;
 		if (handle_proximity) {
@@ -88,10 +89,11 @@ register_events(Display		*dpy,
 		    ProximityOut(device, proximity_out_type, event_list[number]); number++;
 		}
 		break;
-
+/*
 	    default:
 		fprintf(stderr, "unknown class\n");
 		break;
+*/
 	    }
 	}
 
@@ -104,13 +106,65 @@ register_events(Display		*dpy,
 }
 
 int
-align_output (Display *display,
-	      int screen,
-	      RROutput outputid,
-	      const XRROutputInfo *output,
-	      double tratio)
+align_crtc (Display *display,
+	    Window root,
+	    RRCrtc crtcnum,
+	    Rotation rot)
+{
+  int ret;
+  XRRScreenResources *res;
+  XRRCrtcInfo *crtc;
+  Status status;
+
+  res = XRRGetScreenResourcesCurrent (display, root);
+  crtc = XRRGetCrtcInfo (display, res, crtcnum);
+
+  status = XRRSetCrtcConfig (display, res, crtcnum, CurrentTime, crtc->x, crtc->y, crtc->mode, rot, crtc->outputs, crtc->noutput);
+  if (status) {
+    ret = EXIT_FAILURE;
+  } else {
+    ret = EXIT_SUCCESS;
+  }
+
+  XRRFreeCrtcInfo (crtc);
+  XRRFreeScreenResources (res);
+
+  return ret;
+}
+
+Rotation
+current_rotation (Display *display,
+		  Window root,
+		  RRCrtc crtcnum)
+{
+  Rotation rot;
+  XRRScreenResources *res;
+  XRRCrtcInfo *crtc;
+
+  res = XRRGetScreenResourcesCurrent (display, root);
+  crtc = XRRGetCrtcInfo (display, res, crtcnum);
+
+  rot = crtc->rotation;
+
+  XRRFreeCrtcInfo (crtc);
+  XRRFreeScreenResources (res);
+
+  return rot;
+}
+
+int
+read_events (Display *display,
+	     Window root,
+	     const XRROutputInfo *output,
+	     double tratio)
 {
   XEvent e;
+  Rotation crot;
+
+  crot = current_rotation (display, root, output->crtc);
+  if (verbose) {
+    fprintf (stderr, "Current orientation of %s: %u\n", output->name, (unsigned int) crot);
+  }
 
   while (1) {
     XNextEvent(display, &e);
@@ -122,6 +176,7 @@ align_output (Display *display,
 	Rotation rot;
 	double ratio;
 	double x, y;
+	int ret;
 
 	x = m->axis_data[m->first_axis];
 	y = m->axis_data[m->first_axis + 1];
@@ -153,6 +208,17 @@ align_output (Display *display,
 	      fprintf (stderr, "Orientation: right\n");
 	    }
 	  }
+	}
+	if (rot != crot) {
+	  if (verbose) {
+	    fprintf (stderr, "Orientation changed: %u\n", (unsigned int) rot);
+	  }
+	  ret = align_crtc (display, root, output->crtc, rot);
+	  if (ret == EXIT_FAILURE) {
+	    fprintf (stderr, "Unable to set the CRTC configuration for output %s\n", output->name);
+	    return ret;
+	  }
+	  crot = rot;
 	}
       }
     }
@@ -209,8 +275,11 @@ gravitate (Display *display,
   ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
 
   if (ret != EXIT_FAILURE) {
+    Window root;
+
+    root = RootWindow (display, screen);
     if (register_events(display, input, inputarg, False)) {
-      ret = align_output (display, screen, outputid, output, ratio);
+      ret = read_events (display, root, output, ratio);
     } else {
       fprintf(stderr, "Unable to register for input events.\n");
       ret = EXIT_FAILURE;
