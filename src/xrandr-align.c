@@ -67,7 +67,7 @@ static entry drivers[] =
      monitor
     },
     {"gravitate",
-     "[--screen=INT] [--input=INDEV] [--output=OUTDEV] [--ratio=FLOAT] [--threshold=FLOAT]",
+     "[--screen=INT] [--input=INDEV] [--ratio=FLOAT] [--threshold=FLOAT]",
      gravitate
     },
     {NULL, NULL, NULL
