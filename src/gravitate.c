@@ -106,48 +106,43 @@ register_events(Display		*dpy,
 }
 
 int
-align_crtc (Display *display,
+align_screen (Display *display,
 	    Window root,
-	    RRCrtc crtcnum,
 	    Rotation rot)
 {
   int ret;
-  XRRScreenResources *res;
-  XRRCrtcInfo *crtc;
+  XRRScreenConfiguration *sconf;
+  SizeID ssize;
   Status status;
 
-  res = XRRGetScreenResourcesCurrent (display, root);
-  crtc = XRRGetCrtcInfo (display, res, crtcnum);
+  sconf = XRRGetScreenInfo (display, root);
+  ssize = XRRConfigCurrentConfiguration (sconf, &rot);
 
-  status = XRRSetCrtcConfig (display, res, crtcnum, CurrentTime, crtc->x, crtc->y, crtc->mode, rot, crtc->outputs, crtc->noutput);
-  if (status) {
+  status = XRRSetScreenConfig (display, sconf, root, ssize, rot, CurrentTime);
+  if (status != RRSetConfigSuccess) {
     ret = EXIT_FAILURE;
   } else {
     ret = EXIT_SUCCESS;
   }
 
-  XRRFreeCrtcInfo (crtc);
-  XRRFreeScreenResources (res);
+  XRRFreeScreenConfigInfo (sconf);
 
   return ret;
 }
 
 Rotation
 current_rotation (Display *display,
-		  Window root,
-		  RRCrtc crtcnum)
+		  Window root)
+                  /* RRCrtc crtcnum)*/
 {
   Rotation rot;
-  XRRScreenResources *res;
-  XRRCrtcInfo *crtc;
+  XRRScreenConfiguration *sconf;
+  SizeID ssize;
 
-  res = XRRGetScreenResourcesCurrent (display, root);
-  crtc = XRRGetCrtcInfo (display, res, crtcnum);
+  sconf = XRRGetScreenInfo (display, root);
+  ssize = XRRConfigCurrentConfiguration (sconf, &rot);
 
-  rot = crtc->rotation;
-
-  XRRFreeCrtcInfo (crtc);
-  XRRFreeScreenResources (res);
+  XRRFreeScreenConfigInfo (sconf);
 
   return rot;
 }
@@ -155,16 +150,18 @@ current_rotation (Display *display,
 int
 read_events (Display *display,
 	     Window root,
-	     const XRROutputInfo *output,
+	     /*	const XRROutputInfo *output,*/
 	     double tratio)
 {
   XEvent e;
   Rotation crot;
 
-  crot = current_rotation (display, root, output->crtc);
+  crot = current_rotation (display, root);
+/*
   if (verbose) {
     fprintf (stderr, "Current orientation of %s: %u\n", output->name, (unsigned int) crot);
   }
+*/
 
   while (1) {
     XNextEvent(display, &e);
@@ -199,9 +196,9 @@ read_events (Display *display,
 	    fprintf (stderr, "X: %f, Y: %f\n", x, y);
 	    fprintf (stderr, "Orientation changed: %u\n", (unsigned int) rot);
 	  }
-	  ret = align_crtc (display, root, output->crtc, rot);
+	  ret = align_screen (display, root, rot);
 	  if (ret == EXIT_FAILURE) {
-	    fprintf (stderr, "Unable to set the CRTC configuration for output %s\n", output->name);
+	    fprintf (stderr, "Unable to set the screen configuration\n");
 	    return ret;
 	  }
 	  crot = rot;
@@ -220,8 +217,8 @@ gravitate (Display *display,
 	   const char *funcname,
 	   const char *usage)
 {
-  RROutput outputid;
-  XRROutputInfo *output;
+  /*  RROutput outputid;
+      XRROutputInfo *output;*/
   int ret;
   const char *inputarg;
   XDeviceInfo *input;
@@ -258,21 +255,21 @@ gravitate (Display *display,
     return ret;
   }
 
-  ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
+  /* ret = get_output (display, argc, argv, funcname, usage, &outputid, &output); */
 
   if (ret != EXIT_FAILURE) {
     Window root;
 
     root = RootWindow (display, screen);
     if (register_events(display, input, inputarg, False)) {
-      ret = read_events (display, root, output, ratio);
+      ret = read_events (display, root, ratio);
     } else {
       fprintf(stderr, "Unable to register for input events.\n");
       ret = EXIT_FAILURE;
     }
   }
 
-  XRRFreeOutputInfo (output);
+  /*  XRRFreeOutputInfo (output); */
   return ret;
 }
 
