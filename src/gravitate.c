@@ -113,16 +113,18 @@ align_screen (Display *display,
   int ret;
   XRRScreenConfiguration *sconf;
   SizeID ssize;
+  Rotation crot;
   Status status;
 
   sconf = XRRGetScreenInfo (display, root);
-  ssize = XRRConfigCurrentConfiguration (sconf, &rot);
+  ssize = XRRConfigCurrentConfiguration (sconf, &crot);
 
-  status = XRRSetScreenConfig (display, sconf, root, ssize, rot, CurrentTime);
-  if (status != RRSetConfigSuccess) {
-    ret = EXIT_FAILURE;
-  } else {
-    ret = EXIT_SUCCESS;
+  ret = EXIT_SUCCESS;
+  if (rot != crot) {
+    status = XRRSetScreenConfig (display, sconf, root, ssize, rot, CurrentTime);
+    if (status != RRSetConfigSuccess) {
+      ret = EXIT_FAILURE;
+    }
   }
 
   XRRFreeScreenConfigInfo (sconf);
