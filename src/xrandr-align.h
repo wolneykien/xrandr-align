@@ -54,6 +54,7 @@
 
 extern int xi_opcode; /* xinput extension op code */
 XDeviceInfo* find_device_info( Display *display, const char *name, Bool only_extended);
+XDeviceInfo* find_device_info_ext (Display *display, const char *name, Bool only_extended, unsigned char mode, unsigned char min_axes, Bool signed_axes);
 #if HAVE_XI2
 XIDeviceInfo* xi2_find_device_info(Display *display, const char *name);
 int xinput_version(Display* display);

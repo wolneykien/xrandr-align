@@ -250,7 +250,7 @@ gravitate (Display *display,
   if (ret == EXIT_FAILURE) {
     return ret;
   }
-  input = find_device_info(display, inputarg, False);
+  input = find_device_info_ext (display, inputarg, False, Absolute, 2, True);
   if (!input) {
     fprintf(stderr, "Unable to find device: %s\n", inputarg);
     ret = EXIT_FAILURE;

@@ -146,10 +146,57 @@ xinput_version(Display	*display)
     return vers;
 }
 
+int check_valuator (XDeviceInfo *info,
+		    unsigned char mode,
+		    unsigned char min_axes,
+		    Bool axes_signed)
+{
+    XAnyClassPtr any;
+    XValuatorInfoPtr v;
+    XAxisInfoPtr a;
+    int i, j;
+
+    if (info->num_classes > 0) {
+        any = (XAnyClassPtr) (info->inputclassinfo);
+	for (i = 0; i < info->num_classes; i++) {
+	    if (any->class == ValuatorClass) {
+		v = (XValuatorInfoPtr) any;
+		if (mode && v->mode != mode) {
+		    continue;
+		}
+		if (min_axes && v->num_axes < min_axes) {
+		    continue;
+		}
+
+		if (axes_signed) {
+		    a = (XAxisInfoPtr) ((char *) v + sizeof (XValuatorInfo));
+		    for (j = 0; j < v->num_axes; j++) {
+		        if (a->min_value >= 0) {
+			    break;
+			}
+			a++;
+		    }
+		    if (j < v->num_axes) {
+		        continue;
+		    }
+		}
+
+		return 1;
+	    }
+	    any = (XAnyClassPtr) ((char *) any + any->length);
+	}
+    }
+
+    return 0;
+}
+
 XDeviceInfo*
-find_device_info(Display	*display,
-		 const char    	*name,
-		 Bool		only_extended)
+find_device_info_ext (Display		*display,
+		      const char    	*name,
+		      Bool		only_extended,
+		      unsigned char	mode,
+		      unsigned char	min_axes,
+		      Bool		axes_signed)
 {
     XDeviceInfo	*devices;
     XDeviceInfo *found = NULL;
@@ -176,6 +223,10 @@ find_device_info(Display	*display,
 	if ((!only_extended || (devices[loop].use >= IsXExtensionDevice)) &&
 	    ((!is_id && strcmp(devices[loop].name, name) == 0) ||
 	     (is_id && devices[loop].id == id))) {
+	    if ((mode || min_axes) && \
+		! check_valuator (&devices[loop], mode, min_axes, axes_signed)) {
+	        continue;
+	    }
 	    if (found) {
 	        fprintf(stderr,
 	                "Warning: There are multiple devices named \"%s\".\n"
@@ -188,6 +239,14 @@ find_device_info(Display	*display,
 	}
     }
     return found;
+}
+
+XDeviceInfo*
+find_device_info(Display	*display,
+		 const char    	*name,
+		 Bool		only_extended)
+{
+    return find_device_info_ext (display, name, only_extended, 0, 0, 0);
 }
 
 #ifdef HAVE_XI2
