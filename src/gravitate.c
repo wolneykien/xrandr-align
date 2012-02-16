@@ -180,37 +180,23 @@ read_events (Display *display,
 
 	x = m->axis_data[m->first_axis];
 	y = m->axis_data[m->first_axis + 1];
-	if (verbose) {
-	  fprintf (stderr, "X: %f, Y: %f\n", x, y);
-	}
 	ratio = y/x;
 	if (ratio >= tratio || ratio <= -tratio) {
 	  if (y < 0) {
 	    rot = RR_Rotate_180;
-	    if (verbose) {
-	      fprintf (stderr, "Orientation: inverted\n");
-	    }
 	  } else {
 	    rot = RR_Rotate_0;
-	    if (verbose) {
-	      fprintf (stderr, "Orientation: normal\n");
-	    }
 	  }
 	} else {
 	  if (x < 0) {
 	    rot = RR_Rotate_90;
-	    if (verbose) {
-	      fprintf (stderr, "Orientation: left\n");
-	    }
 	  } else {
 	    rot = RR_Rotate_270;
-	    if (verbose) {
-	      fprintf (stderr, "Orientation: right\n");
-	    }
 	  }
 	}
 	if (rot != crot) {
 	  if (verbose) {
+	    fprintf (stderr, "X: %f, Y: %f\n", x, y);
 	    fprintf (stderr, "Orientation changed: %u\n", (unsigned int) rot);
 	  }
 	  ret = align_crtc (display, root, output->crtc, rot);
