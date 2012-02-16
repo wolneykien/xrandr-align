@@ -1,17 +1,20 @@
 .TH xrandr-align 1
 
 .SH NAME
-xrandr-align - utility to align an X input device in accordance with
-the screen rotation
+xrandr-align -- utility to keep the proper alignment between the
+screen and an X input device
 
 .SH SYNOPSIS
 .B xrandr-align [OPTIONS] [FUNCTION] [FUNCTION-OPTIONS]
 
 .SH DESCRIPTION
-xrandr-align is a utility to align an X input device in accordance
-with the screen rotation, panning and scale parameters controlled by
-the X RandR extension. In addition the utility can list available
-input devices and screen outputs.
+The xrandr-align is a utility to keep the proper alignment between the
+screen and an X input device. The utility works in both ways. First, it
+can dynamically align an input device (touchscreen) to correspond the
+varying orientation of the screen. Second, it can dynamically align
+the screen to correspond the varying spacial orientation of the
+display (handheld device). In addition it can list available input
+devices and screen outputs.
 
 .SH OPTIONS
 .TP 8
@@ -26,41 +29,55 @@ extensions available on the running X server. This function does not
 require any additional options.
 .PP
 .TP 8
-.B list-input [--short | --long] [\fIdevice\fP]
-If no argument is given list all available input devices. If an
-argument is given, show all the features of the given \fIdevice\fP.
+.B list-input [--short | --long] [\fIname-or-ID\fP]
+If no argument is given lists all available input devices. If an
+argument is given, shows all the features of the device with the given
+\fIname or ID\fP.
 If --long is provided, the output includes detailed information about
 the capabilities of each devices. Otherwise, or if --short is
 provided, only the device names and some minimal information is
 listed.
 .PP
 .TP 8
-.B list-output [--screen=\fInumber\fP]
-If no argument is given list all available screen outputs. Optionally
-the screen \fnumber\fP can be specified.
+.B list-output [--screen=\fIinteger\fP]
+If no argument is given lists all available screen outputs. Optionally
+the \fIscreen\fP number can be specified.
 .PP
 .TP 8
-.B align [--input=\fIdevice\fP] [--screen=\fInumber\fP] [--output=\fIoutput\fP]
+.B align [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP]
 The default function. It is called when no function name is given. It
 queries the current screen configuration and applies the current
 coordinate transformation to the input device. If no options are given
 then the Core Pointer and the Primary Output (or the first available
 output) is used in correspondence. The name or the ID of the input
-device can be specified with the \fIinput\fP. The name or ID of the
-output can explicitly specified with the \fIoutput\fP option. For
-multiple screen configuration the output selection can be narrowed by
-specifying the screen \fInumber\fP.
+device can be specified with the \fIinput\fP option. The name or ID of the
+output can explicitly specified with the \fIoutput\fP option. For a
+multiple screen configuration the output selection can be directed by
+specifying the \fIscreen\fP number.
 .PP
 .TP 8
-.B monitor [--input=\fIdevice\fP] [--screen=\fInumber\fP] [--output=\fIoutput\fP]
-Listens for screen (CRTC, output) change events from RandR end applies
-each coordinate transformation to the input device. If no options are
-given then the Core Pointer and the Primary Output (or the first
-available output) is used in correspondence. The name or the ID of the
-input device can be specified with the \fIinput\fP. The name or ID of
-the output can explicitly specified with the \fIoutput\fP option. For
-multiple screen configuration the output selection can be narrowed by
-specifying the screen \fInumber\fP.
+.B monitor [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP]
+Listens to the screen (CRTC, output) change events from RandR and
+applies each coordinate transformation to the input device. If no
+options are given then the Core Pointer and the Primary Output (or the
+first available output) is used in correspondence. The name or the ID
+of the input device can be specified with the \fIinput\fP option. The name or
+ID of the output can explicitly specified with the \fIoutput\fP
+option. For a multiple screen configuration the output selection can
+be directed by specifying the \fIscreen\fP number.
+.PP
+.TP 8
+.B gravitate [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--ratio=\fIfloat\fP] [--threshold=\fIfloat\fP]
+Listens to the events from the given input device which should be a
+gravity sensor (accelerometer) and rotates the screen in accordance
+with the varying spacial orientation of the device. The gravity sensor
+data is analysed with the use of \fIratio\fP and \fIthreshold\fP
+parameters. The first defines the minimum ratio between horizontal and
+vertical pitch in order to select the prevalent one and equals 2.0 by
+default. The second defines the minimal pitch value to consider in
+relation to the axis value range and equals 0.12 by default.
+The name or the ID of the input device should be specified with the
+\fIinput\fP option. Optionally the \fIscreen\fP number can be specified.
 
 .SH ENVIRONMENT
 The program uses the \fBDISPLAY\fP environment variable specifying the

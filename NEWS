@@ -1,3 +1,8 @@
+xrandr-align 0.3.0 - 17 Feb 2012
+=========================
+
+  * Implement the `gravitate' command.
+
 xrandr-align 0.2.0 - 02 Feb 2012
 =========================
 

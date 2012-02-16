@@ -4,13 +4,36 @@
 Overview
 ========
 
-The xrandr-align is a utility to align an X input device in accordance
-with the screen rotation, panning and scale parameters controlled by
-the X RandR extension. In addition the utility can list available
-input devices and screen outputs.
+The xrandr-align is a utility to keep the proper alignment between the
+screen and an X input device. The utility works in both ways. First, it
+can dynamically align an input device (touchscreen) to correspond the
+varying orientation of the screen. Second, it can dynamically align
+the screen to correspond the varying spacial orientation of the
+display (handheld device). In addition it can list available input
+devices and screen outputs.
 
-The `monitor' command is used to apply the transformations dynamically
-listening to the events from the RandR extension.
+The `monitor' command is used to dynamically apply the transformations
+to a given input device listening to the events from the RandR
+extension. In order to apply the current transformation to the input
+device and exit use the `align' command, which is the default.
+
+The `gravitate' command is used to dynamically rotate the screen in
+accordance with the spacial orientation of the device listening to the
+events from a given gravity sensor (accelerometer) as an input device.
+
+Examples
+========
+
+Tested on the "Pegatron Lucid" Tablet PC with the following set of
+commands:
+
+  xrandr-align -v monitor --input="eGalax Inc. USB TouchController"
+
+  xrandr-align -v gravitate --input="Pegatron Lucid Tablet Accelerometer"
+
+The first process keeps the screen and its touchscreen part
+aligned. The second process rotates the screen when the accelerometer
+data suggests that the device was rotated.
 
 Requirements
 ============
