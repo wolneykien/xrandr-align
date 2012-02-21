@@ -50,6 +50,8 @@ monitor (Display *display,
   int screen;
   int event_base, error_base;
 
+  ret = align (display, argc, argv, funcname, usage);
+
   ret = get_screen (display, argc, argv, funcname, usage, &screen);
   if (ret == EXIT_FAILURE) {
     return ret;
