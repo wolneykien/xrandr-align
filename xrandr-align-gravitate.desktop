@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Screen autorotate
+Name[ru]=Автоповорот экрана
+Comment=Rotate the screen folow the device rotations
+Comment[ru]=Поворачивать экран вслед за поворотом устройства
+Icon=
+Exec=xrandr-align-gravitate --start
+Terminal=false
+Type=Application
+Categories=

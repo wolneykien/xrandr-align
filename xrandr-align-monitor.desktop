@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Align inputs
+Name[ru]=Ориентировать ввод
+Comment=Align input devices to the screen
+Comment[ru]=Ориентировать устройства ввода по экрану
+Icon=
+Exec=xrandr-align-monitor --start
+Terminal=false
+Type=Application
+Categories=
