@@ -44,3 +44,6 @@ ChangeLog:
 	$(CHANGELOG_CMD)
 
 dist-hook: ChangeLog INSTALL
+
+autostartdir = $(sysconfdir)/xdg/autostart
+autostart_DATA = xrandr-align-monitor.desktop xrandr-align-gravitate.desktop
