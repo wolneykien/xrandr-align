@@ -21,6 +21,12 @@ The `gravitate' command is used to dynamically rotate the screen in
 accordance with the spacial orientation of the device listening to the
 events from a given gravity sensor (accelerometer) as an input device.
 
+Additionally, there are two scripts (xrandr-align-monitor and
+xrandr-align-gravitate) to start and stop monitoring and autorotation
+for configurable set of devices. Moreover, the corresponding desktop
+files are installed into the /etc/xdg/autostart directory in order to
+start the scripts at the start of a user session.
+
 Examples
 ========
 
