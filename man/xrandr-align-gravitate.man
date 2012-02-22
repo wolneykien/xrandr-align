@@ -1,0 +1,68 @@
+.TH xrandr-align-gravitate 1
+
+.SH NAME
+xrandr-align-gravitate -- script to start/stop the screen autorotation
+
+.SH SYNOPSIS
+.B xrandr-align-gravitate [ --start | --stop ]
+
+.SH DESCRIPTION
+The xrandr-align-gravitate is a script to start/stop the screen
+autorotation following the rotations of the device registered by a
+gravisensor.
+
+.SH OPTIONS
+.TP 8
+.B --start
+The default option. Starts screen autorotation process listening for
+events from each input device listed in the configuration file
+\fI~/.xrandr-align/gravitate\fP or \fI/etc/xrandr-align/gravitate\fP
+if the former doesn't exist.
+
+The configuration file entries are formatted as follows:
+
+.nf
+"\fIinput device name\fP" [\fIratio\fP,\fIthreshold\fP]
+.fi
+
+The \fIratio\fP and \fIthreshold\fP values are optional but useful to
+adjust autorotation for a particular gravisensor.
+.PP
+.TP 8
+.B --stop
+Stops one or more previously started processes.
+
+.SH FILES
+~/.xrandr-align/gravitate, /etc/xrandr-align/gravitate
+
+.SH "SEE ALSO"
+xrandr-align(1), xrandr-align-monitor(1)
+
+.SH LICENSE
+Permission to use, copy, modify, distribute, and sell this software
+and its documentation for any purpose is  hereby granted without fee,
+provided that the  above copyright   notice appear  in   all  copies
+and  that both  that copyright  notice   and   this  permission
+notice  appear  in  supporting documentation, and that   the  name of
+the authors  not  be  used  in advertising or publicity pertaining to
+distribution of the software without specific,  written prior
+permission. The authors  make  no representations about the
+suitability of this software for any purpose.  It is provided "as is"
+without express or implied warranty.
+
+THE AUTHORS DISCLAIM ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
+INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS,
+IN NO EVENT  SHALL THE AUTHORS  BE   LIABLE   FOR ANY  SPECIAL,
+INDIRECT   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+RESULTING FROM LOSS OF USE, DATA  OR PROFITS, WHETHER  IN  AN ACTION
+OF  CONTRACT,  NEGLIGENCE OR OTHER TORTIOUS  ACTION, ARISING    OUT OF
+OR   IN  CONNECTION  WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+.SH COPYRIGHT
+Copyright 2012, Paul Wolneykien, ALT Linux Ltd.
+
+.SH AUTHORS
+
+.nf
+Paul Wolneykien <manowar@altlinux.org>
+.fi

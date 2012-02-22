@@ -1,0 +1,64 @@
+.TH xrandr-align-monitor 1
+
+.SH NAME
+xrandr-align-monitor -- script to start/stop the alignment of
+configured inputs with xrandr-align
+
+.SH SYNOPSIS
+.B xrandr-align-monitor [ --start | --stop ]
+
+.SH DESCRIPTION
+The xrandr-align-monitor is a script to start/stop the alignment of
+configured inputs with xrandr-align utility.
+
+.SH OPTIONS
+.TP 8
+.B --start
+The default option. Starts monitoring for output-input pairs listed in
+the configuration file \fI~/.xrandr-align/monitor\fP or
+\fI/etc/xrandr-align/monitor\fP if the former doesn't exist.
+
+The configuration file entries are formatted as follows:
+
+.nf
+"\fIoutput name\fP" "\fIinput device name\fP"
+.fi
+.PP
+.TP 8
+.B --stop
+Stops one or more previously started monitoring processes.
+
+.SH FILES
+~/.xrandr-align/monitor, /etc/xrandr-align/monitor
+
+.SH "SEE ALSO"
+xrandr-align(1), xrandr-align-gravitate(1)
+
+.SH LICENSE
+Permission to use, copy, modify, distribute, and sell this software
+and its documentation for any purpose is  hereby granted without fee,
+provided that the  above copyright   notice appear  in   all  copies
+and  that both  that copyright  notice   and   this  permission
+notice  appear  in  supporting documentation, and that   the  name of
+the authors  not  be  used  in advertising or publicity pertaining to
+distribution of the software without specific,  written prior
+permission. The authors  make  no representations about the
+suitability of this software for any purpose.  It is provided "as is"
+without express or implied warranty.
+
+THE AUTHORS DISCLAIM ALL   WARRANTIES WITH REGARD  TO  THIS SOFTWARE,
+INCLUDING ALL IMPLIED   WARRANTIES OF MERCHANTABILITY  AND   FITNESS,
+IN NO EVENT  SHALL THE AUTHORS  BE   LIABLE   FOR ANY  SPECIAL,
+INDIRECT   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+RESULTING FROM LOSS OF USE, DATA  OR PROFITS, WHETHER  IN  AN ACTION
+OF  CONTRACT,  NEGLIGENCE OR OTHER TORTIOUS  ACTION, ARISING    OUT OF
+OR   IN  CONNECTION  WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+.SH COPYRIGHT
+Copyright 2012, Paul Wolneykien, ALT Linux Ltd.
+
+.SH AUTHORS
+
+.nf
+Paul Wolneykien <manowar@altlinux.org>
+.fi

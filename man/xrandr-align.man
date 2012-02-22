@@ -84,7 +84,7 @@ The program uses the \fBDISPLAY\fP environment variable specifying the
 X display to connect.
 
 .SH "SEE ALSO"
-xinput(1), xrandr(1)
+xrandr-align-monitor(1), xrandr-align-gravitate(1), xinput(1), xrandr(1)
 
 .SH LICENSE
 Permission to use, copy, modify, distribute, and sell this software

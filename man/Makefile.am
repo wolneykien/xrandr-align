@@ -31,7 +31,7 @@
 
 
 appmandir = $(APP_MAN_DIR)
-appman_PRE = xrandr-align.man
+appman_PRE = xrandr-align.man xrandr-align-monitor.man xrandr-align-gravitate.man
 appman_DATA = $(appman_PRE:man=@APP_MAN_SUFFIX@)
 
 EXTRA_DIST = $(appman_PRE)
