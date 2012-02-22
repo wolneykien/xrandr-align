@@ -42,10 +42,12 @@ elif [ $# -lt 1 ] || [ $1 = "--start" ]; then
 	(
 	    flock -n 4
 	    cat "${CONFDIR%/}/gravitate" |
-	    sed -n -e 's/^"\([^"]\+\)"[[:space:]]\+"\([^"]\+\)"/input="\1"; output="\2"/p' |
-	    while read margs; do
-		eval $margs
-		xrandr-align gravitate --input="$input" --output="$output" &
+	    sed -n -e 's/^"\([^"]\+\)"[[:space:]]\+"\([^"]\+\)"\([[:space:]]\+\([.0-9]\+\),\([.0-9]\+\)\)\?/input="\1"; output="\2"; ratio="\4"; threshold="\5"/p' |
+	    while read gargs; do
+		eval $gargs
+		ratio=${ratio:-2.0}
+		threshold=${threshold:-0.12}
+		xrandr-align gravitate --input="$input" --output="$output" --ratio=$ratio --threshold=$threshold &
 		echo $! >&4
 	    done
 	    flock -u 4
