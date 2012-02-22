@@ -1,0 +1,54 @@
+#!/bin/sh -efu
+
+PROG=${0##*/}
+CONFDIR="${HOME%/}/.xrandr-align"
+if [ ! -d "$CONFDIR" ]; then
+    SYSCONFDIR=${SYSCONFDIR:-/etc}
+    CONFDIR="${SYSCONFDIR%/}/xrandr-align"
+fi
+if [ -z "${STATEDIR:-}" ]; then
+    if [ -w /var/run ]; then
+	STATEDIR=/var/run
+    else
+	STATEDIR=/tmp
+    fi
+fi
+if [ -z "${DISPLAY:-}" ]; then
+    echo "No DISPLAY is set" >&2
+    exit 1
+fi
+PIDFILE="${STATEDIR%/}/$PROG$DISPLAY"
+
+
+if [ $# -gt 1 ]; then
+    echo "Usage: $PROG [--start|--stop]" >&2
+    exit 2
+fi
+
+if [ $# -gt 0 ] && [ $1 = "--stop" ]; then
+    if [ -f "$PIDFILE" ]; then
+	(
+            flock 4
+	    while read pid; do
+		if ! kill -0 $pid || kill $pid; then
+		    sed -i -e "/^$pid\$/d" "$PIDFILE"
+		fi
+	    done <&4
+	    [ ! -s "$PIDFILE" ] && rm "$PIDFILE"
+	) 4<"$PIDFILE"
+    fi
+elif [ $# -lt 1 ] || [ $1 = "--start" ]; then    
+    if [ -f "${CONFDIR%/}/gravitate" ]; then
+	(
+	    flock -n 4
+	    cat "${CONFDIR%/}/gravitate" |
+	    sed -n -e 's/^"\([^"]\+\)"[[:space:]]\+"\([^"]\+\)"/input="\1"; output="\2"/p' |
+	    while read margs; do
+		eval $margs
+		xrandr-align gravitate --input="$input" --output="$output" &
+		echo $! >&4
+	    done
+	    flock -u 4
+	) 4>>"$PIDFILE"
+    fi
+fi
