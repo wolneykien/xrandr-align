@@ -299,7 +299,7 @@ static int
 do_set_prop(Display *display, Atom type, int format, int argc, const char *argv[], const char *name, const char *desc)
 {
 #ifdef HAVE_XI2
-    if (xinput_version(display) == XI_2_Major)
+    if (check_xi2 (display))
         return do_set_prop_xi2(display, type, format, argc, argv, name, desc);
 #endif
     return do_set_prop_xi1(display, type, format, argc, argv, name, desc);

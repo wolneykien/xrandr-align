@@ -146,6 +146,18 @@ xinput_version(Display	*display)
     return vers;
 }
 
+#if HAVE_XI2
+int
+check_xi2 (Display *display)
+{
+    int major = XI_2_Major, minor = XI_2_Minor;
+
+    return xinput_version(display) == XI_2_Major &&
+	   XIQueryVersion(display, &major, &minor) == Success &&
+	   (major * 1000 + minor) >= (XI_2_Major * 1000 + XI_2_Minor);
+}
+#endif
+
 int check_valuator (XDeviceInfo *info,
 		    unsigned char mode,
 		    unsigned char min_axes,

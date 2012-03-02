@@ -294,7 +294,7 @@ list_input(Display	*display,
     if (argc > arg_dev)
     {
 #ifdef HAVE_XI2
-        if (xinput_version(display) == XI_2_Major)
+        if (check_xi2 (display))
         {
             XIDeviceInfo *info = xi2_find_device_info(display, argv[arg_dev]);
 
@@ -320,10 +320,7 @@ list_input(Display	*display,
         }
     } else {
 #ifdef HAVE_XI2
-        int major = XI_2_Major, minor = XI_2_Minor;
-        if (xinput_version(display) == XI_2_Major &&
-            XIQueryVersion(display, &major, &minor) == Success &&
-            (major * 1000 + minor) >= (XI_2_Major * 1000 + XI_2_Minor))
+        if (check_xi2 (display))
         {
                 return list_xi2(display, !longformat);
         }
