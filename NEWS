@@ -1,3 +1,10 @@
+xrandr-align 0.3.3 - 02 Mar 2012
+=========================
+
+  * Bugfix:
+  
+    - More fixes for the XInput2 version check.
+
 xrandr-align 0.3.2 - 22 Feb 2012
 =========================
 
