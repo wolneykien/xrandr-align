@@ -48,6 +48,8 @@ align (Display *display,
   int ret;
   const char *inputarg;
   int screen;
+  const char *pre_script;
+  const char *post_script;
 
   ret = get_screen (display, argc, argv, funcname, usage, &screen);
   if (ret == EXIT_FAILURE) {
@@ -64,6 +66,16 @@ align (Display *display,
     return ret;
   }
 
+  ret = get_argval (argc, argv, "pre-script", funcname, usage, "", &pre_script);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
+  ret = get_argval (argc, argv, "post-script", funcname, usage, "", &post_script);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
   if (ret != EXIT_FAILURE) {
     Window root;
 
@@ -72,7 +84,14 @@ align (Display *display,
     }
     
     root = RootWindow (display, screen);
-    ret = apply_transform (display, root, output->crtc, inputarg);
+
+    ret = run_script (pre_script);
+    if (ret != EXIT_FAILURE) {
+	    ret = apply_transform (display, root, output->crtc, inputarg);
+	    if (ret != EXIT_FAILURE) {
+		    ret = run_script (post_script);
+	    }
+    }
   }
 
   XRRFreeOutputInfo (output);

@@ -44,7 +44,7 @@ If no argument is given lists all available screen outputs. Optionally
 the \fIscreen\fP number can be specified.
 .PP
 .TP 8
-.B align [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP]
+.B align [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP] [--pre-script=\fIpre-script\fP] [--post-script=\fIpost-script\fP]
 The default function. It is called when no function name is given. It
 queries the current screen configuration and applies the current
 coordinate transformation to the input device. If no options are given
@@ -55,8 +55,10 @@ output can explicitly specified with the \fIoutput\fP option. For a
 multiple screen configuration the output selection can be directed by
 specifying the \fIscreen\fP number.
 .PP
+Optionally a script defined with \fIpre-script\fP can be run prior to alignment and an other script defined by \fIpost-script\fP can be run after alignment. 
+.PP
 .TP 8
-.B monitor [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP]
+.B monitor [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--output=\fIname-or-ID\fP] [--pre-script=\fIpre-script\fP] [--post-script=\fIpost-script\fP]
 Listens to the screen (CRTC, output) change events from RandR and
 applies each coordinate transformation to the input device. If no
 options are given then the Core Pointer and the Primary Output (or the
@@ -65,6 +67,8 @@ of the input device can be specified with the \fIinput\fP option. The name or
 ID of the output can explicitly specified with the \fIoutput\fP
 option. For a multiple screen configuration the output selection can
 be directed by specifying the \fIscreen\fP number.
+.PP
+Optionally a script defined with \fIpre-script\fP can be run prior to each alignment and an other script defined by \fIpost-script\fP can be run after each alignment. 
 .PP
 .TP 8
 .B gravitate [--input=\fIname-or-ID\fP] [--screen=\fIinteger\fP] [--ratio=\fIfloat\fP] [--threshold=\fIfloat\fP]

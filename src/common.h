@@ -65,3 +65,6 @@ get_output (Display *display,
 	    const char *usage,
 	    RROutput *retoutputid,
 	    XRROutputInfo **retoutput);
+
+int
+run_script (const char *script);

@@ -59,11 +59,11 @@ static entry drivers[] =
      list_output
     },
     {"[align]",
-     "[--screen=INT] [--input=INDEV] [--output=OUTDEV]",
+     "[--screen=INT] [--input=INDEV] [--output=OUTDEV] [--pre-script=PRE] [--post-script=POST]",
      align
     },
     {"monitor",
-     "[--screen=INT] [--input=INDEV] [--output=OUTDEV]",
+     "[--screen=INT] [--input=INDEV] [--output=OUTDEV] [--pre-script=PRE] [--post-script=POST]",
      monitor
     },
     {"gravitate",

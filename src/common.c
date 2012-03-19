@@ -191,3 +191,23 @@ get_output (Display *display,
 
   return ret;
 }
+
+int
+run_script (const char *script)
+{
+  int ret;
+  int retcode;
+
+  if (script != NULL && strlen (script) > 0) {
+    if ((retcode = system (script)) == 0) {
+      ret = EXIT_SUCCESS;
+    } else {
+      ret = EXIT_FAILURE;
+      fprintf (stderr, "Error running `%s` (%i)\n", script, retcode);
+    }
+  } else {
+    ret = EXIT_SUCCESS;
+  }
+
+  return ret;
+}

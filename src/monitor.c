@@ -49,6 +49,8 @@ monitor (Display *display,
   const char *inputarg;
   int screen;
   int event_base, error_base;
+  const char *pre_script;
+  const char *post_script;
 
   ret = align (display, argc, argv, funcname, usage);
 
@@ -63,6 +65,16 @@ monitor (Display *display,
   }
 
   ret = get_output (display, argc, argv, funcname, usage, &outputid, &output);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
+  ret = get_argval (argc, argv, "pre-script", funcname, usage, "", &pre_script);
+  if (ret == EXIT_FAILURE) {
+    return ret;
+  }
+
+  ret = get_argval (argc, argv, "post-script", funcname, usage, "", &post_script);
   if (ret == EXIT_FAILURE) {
     return ret;
   }
@@ -100,7 +112,13 @@ monitor (Display *display,
 	}
 	escreen = XRRRootToScreen (sce->display, sce->root);
 	if (escreen == screen) {
-	  ret = apply_transform (sce->display, sce->root, output->crtc, inputarg);
+	  ret = run_script (pre_script);
+          if (ret != EXIT_FAILURE) {
+	    ret = apply_transform (sce->display, sce->root, output->crtc, inputarg);
+	    if (ret != EXIT_FAILURE) {
+	      ret = run_script (post_script);
+	    }
+	  }
 	  if (ret != EXIT_FAILURE) {
 	    root = sce->root;
 	    XRRFreeOutputInfo (output);
