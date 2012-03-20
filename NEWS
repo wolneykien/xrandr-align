@@ -3,6 +3,10 @@ xrandr-align 0.3.4 - 20 Mar 2012
 
   * Add support for pre- and post-align scripts.
   * Add default start/stop scripts for the twofing daemon.
+  * Bugfix:
+
+    - Filter out the gravisensor noise: add the timeout of 1 s
+      to the gravitate event listener.
 
 xrandr-align 0.3.3 - 02 Mar 2012
 =========================
