@@ -19,7 +19,6 @@ if [ -z "${DISPLAY:-}" ]; then
 fi
 PIDFILE="${STATEDIR%/}/$PROG$DISPLAY"
 
-
 if [ $# -gt 1 ]; then
     echo "Usage: $PROG [--start|--stop]" >&2
     exit 2
@@ -42,10 +41,13 @@ elif [ $# -lt 1 ] || [ $1 = "--start" ]; then
 	(
 	    flock -n 4
 	    cat "${CONFDIR%/}/monitor" |
-	    sed -n -e 's/^"\([^"]\+\)"[[:space:]]\+"\([^"]\+\)"/output="\1"; input="\2"/p' |
+	    sed -n -e 's/^"\([^"]\+\)"[[:space:]]\+"\([^"]\+\)"\(.*\)$/output="\1"; input="\2"; tail="\3"/p' |
 	    while read margs; do
 		eval $margs
-		xrandr-align monitor --output="$output" --input="$input" &
+		pre="${CONFDIR%/}/pre-align.sh"
+		post="${CONFDIR%/}/post-align.sh"
+		eval $(echo "$tail" | sed -e 's/[[:space:]]*\([a-z]\+\):/"; \1="/g' -e 's/^"; \([a-z]\+=".*\)$/\1"/')
+		xrandr-align monitor --output="$output" --input="$input" `[ -n "$pre" ] && echo "--pre-script=\"$pre\""` `[ -n "$post" ] && echo "--post-script=\"$post\""` &
 		echo $! >&4
 	    done
 	    flock -u 4

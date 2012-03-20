@@ -21,8 +21,10 @@ the configuration file \fI~/.xrandr-align/monitor\fP or
 The configuration file entries are formatted as follows:
 
 .nf
-"\fIoutput name\fP" "\fIinput device name\fP"
+"\fIoutput name\fP" "\fIinput device name\fP" [pre: \fIpre-script\fP] [post: \fIpost-script\fP]
 .fi
+
+The parameters for pre- and post- scripts are optional. By default the \fIpre-align.sh\fP and \fIpost-align.sh\fP files in the configuration directory are used. These scripts run the set of another scripts residing in the \fIpre-align.d\fP and \fIpost-align.d\fP correspondingly.
 .PP
 .TP 8
 .B --stop

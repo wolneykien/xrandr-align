@@ -29,4 +29,6 @@
 #  TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 #  PERFORMANCE OF THIS SOFTWARE.
 
+xrconfdir = $(sysconfdir)/xrandr-align
 dist_bin_SCRIPTS = xrandr-align-monitor xrandr-align-gravitate
+xrconf_SCRIPTS = pre-align.sh post-align.sh
