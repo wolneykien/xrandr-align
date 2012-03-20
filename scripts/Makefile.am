@@ -30,5 +30,9 @@
 #  PERFORMANCE OF THIS SOFTWARE.
 
 xrconfdir = $(sysconfdir)/xrandr-align
+prealigndir = $(xrconfdir)/pre-align.d
+postaligndir = $(xrconfdir)/post-align.d
 dist_bin_SCRIPTS = xrandr-align-monitor xrandr-align-gravitate
 xrconf_SCRIPTS = pre-align.sh post-align.sh
+prealign_SCRIPTS = pre-align.d/10-twofing-stop
+postalign_SCRIPTS = post-align.d/10-twofing-start

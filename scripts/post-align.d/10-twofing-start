@@ -1,0 +1,17 @@
+#!/bin/sh -efu
+
+if [ -z "${ALIGN_TMPDIR:-}" ]; then
+	echo "ALIGN_TMPDIR is not set" >&2
+	exit 2
+fi
+
+[ -f "${ALIGN_TMPDIR%/}/twofing.stopped" ] || exit 0
+
+(
+flock 4
+cat "${ALIGN_TMPDIR%/}/twofing.stopped" | \
+	while read cmd; do
+		eval $cmd &
+	done
+rm  "${ALIGN_TMPDIR%/}/twofing.stopped"
+) 4<"${ALIGN_TMPDIR%/}/twofing.stopped"
