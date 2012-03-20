@@ -33,6 +33,7 @@
 
 #include "xrandr-align.h"
 #include <string.h>
+#include <time.h>
 
 #define INVALID_EVENT_TYPE	-1
 
@@ -193,8 +194,10 @@ read_events (Display *display,
 {
   XEvent e;
   Rotation crot;
+  time_t rtime;
   double xthr, ythr;
   int ret;
+  int asleep = 0;
 
   if (! register_events(display, input, "", False)) {
     fprintf(stderr, "Unable to register for input events.\n");
@@ -208,6 +211,8 @@ read_events (Display *display,
   }
 
   crot = current_rotation (display, root);
+  rtime = time (NULL);
+
 /*
   if (verbose) {
     fprintf (stderr, "Current orientation of %s: %u\n", output->name, (unsigned int) crot);
@@ -218,6 +223,16 @@ read_events (Display *display,
     XNextEvent(display, &e);
 
     if (e.type == motion_type) {
+      if (asleep) {
+        if ((time (NULL) - rtime) < 1) {
+          continue;
+        } else {
+	  asleep = 0;
+	  if (verbose) {
+            fprintf (stderr, "...Woken up.\n");
+	  }
+        }
+      }
       XDeviceMotionEvent *m = (XDeviceMotionEvent *) &e;
 
       if (m->axes_count > 1) {
@@ -253,6 +268,11 @@ read_events (Display *display,
 	    return ret;
 	  }
 	  crot = rot;
+	  if (verbose) {
+            fprintf (stderr, "Enter sleep...\n");
+	  }
+	  rtime = time (NULL);
+	  asleep = 1;
 	}
       }
     }
