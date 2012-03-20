@@ -2,7 +2,7 @@ dnl  Copyright 2007 Peter Hutterer <peter@cs.unisa.edu.au>
 dnl Process this file with autoconf to create configure.
 
 AC_PREREQ([2.57])
-AC_INIT(xrandr-align,[0.3.3], [http://bugs.altlinux.org/enter_bug.cgi?product=Sisyphus,component=xrandr-align],xrandr-align)
+AC_INIT(xrandr-align,[0.3.4], [http://bugs.altlinux.org/enter_bug.cgi?product=Sisyphus,component=xrandr-align],xrandr-align)
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
