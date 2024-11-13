@@ -31,6 +31,7 @@
  *
  */
 
+#include "common.h"
 #include "xrandr-align.h"
 #include <string.h>
 #include <time.h>
