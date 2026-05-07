@@ -388,7 +388,7 @@ main(int argc, const char * argv[])
     while((*func) == '-') func++;
 
     if (strcmp("version", func) == 0) {
-        return print_version(argv[0]);
+        return print_version();
     }
 
     display = XOpenDisplay(NULL);
