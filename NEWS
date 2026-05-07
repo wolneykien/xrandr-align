@@ -1,3 +1,8 @@
+xrandr-align 0.3.7 - 07 May 2026
+=========================
+
+  * Fixed print_version() bug found by GCC v15.
+
 xrandr-align 0.3.6 - 13 Nov 2024
 =========================
 
